@@ -1,0 +1,57 @@
+package ru.spmi.backend.dto.interfaces;
+
+public interface PaginationResponse {
+
+    String getFio_Full();
+    String getDolshnost();
+    String getBirth_Date();
+    String getAge();
+    String getSex();
+    String getCountry();
+    String getPhone();
+    String getE_Mail();
+    String getEmp_Type();
+    String getOkonchanie_Instituta();
+    String getDis_Sovet_Name();
+    String getDiss_Qualification_Name();
+    String getFio_Scientific_Adviser();
+    String getDate_Defense();
+    String getTime_Defense();
+    String getAuditory();
+    String getDate_Doc();
+    String getDate_Admission();
+    String getDate_Vak();
+    String getDate_Minus_10();
+    String getDate_Minus_5();
+    String getDate_Plus_10();
+    String getDate_Plus_15();
+    String getDate_Plus_30();
+    String getOkso_Ds();
+    String getDiss_Spec_Name_Ds();
+    String getTheme();
+    String getProtocol_1();
+    String getDate_Protocol_1();
+    String getProtocol_2();
+    String getDate_Protocol_2();
+    String getProtocol_3();
+    String getDate_Protocol_3();
+    String getCount_Presents();
+    String getPotocol_3_Count_Voite();
+    String getPotocol_3_Count_Voite_Not();
+    String getPotocol_3_Count_Voite_Forgo();
+    String getPotocol_3_Count_Voite_Bad();
+    String getProtocol_4();
+    String getDate_Protocol_4();
+    String getCertification_Case();
+    String getCertification_Date();
+    String getOrder_Number();
+    String getOrder_Date();
+    String getDiplom_Num();
+    String getDiplom_Seria();
+    String getUrl_Vak();
+    String getQr_Code();
+    String getComment();
+    String getDiss_Status();
+
+
+}
