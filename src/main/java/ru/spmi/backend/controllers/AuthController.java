@@ -157,6 +157,8 @@ public class AuthController {
     @PostMapping("/get_menu")
     public Map getMenu(@RequestParam(name="roles", defaultValue = "34"/*"Просмотр("VISIBLE")"*/) int roles) {
         System.out.println("in getMenu");
+        System.out.println("roles = "+roles);
+
         return menuDAO.getMenuFromByRole(roles);
     }
 }

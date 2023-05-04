@@ -21,12 +21,12 @@ public class ScienceController {
 //    }
 
     @PostMapping("/all")
-    public ScienceTableDTO adminFilterAction(@RequestBody String filters,
+    public ResponseEntity<?> adminFilterAction(@RequestBody String filters,
                                              @RequestParam(name="page_rows",  defaultValue = "30") int page_rows,
                                              @RequestParam(name="page_num",  defaultValue = "0") int page_num) {
         System.out.println(filters);
-//        System.out.println(scienceDAO.getScienceAllJsonFromFilters(filters, 30, 0));
-        return scienceDAO.getScienceAllJsonFromFilters(filters, page_rows, page_num);
+        System.out.println(new Gson().toJson(scienceDAO.getScienceAllJsonFromFilters(filters,  page_rows, page_num)));
+        return new ResponseEntity<>(new Gson().toJson(scienceDAO.getScienceAllJsonFromFilters(filters,  page_rows, page_num)), HttpStatus.OK);
     }
 //
 //    @PostMapping("/filter")

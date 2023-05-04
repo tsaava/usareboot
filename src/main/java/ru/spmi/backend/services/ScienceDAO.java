@@ -125,7 +125,7 @@ public class ScienceDAO {
         var fields = new ArrayList<>(Arrays.asList(ScienceDTO.class.getDeclaredFields()));
         ArrayList<String> fieldsList = new ArrayList<>();
         fields.forEach(x-> fieldsList.add(x.getName()));
-        System.out.println(fieldsList);
+        System.out.println("scienceList11 "+scienceList);
         var scienceTable= new ScienceTableDTO(
                 scienceList,
                 fieldsList,
@@ -135,7 +135,7 @@ public class ScienceDAO {
                 page_num
         );
 //
-        System.out.println(scienceTable);
+//        System.out.println(scienceTable);
         //return Collections.singletonList(modelMapper.map(bdFuncResponse, ScienceDto.class));
         return scienceTable;
     }
