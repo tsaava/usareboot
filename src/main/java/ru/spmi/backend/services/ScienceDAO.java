@@ -125,7 +125,7 @@ public class ScienceDAO {
         var fields = new ArrayList<>(Arrays.asList(ScienceDTO.class.getDeclaredFields()));
         ArrayList<String> fieldsList = new ArrayList<>();
         fields.forEach(x-> fieldsList.add(x.getName()));
-        System.out.println("scienceList11 "+scienceList);
+        System.out.println("scienceListы11 "+scienceList);
         var scienceTable= new ScienceTableDTO(
                 scienceList,
                 fieldsList,
