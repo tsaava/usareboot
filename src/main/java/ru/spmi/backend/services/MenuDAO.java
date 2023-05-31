@@ -17,7 +17,7 @@ public class MenuDAO {
         ArrayList<MenuDTO> menuList = new ArrayList<>();
         var bdFuncResponse = menuRepository.menuFunc(roles);
 //        bdFuncResponse.forEach(x -> menuList.add(new MenuDTO(x.getMenu_role())));
-        System.out.println(bdFuncResponse);
+//        System.out.println(bdFuncResponse);
 
         return bdFuncResponse;
     }

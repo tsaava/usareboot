@@ -50,6 +50,8 @@ public class WebSecurityConfiguration {
 //                                .requestMatchers("/swagger-ui/index.html#/").permitAll()
                                 .requestMatchers("/api/admin/**").hasAnyAuthority("COUNCIL", "COUNCIL_SUPER")
                                 .requestMatchers("/api/science/**").hasAnyAuthority("COUNCIL", "COUNCIL_SUPER")
+                                .requestMatchers("/api/student/**").hasAnyAuthority("COUNCIL", "COUNCIL_SUPER")
+
 //                       .requestMatchers("/api/teacher/**").hasAnyAuthority( "TEACHER", "ADMIN","DORMITORY")
 //                        .requestMatchers("/api/student/**").hasAnyAuthority("STUDENT", "ADMIN","DORMITORY")
                                 .anyRequest().authenticated()

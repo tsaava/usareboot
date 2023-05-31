@@ -20,13 +20,20 @@ public class ScienceController {
 //        return new ResponseEntity<>(new Gson().toJson(scienceDAO.getScienceAllJsonFromFilters(filters, 30, 0)), HttpStatus.OK);
 //    }
 
-    @PostMapping("/all")
-    public ResponseEntity<?> adminFilterAction(@RequestBody String filters,
-                                             @RequestParam(name="page_rows",  defaultValue = "30") int page_rows,
-                                             @RequestParam(name="page_num",  defaultValue = "0") int page_num) {
-        System.out.println(filters);
-        System.out.println(new Gson().toJson(scienceDAO.getScienceAllJsonFromFilters(filters,  page_rows, page_num)));
-        return new ResponseEntity<>(new Gson().toJson(scienceDAO.getScienceAllJsonFromFilters(filters,  page_rows, page_num)), HttpStatus.OK);
+//    @PostMapping("/all")
+//    public ResponseEntity<?> adminFilterAction(@RequestParam(name="page_rows",  defaultValue = "30") int page_rows,
+//                                               @RequestParam(name="page_num",  defaultValue = "0") int page_num,
+//                                               @RequestBody String filters){
+////        System.out.println(filters);
+////        System.out.println(new Gson().toJson(scienceDAO.getScienceAllJsonFromFilters(filters,  page_rows, page_num)));
+//        return new ResponseEntity<>(new Gson().toJson(scienceDAO.getScienceAllJsonFromFilters(filters,  page_rows, page_num)), HttpStatus.OK);
+//    }
+
+    @GetMapping("/all")
+    public ResponseEntity<?> adminFilterAction(){
+//        System.out.println(filters);
+//        System.out.println(new Gson().toJson(scienceDAO.getScienceAllJsonFromFilters(filters,  page_rows, page_num)));
+        return new ResponseEntity<>(new Gson().toJson(scienceDAO.getScienceAllJsonFromFilters()), HttpStatus.OK);
     }
 //
 //    @PostMapping("/filter")

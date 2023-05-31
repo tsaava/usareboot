@@ -79,7 +79,7 @@ public class AuthController {
 
         responcedto.setUser(userdto);
         responcedto.setRoleList(roleList);
-        System.out.println(roleListDTO);
+//        System.out.println(roleListDTO);
 
         if (list.size() < 2) {
             responcedto.setNeedToChooseRole(false);
@@ -87,7 +87,7 @@ public class AuthController {
             responcedto.setNeedToChooseRole(true);
             System.out.println("setNeedToChooseRole(true)");
         }
-        System.out.println("responcedto ="+new Gson().toJson(responcedto));
+//        System.out.println("responcedto ="+new Gson().toJson(responcedto));
         return new ResponseEntity<>(new Gson().toJson(responcedto), HttpStatus.OK);
     }
 
@@ -156,8 +156,8 @@ public class AuthController {
     // вытаскиваем из базы менюшки по роли
     @PostMapping("/get_menu")
     public Map getMenu(@RequestParam(name="roles", defaultValue = "34"/*"Просмотр("VISIBLE")"*/) int roles) {
-        System.out.println("in getMenu");
-        System.out.println("roles = "+roles);
+//        System.out.println("in getMenu");
+//        System.out.println("roles = "+roles);
 
         return menuDAO.getMenuFromByRole(roles);
     }

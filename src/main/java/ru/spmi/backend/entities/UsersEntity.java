@@ -62,7 +62,7 @@ public class UsersEntity {
     }
 
     public String getPassword(){
-        System.out.println("пароль из базы: getPassword "+password);
+//        System.out.println("пароль из базы: getPassword "+password);
 
         return password;
     }

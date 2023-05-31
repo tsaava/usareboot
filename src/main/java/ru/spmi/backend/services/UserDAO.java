@@ -55,7 +55,7 @@ public class UserDAO {
     }
 
     public UsersEntity findUserByLoginAndPassword(String login, String password) throws UnsupportedEncodingException, NoSuchAlgorithmException {
-        System.out.println( toSha1(password));
+//        System.out.println( toSha1(password));
         return userRepository.findUsersEntityByLoginAndPassword(login, toSha1(password)).get();
     }
 
@@ -78,7 +78,7 @@ public class UserDAO {
         //из таблицы UsersEntity вытаскиваем поле roles с колекцией ролей
         var roleArray =  (userRepository.findAllRolesByUserId(user.getUserId()).get(0).getRoles());//.toList();//.get(0).getRoles();
 
-        System.out.println(roleArray);
+//        System.out.println(roleArray);
 //        var personRoles = roleArray.stream()
 //                .map(x -> rolesRepository.findDRolesEntityByRoleId(x.getRoleId()))
 //                .collect(Collectors.toSet());
