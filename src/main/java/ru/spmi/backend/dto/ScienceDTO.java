@@ -10,6 +10,17 @@ import lombok.NoArgsConstructor;
 
 public class ScienceDTO {
     //основная информация при открытии окна
+    private String person_id;
+    private String science_dissertation_id;
+    private String science_council_spec_id;
+    private String degree_detail_id;
+    private String science_applicant_status_id;
+    private String science_dissertation_status_id;
+    private String employee_position_id;
+    private String auditory_id;
+    private String order_id;
+    private String spec_id;
+
     private String _02fio_full;
     private String _03okonchanie_instituta;
     private String _04dis_sovet_name;

@@ -12,7 +12,7 @@ import ru.spmi.backend.services.StudentDAO;
 import java.math.BigInteger;
 
 @RestController
-@RequestMapping("/api/student")
+@RequestMapping("/api/university/student")
 public class StudentController {
     @Autowired
     private StudentDAO studentDAO;

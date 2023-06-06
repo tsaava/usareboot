@@ -17,6 +17,17 @@ public class ScienceDAO {
         var bdFuncResponse = scienceRepository.scienceFunc();
         if (bdFuncResponse.size() > 0) {
             bdFuncResponse.forEach(x -> scienceList.add(new ScienceDTO(
+                    x.getperson_id()!=null? x.getperson_id().toString() : "",
+                    x.getscience_dissertation_id()!=null? x.getscience_dissertation_id().toString() : "",
+                    x.getscience_council_spec_id()!=null? x.getscience_council_spec_id().toString() : "",
+                    x.getdegree_detail_id()!=null? x.getdegree_detail_id().toString() : "",
+                    x.getscience_applicant_status_id()!=null? x.getscience_applicant_status_id().toString() : "",
+                    x.getscience_dissertation_status_id()!=null? x.getscience_dissertation_status_id().toString() : "",
+                    x.getemployee_position_id()!=null? x.getemployee_position_id().toString() : "",
+                    x.getauditory_id()!=null? x.getauditory_id().toString() : "",
+                    x.getorder_id()!=null? x.getorder_id().toString() : "",
+                    x.getspec_id()!=null? x.getspec_id().toString() : "",
+
                     x.getFio_Full(),
                     x.getOkonchanie_Instituta(),
                     x.getDis_Sovet_Name(),

@@ -1,5 +1,7 @@
 package ru.spmi.backend.dto.interfaces;
 
+import java.math.BigInteger;
+
 public interface ScienceResponse {
 
 //    Long getStudentId();
@@ -19,7 +21,17 @@ public interface ScienceResponse {
 //    String GetStateCode();
 //    String GetNameStat();
 //    String GetCompensationTypeCode();
-    int getCount_Rows();
+
+    BigInteger getperson_id();
+    BigInteger getscience_dissertation_id();
+    BigInteger getscience_council_spec_id();
+    BigInteger getdegree_detail_id();
+    BigInteger getscience_applicant_status_id();
+    BigInteger getscience_dissertation_status_id();
+    BigInteger getemployee_position_id();
+    BigInteger getauditory_id();
+    BigInteger getorder_id();
+    BigInteger getspec_id();
     String getFio_Full();
     String getDolshnost();
     String getBirth_Date();

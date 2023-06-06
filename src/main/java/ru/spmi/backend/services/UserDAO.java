@@ -1,6 +1,7 @@
 package ru.spmi.backend.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 import ru.spmi.backend.entities.DRolesEntity;
 import ru.spmi.backend.entities.UsersEntity;

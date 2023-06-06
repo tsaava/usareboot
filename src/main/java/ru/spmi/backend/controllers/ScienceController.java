@@ -9,7 +9,8 @@ import ru.spmi.backend.dto.ScienceTableDTO;
 import ru.spmi.backend.services.ScienceDAO;
 
 @RestController
-@RequestMapping("/api/science")
+@RequestMapping("/api/university/science")
+///"api/science"
 
 public class ScienceController {
     @Autowired
@@ -29,10 +30,10 @@ public class ScienceController {
 //        return new ResponseEntity<>(new Gson().toJson(scienceDAO.getScienceAllJsonFromFilters(filters,  page_rows, page_num)), HttpStatus.OK);
 //    }
 
-    @GetMapping("/all")
+    @GetMapping("/applicants")
     public ResponseEntity<?> adminFilterAction(){
 //        System.out.println(filters);
-//        System.out.println(new Gson().toJson(scienceDAO.getScienceAllJsonFromFilters(filters,  page_rows, page_num)));
+        System.out.println(new Gson().toJson(scienceDAO.getScienceAllJsonFromFilters()));
         return new ResponseEntity<>(new Gson().toJson(scienceDAO.getScienceAllJsonFromFilters()), HttpStatus.OK);
     }
 //
