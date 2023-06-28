@@ -16,9 +16,9 @@
     <name>University</name>
     <description>University</description>
     <scm>
-        <connection>scm:git:smb://git01.resp.man.spmi.ru/Common/ngAngular</connection>
+        <connection>scm:git://git01.resp.man.spmi.ru/Common/ngAngular</connection>
         <url>//git01.resp.man.spmi.ru/Common/ngAngular</url>
-        <developerConnection>scm:git:smb://git01.resp.man.spmi.ru/Common/ngAngular</developerConnection>
+        <developerConnection>scm:git://git01.resp.man.spmi.ru/Common/ngAngular</developerConnection>
       <tag>university-0.0.2</tag>
 
   </scm>
