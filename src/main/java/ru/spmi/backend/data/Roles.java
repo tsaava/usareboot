@@ -6,5 +6,6 @@ public class Roles {
     public static String[] getAllRoles(){
         return str;
 
+
     }
 }

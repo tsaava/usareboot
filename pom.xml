@@ -12,7 +12,7 @@
     <groupId>ru.spmi.backend</groupId>
     <artifactId>university</artifactId>
     <packaging>jar</packaging>
-    <version>${plugin.maven.release.ver}</version>
+    <version>0.0.3-SNAPSHOT</version>
     <name>University</name>
     <description>University</description>
     <scm>
@@ -158,6 +158,7 @@
                 <artifactId>maven-release-plugin</artifactId>
                 <version>3.0.0-M7</version>
                 <configuration>
+                    <autoVersionSubmodules>true</autoVersionSubmodules>
                     <pushChanges>false</pushChanges>
                     <preparationGoals>clean package</preparationGoals>
                 </configuration>
