@@ -20,6 +20,7 @@
         <url>//git01.resp.man.spmi.ru/Common/ngAngular</url>
         <developerConnection>scm:git:smb://git01.resp.man.spmi.ru/Common/ngAngular</developerConnection>
       <tag>university-0.0.2</tag>
+
   </scm>
     <properties>
         <java.version>19</java.version>
@@ -150,13 +151,10 @@
                 <version>3.3.2</version>
                 <configuration>
                     <webappDirectory>/sample/servlet/container/deploy/directory</webappDirectory>
+
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-release-plugin</artifactId>
-                <version>3.0.0-M7</version>
-            </plugin>
+
 
         </plugins>
 
