@@ -9,12 +9,18 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
+
     <groupId>ru.spmi.backend</groupId>
     <artifactId>university</artifactId>
     <packaging>jar</packaging>
-    <version>0.0.2</version>
+    <version>0.0.2-SNAPSHOT</version>
     <name>University</name>
     <description>University</description>
+    <scm>
+        <connection>scm:git:smb://git01.resp.man.spmi.ru/Common/ngAngular</connection>
+        <url>//git01.resp.man.spmi.ru/Common/ngAngular</url>
+        <developerConnection>scm:git:smb://git01.resp.man.spmi.ru/Common/ngAngular</developerConnection>
+    </scm>
     <properties>
         <java.version>19</java.version>
     </properties>
@@ -146,7 +152,14 @@
                     <webappDirectory>/sample/servlet/container/deploy/directory</webappDirectory>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>3.0.0-M7</version>
+            </plugin>
+
         </plugins>
+
     </build>
 
 </project>
