@@ -12,7 +12,7 @@
     <groupId>ru.spmi.backend</groupId>
     <artifactId>university</artifactId>
     <packaging>jar</packaging>
-    <version>0.0.3-SNAPSHOT</version>
+    <version>0.0.4</version>
     <name>University</name>
     <description>University</description>
     <scm>
