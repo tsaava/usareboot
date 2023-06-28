@@ -12,14 +12,14 @@
     <groupId>ru.spmi.backend</groupId>
     <artifactId>university</artifactId>
     <packaging>jar</packaging>
-    <version>0.0.5</version>
+    <version>0.0.6-SNAPSHOT</version>
     <name>University</name>
     <description>University</description>
     <scm>
         <connection>scm:git://git01.resp.man.spmi.ru/Common/ngAngular</connection>
         <url>//git01.resp.man.spmi.ru/Common/ngAngular</url>
         <developerConnection>scm:git://git01.resp.man.spmi.ru/Common/ngAngular</developerConnection>
-      <tag>university-0.0.5</tag>
+      <tag>HEAD</tag>
   </scm>
     <properties>
         <java.version>19</java.version>
