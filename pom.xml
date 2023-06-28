@@ -159,6 +159,7 @@
                 <version>3.0.0-M7</version>
                 <configuration>
                     <pushChanges>false</pushChanges>
+                    <preparationGoals>clean package</preparationGoals>
                 </configuration>
             </plugin>
 
