@@ -64,6 +64,9 @@ public class WebSecurityConfiguration {
                 )
                 // устанавливает стандартных шаблон http
                 .httpBasic(Customizer.withDefaults())
+                .formLogin()
+                .loginPage("/login")
+                .and()
                 .cors().and()
                 .csrf().disable()
                 .exceptionHandling().authenticationEntryPoint(authEntryPointJwt).and()

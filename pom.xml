@@ -8,11 +8,13 @@
         <version>3.0.0</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>com.example</groupId>
-    <artifactId>SpringSecurity</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
-    <name>SpringSecurity</name>
-    <description>SpringSecurity</description>
+
+    <groupId>ru.spmi.backend</groupId>
+    <artifactId>university</artifactId>
+    <packaging>jar</packaging>
+    <version>0.0.2</version>
+    <name>University</name>
+    <description>University</description>
     <properties>
         <java.version>19</java.version>
     </properties>
@@ -134,6 +136,14 @@
                             <artifactId>lombok</artifactId>
                         </exclude>
                     </excludes>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>3.3.2</version>
+                <configuration>
+                    <webappDirectory>/sample/servlet/container/deploy/directory</webappDirectory>
                 </configuration>
             </plugin>
         </plugins>
