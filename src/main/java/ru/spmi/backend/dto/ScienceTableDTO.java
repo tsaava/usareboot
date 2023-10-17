@@ -3,6 +3,7 @@ package ru.spmi.backend.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.spmi.backend.dto.sciense.ScienceDTO;
 
 import java.util.ArrayList;
 

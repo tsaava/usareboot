@@ -12,13 +12,13 @@
     <groupId>ru.spmi.backend</groupId>
     <artifactId>university</artifactId>
     <packaging>jar</packaging>
-    <version>0.0.8-SNAPSHOT</version>
+    <version>0.0.3-SNAPSHOT</version>
     <name>University</name>
     <description>University</description>
     <scm>
-        <connection>scm:git://git01.resp.man.spmi.ru/Common/ngAngular</connection>
-        <url>//git01.resp.man.spmi.ru/Common/ngAngular</url>
-        <developerConnection>scm:git://git01.resp.man.spmi.ru/Common/ngAngular</developerConnection>
+        <connection>scm:git://git01.resp.man.spmi.ru/Common/spring</connection>
+        <url>//git01.resp.man.spmi.ru/Common/spring</url>
+        <developerConnection>scm:git://git01.resp.man.spmi.ru/Common/spring</developerConnection>
       <tag>HEAD</tag>
   </scm>
     <properties>

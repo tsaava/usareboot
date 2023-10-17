@@ -1,4 +1,4 @@
-package ru.spmi.backend.dto;
+package ru.spmi.backend.dto.sciense;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -25,6 +25,7 @@ public class ScienceDTO {
     private String _03okonchanie_instituta;
     private String _04dis_sovet_name;
     private String _05diss_qualification_name;
+    private String degree_detail_short;
     private String _06date_defense;
     private String _07time_defense;
     private String _08auditory;
@@ -81,7 +82,22 @@ public class ScienceDTO {
     private String _5z0protocol_3_count_voite_forgo_info;
     private String _5z1protocol_3_count_voite_bad_info;
 
+    private String flag_date_minus_10;
+    private String flag_date_minus_5;
+    private String flag_date_plus_10;
+    private String flag_date_plus_15;
+    private String flag_date_plus_30;
+    private String fio_short;
 
+    private String applicant_status;
+    private String f_name_eng;
+    private String i_name_eng;
+    private String o_name_eng;
+    private String theme_eng;
+    private String keyword;
+    private String keyword_eng;
+    private String url_applicant;
+    private String part_text;
 
    /* private String fio_full;
     private String dolshnost;

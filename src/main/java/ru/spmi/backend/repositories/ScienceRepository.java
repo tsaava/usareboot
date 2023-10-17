@@ -4,8 +4,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-import ru.spmi.backend.dto.interfaces.ScienceResponse;
-import ru.spmi.backend.dto.interfaces.StudentsResponse;
+import ru.spmi.backend.dto.interfaces.sciense.ScienceResponse;
+import ru.spmi.backend.dto.interfaces.sciense.ScienceShedulesResponse;
 import ru.spmi.backend.entities.TestEntity;
 
 import java.util.ArrayList;
@@ -33,4 +33,7 @@ public interface ScienceRepository extends CrudRepository<TestEntity, Long> {
 
     @Query(nativeQuery = true, value = "SELECT * FROM public.vf_journal_dissertations()")
     ArrayList<ScienceResponse> scienceFunc();
+
+    @Query(nativeQuery = true, value = "SELECT * FROM public.vf_science_dissertation_schedules(:science_dis_id)")
+    ArrayList<ScienceShedulesResponse> scienceSchedulesFunc(@Param("science_dis_id")long science_dis_id);
 }

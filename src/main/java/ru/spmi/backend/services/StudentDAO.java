@@ -2,13 +2,10 @@ package ru.spmi.backend.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.spmi.backend.dto.ScienceDTO;
-import ru.spmi.backend.dto.ScienceTableDTO;
+import ru.spmi.backend.dto.sciense.ScienceDTO;
 import ru.spmi.backend.dto.StudentDTO;
-import ru.spmi.backend.repositories.ScienceRepository;
 import ru.spmi.backend.repositories.StudentsRepository;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 

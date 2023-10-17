@@ -2,8 +2,8 @@ package ru.spmi.backend.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.spmi.backend.dto.ScienceDTO;
-import ru.spmi.backend.dto.ScienceTableDTO;
+import ru.spmi.backend.dto.sciense.ScienceDTO;
+import ru.spmi.backend.dto.sciense.ScienceSchedulesDTO;
 import ru.spmi.backend.repositories.ScienceRepository;
 import java.util.*;
 
@@ -32,6 +32,7 @@ public class ScienceDAO {
                     x.getOkonchanie_Instituta(),
                     x.getDis_Sovet_Name(),
                     x.getDiss_Qualification_Name(),
+                    x.getdegree_detail_short(),
                     x.getDate_Defense(),
                     x.getTime_Defense(),
                     x.getAuditory(),
@@ -80,7 +81,23 @@ public class ScienceDAO {
                     x.getPotocol_3_Count_Voite(),
                     x.getPotocol_3_Count_Voite_Not(),
                     x.getPotocol_3_Count_Voite_Forgo(),
-                    x.getPotocol_3_Count_Voite_Bad()
+                    x.getPotocol_3_Count_Voite_Bad(),
+                    x.getflag_date_minus_10(),
+                    x.getflag_date_minus_5(),
+                    x.getflag_date_plus_10(),
+                    x.getflag_date_plus_15(),
+                    x.getflag_date_plus_30(),
+                    x.getfio_short(),
+
+                    x.getfapplicant_status(),
+                    x.getf_name_eng(),
+                    x.geti_name_eng(),
+                    x.geto_name_eng(),
+                    x.gettheme_eng(),
+                    x.getkeyword(),
+                    x.getkeyword_eng(),
+                    x.geturl_applicant(),
+                    x.getpart_text()
             )));
             ArrayList<String> headerName = new ArrayList<>(Arrays.asList("ФИО",
                     "Срок окончания",
@@ -158,6 +175,21 @@ public class ScienceDAO {
             return null;
     }
 
+    public ArrayList<ScienceSchedulesDTO> getScienceSchedulesJson(long science_dis_id) {
+        ArrayList<ScienceSchedulesDTO> scienceSchedulesList = new ArrayList<>();
+        var bdFuncResponse = scienceRepository.scienceSchedulesFunc(science_dis_id);
+        if (bdFuncResponse.size() > 0) {
+            bdFuncResponse.forEach(x -> scienceSchedulesList.add(new ScienceSchedulesDTO(
+                    x.getscience_dissertation_schedule_id()!=null? x.getscience_dissertation_schedule_id().toString() : "",
+                    x.getscience_dissertation_id()!=null? x.getscience_dissertation_id().toString() : "",
+                    x.getscience_schedule_type_id()!=null? x.getscience_schedule_type_id().toString() : "",
+                    x.getschedule_type_code()!=null? x.getschedule_type_code() : "",
+                    x.getschedule_type_name()!=null? x.getschedule_type_name(): "",
+                    x.getdate_plan()!=null? x.getdate_plan(): "",
+                    x.getdate_fact()!=null? x.getdate_fact(): "")));
+        }
+        return scienceSchedulesList;
+    }
    /* public List<ScienceDto> getScienceAllJsonFromFilters(String filters, int page_rows, int page_num) {
         ArrayList<ScienceDto> scienceList = new ArrayList<>();
         var bdFuncResponse = testRepository.paginationFunc( filters, page_rows, page_num);

@@ -1,4 +1,4 @@
-package ru.spmi.backend.dto.interfaces;
+package ru.spmi.backend.dto.interfaces.sciense;
 
 import java.math.BigInteger;
 
@@ -44,6 +44,7 @@ public interface ScienceResponse {
     String getOkonchanie_Instituta();
     String getDis_Sovet_Name();
     String getDiss_Qualification_Name();
+    String getdegree_detail_short();
     String getFio_Scientific_Adviser();
     String getDate_Defense();
     String getTime_Defense();
@@ -82,5 +83,25 @@ public interface ScienceResponse {
     String getQr_Code();
     String getComment();
     String getDiss_Status();
+
+    String getflag_date_minus_10();
+    String getflag_date_minus_5();
+    String getflag_date_plus_10();
+    String getflag_date_plus_15();
+    String getflag_date_plus_30();
+
+    String getfio_short();
+
+
+    String getfapplicant_status();
+    String getf_name_eng();
+    String geti_name_eng();
+    String geto_name_eng();
+    String gettheme_eng();
+    String getkeyword();
+
+    String getkeyword_eng();
+    String geturl_applicant();
+    String getpart_text();
 
 }
