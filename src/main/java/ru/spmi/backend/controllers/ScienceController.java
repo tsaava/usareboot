@@ -43,6 +43,17 @@ public class ScienceController {
         System.out.println(new Gson().toJson(scienceDAO.getScienceSchedulesJson((id))));
         return new ResponseEntity<>(new Gson().toJson(scienceDAO.getScienceSchedulesJson(id)), HttpStatus.OK);
     }
+    @PostMapping({"/applicants/{id}/schedules/update/dates"})
+    public ResponseEntity<?>  scienceScheduleControlDatesUpdate(@RequestBody String data,@PathVariable int id  ) {
+        System.out.println(data);
+        return new ResponseEntity<>(new Gson().toJson(data), HttpStatus.OK);
+    }
+
+    @PutMapping({"/applicants/{id}/schedules/update/info"})
+    public ResponseEntity<?> scienceScheduleInfoUpdate(@PathVariable String id, @RequestBody String data ) {
+        System.out.println(data);
+        return null;//new ResponseEntity<>(new Gson().toJson(scienceDAO.getEmployersJsonFromFilters(filters, 30, 0)), HttpStatus.OK);
+    }
 //
 //    @PostMapping("/filter")
 //    public ResponseEntity<?> adminFilterAction(@RequestBody String filters) {
