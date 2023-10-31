@@ -44,9 +44,9 @@ public class ScienceController {
         return new ResponseEntity<>(new Gson().toJson(scienceDAO.getScienceSchedulesJson(id)), HttpStatus.OK);
     }
     @PostMapping({"/applicants/{id}/schedules/update/dates"})
-    public ResponseEntity<?>  scienceScheduleControlDatesUpdate(@RequestBody String data,@PathVariable int id  ) {
-        System.out.println(data);
-        return new ResponseEntity<>(new Gson().toJson(data), HttpStatus.OK);
+    public ResponseEntity<?> scienceScheduleControlDatesUpdate(@RequestBody String data,@PathVariable int id  ) {
+       scienceDAO.scienceSchedulesUpdFunc(data);
+        return new ResponseEntity<>( HttpStatus.OK);
     }
 
     @PutMapping({"/applicants/{id}/schedules/update/info"})

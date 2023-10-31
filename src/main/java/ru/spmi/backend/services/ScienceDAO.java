@@ -190,6 +190,11 @@ public class ScienceDAO {
         }
         return scienceSchedulesList;
     }
+
+    public void scienceSchedulesUpdFunc(String data) {
+         scienceRepository.scienceSchedulesUpdFunc(data);
+    }
+
    /* public List<ScienceDto> getScienceAllJsonFromFilters(String filters, int page_rows, int page_num) {
         ArrayList<ScienceDto> scienceList = new ArrayList<>();
         var bdFuncResponse = testRepository.paginationFunc( filters, page_rows, page_num);

@@ -30,10 +30,26 @@ public interface ScienceRepository extends CrudRepository<TestEntity, Long> {
 //                                              @Param("page_rows") int page_rows,
 //                                              @Param("page_num") int page_num);
 
-
+    /**
+     * функция для заполнения журнала соискателей
+     * @return JSON ScienceResponse
+     */
     @Query(nativeQuery = true, value = "SELECT * FROM public.vf_journal_dissertations()")
     ArrayList<ScienceResponse> scienceFunc();
 
+    /**
+     * функция для заполнения формы по графикам дат (ScienceSchedule)
+     * @param science_dis_id: long
+     * @return JSON ScienceShedulesResponse
+     */
     @Query(nativeQuery = true, value = "SELECT * FROM public.vf_science_dissertation_schedules(:science_dis_id)")
     ArrayList<ScienceShedulesResponse> scienceSchedulesFunc(@Param("science_dis_id")long science_dis_id);
+
+    /**
+     * процедура которая сохраняет введеные данные в базу
+     * @param data: String
+     * @return null
+     */
+    @Query(nativeQuery = true, value = "CALL public.science_dissertation_shedule_update(cast(:data AS json))")
+    void scienceSchedulesUpdFunc(@Param("data")String data);
 }
