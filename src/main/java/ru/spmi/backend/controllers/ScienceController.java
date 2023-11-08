@@ -1,21 +1,31 @@
 package ru.spmi.backend.controllers;
 
 import com.google.gson.Gson;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.spmi.backend.dto.ScienceTableDTO;
+import ru.spmi.backend.dto.sciense.ScienceDateRequestDTO;
+import ru.spmi.backend.entities.sciense.ScienceDissertations;
+import ru.spmi.backend.repositories.ScienceDissertationsRepository;
 import ru.spmi.backend.services.ScienceDAO;
 
+import java.sql.Time;
+import java.time.LocalTime;
+
 @RestController
+@CrossOrigin(origins = "*")/*!!!!обязательно во все контроллеры вставлять!!*/
 @RequestMapping("/api/university/science")
+@RequiredArgsConstructor
 ///"api/science"
 
 public class ScienceController {
     @Autowired
     private ScienceDAO scienceDAO;
 
+    private final ScienceDissertationsRepository scienceDissertationsRepository;
 //    @GetMapping("/all")
 //    public ResponseEntity<?> scienceAllPage(@RequestBody String filters) {
 //        return new ResponseEntity<>(new Gson().toJson(scienceDAO.getScienceAllJsonFromFilters(filters, 30, 0)), HttpStatus.OK);
@@ -43,16 +53,31 @@ public class ScienceController {
         System.out.println(new Gson().toJson(scienceDAO.getScienceSchedulesJson((id))));
         return new ResponseEntity<>(new Gson().toJson(scienceDAO.getScienceSchedulesJson(id)), HttpStatus.OK);
     }
-    @PostMapping({"/applicants/{id}/schedules/update/dates"})
+
+    /**
+     * обновляет график дат с грида! (через БД. передается json с тремя полями (ид строки и две даты в формате yyyy-mm-dd) парситься и обновляется процедурой)
+     * @param data
+     * @param id
+     * @return
+     */
+    @PostMapping({"/applicants/{id}/schedules/update/grid"})
     public ResponseEntity<?> scienceScheduleControlDatesUpdate(@RequestBody String data,@PathVariable int id  ) {
        scienceDAO.scienceSchedulesUpdFunc(data);
         return new ResponseEntity<>( HttpStatus.OK);
     }
 
-    @PutMapping({"/applicants/{id}/schedules/update/info"})
-    public ResponseEntity<?> scienceScheduleInfoUpdate(@PathVariable String id, @RequestBody String data ) {
-        System.out.println(data);
-        return null;//new ResponseEntity<>(new Gson().toJson(scienceDAO.getEmployersJsonFromFilters(filters, 30, 0)), HttpStatus.OK);
+
+    @PatchMapping({"/applicants/{id}/schedules/update/date"})
+    public ResponseEntity<?> scienceScheduleInfoUpdate(@RequestBody ScienceDateRequestDTO scienceDateRequestDTO,@PathVariable int id) {
+        System.out.println(scienceDateRequestDTO);
+        ScienceDissertations sd = scienceDissertationsRepository.findById(id);
+        //sd.setScienceDissertationId(id);
+        sd.setDateDefense(scienceDateRequestDTO.getDate_defense());
+        sd.setDateDocument(scienceDateRequestDTO.getDate_dog());
+        sd.setTimeDefense(Time.valueOf(LocalTime.parse(scienceDateRequestDTO.getTime_defense())));
+//        sd.getAuditoryId()
+        scienceDissertationsRepository.save(sd);
+        return new ResponseEntity<>( HttpStatus.OK);//new ResponseEntity<>(new Gson().toJson(scienceDAO.getEmployersJsonFromFilters(filters, 30, 0)), HttpStatus.OK);
     }
 //
 //    @PostMapping("/filter")
@@ -61,4 +86,11 @@ public class ScienceController {
 //        //return new ResponseEntity<>(new Gson().toJson(scienceDAO.getEmployersJsonFromFilters(filters, 30, 0)), HttpStatus.OK);
 //
 //    }
+
+    @GetMapping("/diplomas")
+    public ResponseEntity<?> diplomList(){
+//        System.out.println(filters);
+        //System.out.println(new Gson().toJson(scienceDAO.getScienceAllJsonFromFilters()));
+        return new ResponseEntity<>(new Gson().toJson(scienceDAO.getScienceAllJsonFromFilters()), HttpStatus.OK);
+    }
 }

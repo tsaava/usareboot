@@ -98,7 +98,7 @@ public class ScienceDTO {
     private String keyword_eng;
     private String url_applicant;
     private String part_text;
-
+    private String contacts;
    /* private String fio_full;
     private String dolshnost;
     private String birth_date;

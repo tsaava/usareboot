@@ -1,44 +1,88 @@
 package ru.spmi.backend.entities.sciense;
 
+import jakarta.persistence.*;
+
 import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.Objects;
 
+@Entity
+@Table(name = "science_dissertations", schema = "public", catalog = "university")
 public class ScienceDissertations {
-    private long scienceDissertationId;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "science_dissertation_id", nullable = false)
+    private Long scienceDissertationId;
+
+    @Column(name = "person_id")
     private long personId;
+    @Column(name = "employee_position_Id")
     private Long employeePositionId;
+
+    @Column(name = "science_council_spec_id")
     private Long scienceCouncilSpecId;
+    @Column(name = "degree_detail_id")
     private Long degreeDetailId;
+    @Column(name = "science_applicant_status_id")
     private Long scienceApplicantStatusId;
+
+    @Column(name = "science_dissertation_status_id")
     private Long scienceDissertationStatusId;
+    @Column(name = "auditory_id")
     private Long auditoryId;
+    @Column(name = "order_id")
     private Long orderId;
+    @Column(name = "spec_id")
     private Long specId;
+    @Column(name = "f_name_eng")
     private String fNameEng;
+    @Column(name = "i_name_eng")
     private String iNameEng;
+    @Column(name = "o_name_eng")
     private String oNameEng;
+    @Column(name = "contacts")
     private String contacts;
+    @Column(name = "work_place")
     private String workPlace;
+    @Column(name = "work_position")
     private String workPosition;
+    @Column(name = "date_added")
     private Timestamp dateAdded;
+    @Column(name = "date_document")
     private Date dateDocument;
+    @Column(name = "date_admission")
     private Date dateAdmission;
+    @Column(name = "date_defense")
     private Date dateDefense;
+    @Column(name = "time_defense")
     private Time timeDefense;
+    @Column(name = "theme")
     private String theme;
+    @Column(name = "theme_eng")
     private String themeEng;
+    @Column(name = "part_text")
     private String partText;
+    @Column(name = "keyword")
     private String keyword;
+    @Column(name = "keyword_eng")
     private String keywordEng;
+    @Column(name = "url_vak")
     private String urlVak;
+    @Column(name = "url_applicant")
     private String urlApplicant;
+    @Column(name = "qr_code")
     private String qrCode;
+    @Column(name = "certification_case")
     private String certificationCase;
+    @Column(name = "certification_date")
     private Date certificationDate;
+    @Column(name = "comment")
     private String comment;
+    @Column(name = "active")
     private short active;
+
+
 
     public long getScienceDissertationId() {
         return scienceDissertationId;

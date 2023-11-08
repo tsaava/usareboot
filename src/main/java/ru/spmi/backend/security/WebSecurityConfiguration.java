@@ -49,12 +49,11 @@ public class WebSecurityConfiguration {
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
 
         String[] str  = Roles.getAllRoles();//new String[]{"COUNCIL", "COUNCIL_SUPER"};
-        httpSecurity
-                .authorizeHttpRequests((authz) -> authz
+        httpSecurity.authorizeHttpRequests((authz) -> authz
                                 .requestMatchers("/api/auth/**", "/home/**").permitAll()
 //                                .requestMatchers("/swagger-ui/index.html#/").permitAll()
                                 //.requestMatchers("/api/university/**").hasAnyAuthority("COUNCIL", "COUNCIL_SUPER")
-                        .requestMatchers("/api/university/**").hasAnyAuthority(str )
+                                .requestMatchers("/api/university/**").hasAnyAuthority(str )
                              //   .requestMatchers("/api/science/**").hasAnyAuthority("COUNCIL", "COUNCIL_SUPER")
                                // .requestMatchers("/api/student/**").hasAnyAuthority("COUNCIL", "COUNCIL_SUPER")
 
