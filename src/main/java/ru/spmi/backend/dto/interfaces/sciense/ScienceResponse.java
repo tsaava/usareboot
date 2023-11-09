@@ -103,5 +103,6 @@ public interface ScienceResponse {
     String getkeyword_eng();
     String geturl_applicant();
     String getpart_text();
+    String getcontacts();
 
 }

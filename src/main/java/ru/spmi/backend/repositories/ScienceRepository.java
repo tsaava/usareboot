@@ -52,4 +52,6 @@ public interface ScienceRepository extends CrudRepository<TestEntity, Long> {
      */
     @Query(nativeQuery = true, value = "CALL public.science_dissertation_shedule_update(cast(:data AS json))")
     void scienceSchedulesUpdFunc(@Param("data")String data);
+
+
 }

@@ -56,9 +56,9 @@ public class ScienceController {
 
     /**
      * обновляет график дат с грида! (через БД. передается json с тремя полями (ид строки и две даты в формате yyyy-mm-dd) парситься и обновляется процедурой)
-     * @param data
-     * @param id
-     * @return
+     * @param data - собранный в JSON грид графика дат
+     * @param id - science_dissertation_id
+     * @return возвращает новые данные по выбранному соискателю
      */
     @PostMapping({"/applicants/{id}/schedules/update/grid"})
     public ResponseEntity<?> scienceScheduleControlDatesUpdate(@RequestBody String data,@PathVariable int id  ) {
@@ -66,7 +66,12 @@ public class ScienceController {
         return new ResponseEntity<>( HttpStatus.OK);
     }
 
-
+    /**
+     * метод для обновления переданных данных с фронта в таблице  science_dissertation_schedules
+     * @param scienceDateRequestDTO - поля для сохранения в таблицу
+     * @param id - science_dissertation_id
+     * @return
+     */
     @PatchMapping({"/applicants/{id}/schedules/update/date"})
     public ResponseEntity<?> scienceScheduleInfoUpdate(@RequestBody ScienceDateRequestDTO scienceDateRequestDTO,@PathVariable int id) {
         System.out.println(scienceDateRequestDTO);
@@ -79,13 +84,19 @@ public class ScienceController {
         scienceDissertationsRepository.save(sd);
         return new ResponseEntity<>( HttpStatus.OK);//new ResponseEntity<>(new Gson().toJson(scienceDAO.getEmployersJsonFromFilters(filters, 30, 0)), HttpStatus.OK);
     }
-//
-//    @PostMapping("/filter")
-//    public ResponseEntity<?> adminFilterAction(@RequestBody String filters) {
-//        System.out.println(filters);
-//        //return new ResponseEntity<>(new Gson().toJson(scienceDAO.getEmployersJsonFromFilters(filters, 30, 0)), HttpStatus.OK);
-//
-//    }
+
+    /**
+     * Метод принимает данные в виде json с фронта и запускает процедуру на обновление данных
+     * @param data - JSON с информацией о соискателе (форма анкета соискателя) JSON входной параметр у функции ..
+     * @param id - может быть два варианта: science_dissertation_id=0 - добавляем нового соискателя, science_dissertation_id!=0 - редактируем
+     * @return возвращает новые данные по выбранному соискателю
+     */
+    @PostMapping({"/applicants/{id}/personal/update"})
+    public ResponseEntity<?> sciencePersonalInfoUpdate(@RequestBody String data,@PathVariable int id  ) {
+        System.out.println(data);
+        scienceDAO.sciencePersonalInfoUpdFunc(data);
+        return new ResponseEntity<>( HttpStatus.OK);
+    }
 
     @GetMapping("/diplomas")
     public ResponseEntity<?> diplomList(){

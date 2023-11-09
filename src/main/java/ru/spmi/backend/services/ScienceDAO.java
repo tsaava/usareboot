@@ -97,7 +97,8 @@ public class ScienceDAO {
                     x.getkeyword(),
                     x.getkeyword_eng(),
                     x.geturl_applicant(),
-                    x.getpart_text()
+                    x.getpart_text(),
+                    x.getcontacts()
             )));
             ArrayList<String> headerName = new ArrayList<>(Arrays.asList("ФИО",
                     "Срок окончания",
@@ -193,6 +194,10 @@ public class ScienceDAO {
 
     public void scienceSchedulesUpdFunc(String data) {
          scienceRepository.scienceSchedulesUpdFunc(data);
+    }
+
+    public void sciencePersonalInfoUpdFunc(String data) {
+
     }
 
    /* public List<ScienceDto> getScienceAllJsonFromFilters(String filters, int page_rows, int page_num) {
