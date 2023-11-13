@@ -99,9 +99,9 @@ public class ScienceController {
     }
 
     /**
-     *
-     * @param year_id
-     * @return
+     *Функция для выдачи списка созданных дипломов соискателей (функция vf_science_diploms() )
+     * @param year_id - id учебного года
+     * @return Json ScienceDiplomDTO
      */
     @GetMapping("/diplom/list/{year_id}")
     public ResponseEntity<?> diplomList(@PathVariable long year_id){
