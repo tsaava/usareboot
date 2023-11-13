@@ -98,10 +98,15 @@ public class ScienceController {
         return new ResponseEntity<>( HttpStatus.OK);
     }
 
-    @GetMapping("/diplomas")
-    public ResponseEntity<?> diplomList(){
+    /**
+     *
+     * @param year_id
+     * @return
+     */
+    @GetMapping("/diplom/list/{year_id}")
+    public ResponseEntity<?> diplomList(@PathVariable long year_id){
 //        System.out.println(filters);
-        //System.out.println(new Gson().toJson(scienceDAO.getScienceAllJsonFromFilters()));
-        return new ResponseEntity<>(new Gson().toJson(scienceDAO.getScienceAllJsonFromFilters()), HttpStatus.OK);
+        //System.out.println(new Gson().toJson(scienceDAO.getScienceDiplomas(year_id)));
+        return new ResponseEntity<>(new Gson().toJson(scienceDAO.getScienceDiplomas(year_id)), HttpStatus.OK);
     }
 }

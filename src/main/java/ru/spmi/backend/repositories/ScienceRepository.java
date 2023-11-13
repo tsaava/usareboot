@@ -4,10 +4,12 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import ru.spmi.backend.dto.interfaces.sciense.ScienceDiplomResponse;
 import ru.spmi.backend.dto.interfaces.sciense.ScienceResponse;
 import ru.spmi.backend.dto.interfaces.sciense.ScienceShedulesResponse;
 import ru.spmi.backend.entities.TestEntity;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 
 @Repository
@@ -53,5 +55,11 @@ public interface ScienceRepository extends CrudRepository<TestEntity, Long> {
     @Query(nativeQuery = true, value = "CALL public.science_dissertation_shedule_update(cast(:data AS json))")
     void scienceSchedulesUpdFunc(@Param("data")String data);
 
+    /**
+     * выводит список созданных дипломов у соискателей
+     * @param year_id - учебный год
+     */
+    @Query(nativeQuery = true, value = " SELECT * FROM public.vf_science_diploms(:year_id)")
+    ArrayList<ScienceDiplomResponse> scienceDiplomList(@Param("year_id") long year_id);
 
 }

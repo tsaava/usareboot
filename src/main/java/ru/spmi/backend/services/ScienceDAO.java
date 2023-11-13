@@ -3,6 +3,7 @@ package ru.spmi.backend.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.spmi.backend.dto.sciense.ScienceDTO;
+import ru.spmi.backend.dto.sciense.ScienceDiplomDTO;
 import ru.spmi.backend.dto.sciense.ScienceSchedulesDTO;
 import ru.spmi.backend.repositories.ScienceRepository;
 import java.util.*;
@@ -200,6 +201,29 @@ public class ScienceDAO {
 
     }
 
+    public ArrayList<ScienceDiplomDTO> getScienceDiplomas(long year_id) {
+        ArrayList<ScienceDiplomDTO> scienceDiplomsList = new ArrayList<>();
+        var bdFuncResponse = scienceRepository.scienceDiplomList(year_id);
+        if (bdFuncResponse.size() > 0) {
+            bdFuncResponse.forEach(x -> scienceDiplomsList.add(new ScienceDiplomDTO(
+                    x.getscience_dissertation_id(),
+                    x.getperson_id(),
+                    x.getfio() != null ? x.getfio().toString() : "",
+                    x.getdiss_qualification_name() != null ? x.getdiss_qualification_name() : "",
+                    x.getblank_seria() != null ? x.getblank_seria() : "",
+                    x.getblank_num() != null ? x.getblank_num() : "",
+                    x.getreg_num() != null ? x.getreg_num() : "",
+                    x.getdis_order_num() != null ? x.getdis_order_num() : "",
+                    x.getdis_order_date() != null ? x.getdis_order_date() : "",
+                    x.getdissovet() != null ? x.getdissovet() : "",
+                    x.getdip_order() != null ? x.getdip_order() : "",
+                    x.getdis_sovet_name() != null ? x.getdis_sovet_name() : "",
+                    x.getdate_patent() != null ? x.getdate_patent() : "",
+                    x.getdate_protection() != null ? x.getdate_protection() : "")));
+
+        }
+        return scienceDiplomsList;
+    }
    /* public List<ScienceDto> getScienceAllJsonFromFilters(String filters, int page_rows, int page_num) {
         ArrayList<ScienceDto> scienceList = new ArrayList<>();
         var bdFuncResponse = testRepository.paginationFunc( filters, page_rows, page_num);
