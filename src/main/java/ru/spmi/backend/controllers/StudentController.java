@@ -6,10 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.spmi.backend.dto.FilterDTO;
-import ru.spmi.backend.services.ScienceDAO;
 import ru.spmi.backend.services.StudentDAO;
-
-import java.math.BigInteger;
 
 @RestController
 @RequestMapping("/api/university/student")

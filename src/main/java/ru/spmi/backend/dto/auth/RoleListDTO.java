@@ -1,12 +1,11 @@
-package ru.spmi.backend.dto;
+package ru.spmi.backend.dto.auth;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.spmi.backend.entities.DRolesEntity;
+import ru.spmi.backend.entities.auth.DRolesEntity;
 
 import java.util.ArrayList;
-import java.util.Set;
 
 @Data
 @AllArgsConstructor

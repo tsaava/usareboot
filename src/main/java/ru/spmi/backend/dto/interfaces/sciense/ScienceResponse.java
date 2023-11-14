@@ -105,4 +105,8 @@ public interface ScienceResponse {
     String getpart_text();
     String getcontacts();
 
+    String getf_name();
+    String geti_name();
+    String geto_name();
+
 }

@@ -1,15 +1,15 @@
-package ru.spmi.backend.repositories;
+package ru.spmi.backend.repositories.science;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import ru.spmi.backend.dto.interfaces.sciense.ScienceDiplomResponse;
+import ru.spmi.backend.dto.interfaces.sciense.ScienceListPersonsResponse;
 import ru.spmi.backend.dto.interfaces.sciense.ScienceResponse;
 import ru.spmi.backend.dto.interfaces.sciense.ScienceShedulesResponse;
-import ru.spmi.backend.entities.TestEntity;
+import ru.spmi.backend.entities.auth.TestEntity;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 
 @Repository
@@ -60,6 +60,16 @@ public interface ScienceRepository extends CrudRepository<TestEntity, Long> {
      * @param year_id - учебный год
      */
     @Query(nativeQuery = true, value = " SELECT * FROM public.vf_science_diploms(:year_id)")
-    ArrayList<ScienceDiplomResponse> scienceDiplomList(@Param("year_id") long year_id);
+    ArrayList<ScienceDiplomResponse> scienceListDiplom(@Param("year_id") long year_id);
 
+    /**
+     * Функция, которая выдает список сотрудников и обучающихся аспирантов отфильтрованных по фамилии и имени из входного параметра
+     * JSON filters и с учетом квалификации для обучающихся, причем 0 - все квалификации обучающихся (по умолчанию 1515)
+     * @param filters - JSON {"filter_fname":"Иванов","filter_iname":"Иван"}
+     * @param qual - 1515 - ищется только из аспирантов и сотрдуников
+     * @return
+     */
+    @Query(nativeQuery = true, value = " SELECT * FROM public.vf_list_persons(cast(:filters AS json),:qual)")
+    ArrayList<ScienceListPersonsResponse> scienceListPersons(@Param("filters") String filters,
+                                                             @Param("qual") long qual);
 }

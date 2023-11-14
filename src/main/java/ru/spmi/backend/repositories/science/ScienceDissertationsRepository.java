@@ -1,4 +1,4 @@
-package ru.spmi.backend.repositories;
+package ru.spmi.backend.repositories.science;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import ru.spmi.backend.entities.sciense.ScienceDissertations;

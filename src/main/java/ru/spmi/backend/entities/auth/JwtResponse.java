@@ -1,4 +1,4 @@
-package ru.spmi.backend.entities;
+package ru.spmi.backend.entities.auth;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

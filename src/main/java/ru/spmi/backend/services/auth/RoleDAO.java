@@ -1,9 +1,8 @@
-package ru.spmi.backend.services;
+package ru.spmi.backend.services.auth;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
-import ru.spmi.backend.repositories.RolesRepository;
+import ru.spmi.backend.repositories.auth.RolesRepository;
 
 @Service
 

@@ -5,9 +5,8 @@ import com.auth0.jwt.algorithms.Algorithm;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
-import ru.spmi.backend.services.UserDAO;
+import ru.spmi.backend.services.auth.UserDAO;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;

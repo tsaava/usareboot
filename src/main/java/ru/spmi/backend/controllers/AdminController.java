@@ -5,9 +5,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.spmi.backend.dto.FilterDTO;
-import ru.spmi.backend.dto.ScienceTableDTO;
-import ru.spmi.backend.services.ScienceDAO;
-import ru.spmi.backend.services.UserDAO;
+import ru.spmi.backend.services.science.ScienceDAO;
+import ru.spmi.backend.services.auth.UserDAO;
 
 @RestController
 @RequestMapping("/api/admin")

@@ -4,10 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.spmi.backend.dto.ChosenRoleDTO;
-import ru.spmi.backend.repositories.ScienceRepository;
-import ru.spmi.backend.repositories.UserRepository;
-import ru.spmi.backend.services.UserDAO;
+import ru.spmi.backend.repositories.science.ScienceRepository;
+import ru.spmi.backend.repositories.auth.UserRepository;
+import ru.spmi.backend.services.auth.UserDAO;
 
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;

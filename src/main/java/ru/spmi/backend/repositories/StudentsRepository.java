@@ -4,9 +4,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import ru.spmi.backend.dto.interfaces.StudentsResponse;
-import ru.spmi.backend.entities.TestEntity;
+import ru.spmi.backend.entities.auth.TestEntity;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 
 public interface StudentsRepository extends CrudRepository<TestEntity, Long> {

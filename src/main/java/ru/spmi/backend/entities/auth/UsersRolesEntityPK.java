@@ -1,4 +1,4 @@
-package ru.spmi.backend.entities;
+package ru.spmi.backend.entities.auth;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.GeneratedValue;

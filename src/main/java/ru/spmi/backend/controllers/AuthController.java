@@ -10,18 +10,15 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.spmi.backend.dto.*;
-import ru.spmi.backend.entities.DRolesEntity;
+import ru.spmi.backend.dto.auth.*;
 import ru.spmi.backend.security.JwtUtils;
-import ru.spmi.backend.services.MenuDAO;
-import ru.spmi.backend.services.UserDAO;
+import ru.spmi.backend.services.menu.MenuDAO;
+import ru.spmi.backend.services.auth.UserDAO;
 
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 
 @RestController

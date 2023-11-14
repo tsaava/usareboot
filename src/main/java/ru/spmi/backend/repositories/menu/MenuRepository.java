@@ -1,10 +1,10 @@
-package ru.spmi.backend.repositories;
+package ru.spmi.backend.repositories.menu;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-import ru.spmi.backend.entities.TestEntity;
+import ru.spmi.backend.entities.auth.TestEntity;
 
 import java.util.Map;
 

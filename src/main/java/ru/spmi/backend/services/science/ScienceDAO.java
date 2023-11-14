@@ -1,11 +1,12 @@
-package ru.spmi.backend.services;
+package ru.spmi.backend.services.science;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.spmi.backend.dto.sciense.ScienceDTO;
 import ru.spmi.backend.dto.sciense.ScienceDiplomDTO;
+import ru.spmi.backend.dto.sciense.ScienceListPersonsDTO;
 import ru.spmi.backend.dto.sciense.ScienceSchedulesDTO;
-import ru.spmi.backend.repositories.ScienceRepository;
+import ru.spmi.backend.repositories.science.ScienceRepository;
 import java.util.*;
 
 @Service
@@ -99,7 +100,10 @@ public class ScienceDAO {
                     x.getkeyword_eng(),
                     x.geturl_applicant(),
                     x.getpart_text(),
-                    x.getcontacts()
+                    x.getcontacts(),
+                    x.getf_name() != null ? x.getf_name() : "",
+                    x.geti_name() != null ? x.geti_name() : "",
+                    x.geto_name() != null ? x.geto_name() : ""
             )));
             ArrayList<String> headerName = new ArrayList<>(Arrays.asList("ФИО",
                     "Срок окончания",
@@ -203,7 +207,7 @@ public class ScienceDAO {
 
     public ArrayList<ScienceDiplomDTO> getScienceDiplomas(long year_id) {
         ArrayList<ScienceDiplomDTO> scienceDiplomsList = new ArrayList<>();
-        var bdFuncResponse = scienceRepository.scienceDiplomList(year_id);
+        var bdFuncResponse = scienceRepository.scienceListDiplom(year_id);
         if (bdFuncResponse.size() > 0) {
             bdFuncResponse.forEach(x -> scienceDiplomsList.add(new ScienceDiplomDTO(
                     x.getscience_dissertation_id(),
@@ -224,6 +228,9 @@ public class ScienceDAO {
         }
         return scienceDiplomsList;
     }
+
+
+
    /* public List<ScienceDto> getScienceAllJsonFromFilters(String filters, int page_rows, int page_num) {
         ArrayList<ScienceDto> scienceList = new ArrayList<>();
         var bdFuncResponse = testRepository.paginationFunc( filters, page_rows, page_num);

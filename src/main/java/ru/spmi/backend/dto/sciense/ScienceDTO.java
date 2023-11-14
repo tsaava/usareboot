@@ -99,6 +99,10 @@ public class ScienceDTO {
     private String url_applicant;
     private String part_text;
     private String contacts;
+
+    private String f_name;
+    private String i_name;
+    private String o_name;
    /* private String fio_full;
     private String dolshnost;
     private String birth_date;

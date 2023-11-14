@@ -12,7 +12,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
-import ru.spmi.backend.services.UserService;
+import ru.spmi.backend.services.auth.UserService;
 
 import java.io.IOException;
 

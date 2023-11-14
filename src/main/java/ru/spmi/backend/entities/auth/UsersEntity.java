@@ -1,11 +1,7 @@
-package ru.spmi.backend.entities;
+package ru.spmi.backend.entities.auth;
 
 import jakarta.persistence.*;
 
-import javax.xml.bind.DatatypeConverter;
-import java.io.UnsupportedEncodingException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.Objects;
 import java.util.Set;
 

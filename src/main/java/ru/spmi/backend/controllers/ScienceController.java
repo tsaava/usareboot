@@ -6,11 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.spmi.backend.dto.ScienceTableDTO;
 import ru.spmi.backend.dto.sciense.ScienceDateRequestDTO;
 import ru.spmi.backend.entities.sciense.ScienceDissertations;
-import ru.spmi.backend.repositories.ScienceDissertationsRepository;
-import ru.spmi.backend.services.ScienceDAO;
+import ru.spmi.backend.repositories.science.ScienceDissertationsRepository;
+import ru.spmi.backend.services.science.ScienceDAO;
 
 import java.sql.Time;
 import java.time.LocalTime;
@@ -85,18 +84,18 @@ public class ScienceController {
         return new ResponseEntity<>( HttpStatus.OK);//new ResponseEntity<>(new Gson().toJson(scienceDAO.getEmployersJsonFromFilters(filters, 30, 0)), HttpStatus.OK);
     }
 
-    /**
-     * Метод принимает данные в виде json с фронта и запускает процедуру на обновление данных
-     * @param data - JSON с информацией о соискателе (форма анкета соискателя) JSON входной параметр у функции ..
-     * @param id - может быть два варианта: science_dissertation_id=0 - добавляем нового соискателя, science_dissertation_id!=0 - редактируем
-     * @return возвращает новые данные по выбранному соискателю
-     */
-    @PostMapping({"/applicants/{id}/personal/update"})
-    public ResponseEntity<?> sciencePersonalInfoUpdate(@RequestBody String data,@PathVariable int id  ) {
-        System.out.println(data);
-        scienceDAO.sciencePersonalInfoUpdFunc(data);
-        return new ResponseEntity<>( HttpStatus.OK);
-    }
+//    /**
+//     * Метод принимает данные в виде json с фронта и запускает процедуру на обновление данных
+//     * @param data - JSON с информацией о соискателе (форма анкета соискателя) JSON входной параметр у функции ..
+//     * @param id - может быть два варианта: science_dissertation_id=0 - добавляем нового соискателя, science_dissertation_id!=0 - редактируем
+//     * @return возвращает новые данные по выбранному соискателю
+//     */
+//    @PatchMapping({"/applicants/personal/update/{id}"})
+//    public ResponseEntity<?> sciencePersonalInfoUpdate(@RequestBody String data,@PathVariable int id  ) {
+//        //System.out.println(data);
+//        scienceDAO.sciencePersonalInfoUpdFunc(data);
+//        return new ResponseEntity<>( HttpStatus.OK);
+//    }
 
     /**
      *Функция для выдачи списка созданных дипломов соискателей (функция vf_science_diploms() )
@@ -104,9 +103,11 @@ public class ScienceController {
      * @return Json ScienceDiplomDTO
      */
     @GetMapping("/diplom/list/{year_id}")
-    public ResponseEntity<?> diplomList(@PathVariable long year_id){
+    public ResponseEntity<?> getdiplomList(@PathVariable long year_id){
 //        System.out.println(filters);
         //System.out.println(new Gson().toJson(scienceDAO.getScienceDiplomas(year_id)));
         return new ResponseEntity<>(new Gson().toJson(scienceDAO.getScienceDiplomas(year_id)), HttpStatus.OK);
     }
+
+
 }

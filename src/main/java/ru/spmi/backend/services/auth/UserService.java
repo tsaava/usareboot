@@ -1,4 +1,4 @@
-package ru.spmi.backend.services;
+package ru.spmi.backend.services.auth;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
@@ -9,8 +9,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import ru.spmi.backend.entities.DRolesEntity;
-import ru.spmi.backend.entities.UsersEntity;
+import ru.spmi.backend.entities.auth.UsersEntity;
 
 import java.util.*;
 
@@ -25,7 +24,7 @@ public class UserService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
-        ru.spmi.backend.entities.UsersEntity user = userDAO.findUserByLogin(login);
+        UsersEntity user = userDAO.findUserByLogin(login);
 //        user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
@@ -35,7 +34,7 @@ public class UserService implements UserDetailsService {
         return buildUserForAuthentication(user, authorities);
     }
 
-    public User buildUserForAuthentication(ru.spmi.backend.entities.UsersEntity user, List<GrantedAuthority> grantedAuthorities) {
+    public User buildUserForAuthentication(UsersEntity user, List<GrantedAuthority> grantedAuthorities) {
 //        System.out.println(grantedAuthorities.size());
         return new User(user.getLogin(), user.getPassword(), true, true, true, true, grantedAuthorities);
     }

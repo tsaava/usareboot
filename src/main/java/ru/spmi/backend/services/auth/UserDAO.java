@@ -1,21 +1,19 @@
-package ru.spmi.backend.services;
+package ru.spmi.backend.services.auth;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
-import ru.spmi.backend.entities.DRolesEntity;
-import ru.spmi.backend.entities.UsersEntity;
-import ru.spmi.backend.repositories.PersonRepository;
-import ru.spmi.backend.repositories.RolesRepository;
-import ru.spmi.backend.repositories.ScienceRepository;
-import ru.spmi.backend.repositories.UserRepository;
+import ru.spmi.backend.entities.auth.DRolesEntity;
+import ru.spmi.backend.entities.auth.UsersEntity;
+import ru.spmi.backend.repositories.auth.PersonRepository;
+import ru.spmi.backend.repositories.auth.RolesRepository;
+import ru.spmi.backend.repositories.science.ScienceRepository;
+import ru.spmi.backend.repositories.auth.UserRepository;
 
 import javax.xml.bind.DatatypeConverter;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Set;
 import java.util.stream.Collectors;
 

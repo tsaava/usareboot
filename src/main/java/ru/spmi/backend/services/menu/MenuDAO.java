@@ -1,9 +1,9 @@
-package ru.spmi.backend.services;
+package ru.spmi.backend.services.menu;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.spmi.backend.dto.MenuDTO;
-import ru.spmi.backend.repositories.MenuRepository;
+import ru.spmi.backend.repositories.menu.MenuRepository;
 
 import java.util.ArrayList;
 import java.util.Map;
