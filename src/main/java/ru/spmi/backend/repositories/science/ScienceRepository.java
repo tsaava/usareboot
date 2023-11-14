@@ -4,10 +4,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-import ru.spmi.backend.dto.interfaces.sciense.ScienceDiplomResponse;
-import ru.spmi.backend.dto.interfaces.sciense.ScienceListPersonsResponse;
-import ru.spmi.backend.dto.interfaces.sciense.ScienceResponse;
-import ru.spmi.backend.dto.interfaces.sciense.ScienceShedulesResponse;
+import ru.spmi.backend.dto.interfaces.sciense.*;
 import ru.spmi.backend.entities.auth.TestEntity;
 
 import java.util.ArrayList;
@@ -72,4 +69,7 @@ public interface ScienceRepository extends CrudRepository<TestEntity, Long> {
     @Query(nativeQuery = true, value = " SELECT * FROM public.vf_list_persons(cast(:filters AS json),:qual)")
     ArrayList<ScienceListPersonsResponse> scienceListPersons(@Param("filters") String filters,
                                                              @Param("qual") long qual);
+
+    @Query(nativeQuery = true, value = " SELECT * FROM public.vf_list_science_councils(:yearnum)")
+    ArrayList<ListScienceCouncilResponse> listScienceCouncil(@Param("yearnum") long yearnum);
 }

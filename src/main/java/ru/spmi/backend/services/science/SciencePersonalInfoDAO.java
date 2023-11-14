@@ -2,10 +2,7 @@ package ru.spmi.backend.services.science;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.spmi.backend.dto.sciense.ScienceDTO;
-import ru.spmi.backend.dto.sciense.ScienceDiplomDTO;
-import ru.spmi.backend.dto.sciense.ScienceListPersonsDTO;
-import ru.spmi.backend.dto.sciense.ScienceSchedulesDTO;
+import ru.spmi.backend.dto.sciense.*;
 import ru.spmi.backend.repositories.science.ScienceRepository;
 
 import java.util.ArrayList;
@@ -38,5 +35,7 @@ public class SciencePersonalInfoDAO {
         }
         return scienceListPersons;
     }
+
+
 
 }

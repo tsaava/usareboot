@@ -57,4 +57,6 @@ public class SciencePersonInfoController {
         System.out.println(sciencePersonalInfoDAO.getScienceListPersons(filters,qual));
         return new ResponseEntity<>(new Gson().toJson(sciencePersonalInfoDAO.getScienceListPersons(filters,qual)), HttpStatus.OK);
     }
+
+
 }
