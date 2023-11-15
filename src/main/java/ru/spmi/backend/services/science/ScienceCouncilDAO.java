@@ -13,7 +13,7 @@ public class ScienceCouncilDAO {
     @Autowired
     private ScienceRepository scienceRepository;
 
-    public ArrayList<ListScienceCouncilDTO> getListScienceCouncil(long year ) {
+    public ArrayList<ListScienceCouncilDTO> getListScienceCouncil(int year ) {
         ArrayList<ListScienceCouncilDTO> scienceCouncilList = new ArrayList<>();
         var bdFuncResponse = scienceRepository.listScienceCouncil(year);
         if (bdFuncResponse.size() > 0) {

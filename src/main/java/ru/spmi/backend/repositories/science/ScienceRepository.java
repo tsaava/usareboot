@@ -71,5 +71,5 @@ public interface ScienceRepository extends CrudRepository<TestEntity, Long> {
                                                              @Param("qual") long qual);
 
     @Query(nativeQuery = true, value = " SELECT * FROM public.vf_list_science_councils(:yearnum)")
-    ArrayList<ListScienceCouncilResponse> listScienceCouncil(@Param("yearnum") long yearnum);
+    ArrayList<ListScienceCouncilResponse> listScienceCouncil(@Param("yearnum") int yearnum);
 }
