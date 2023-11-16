@@ -11,9 +11,10 @@ import lombok.NoArgsConstructor;
 public class DAuditoriesDTO {
     private long auditoryId;
     private long educationCenterId;
-    private long buildingId;
-    private long auditoryTypeId;
+    private Long buildingId;
+    private Long auditoryTypeId;
     private String auditoryCode;
     private String auditoryName;
-
+    private int sd;
+    private int active;
 }

@@ -39,12 +39,12 @@ public class ScienceController {
 //        return new ResponseEntity<>(new Gson().toJson(scienceDAO.getScienceAllJsonFromFilters(filters,  page_rows, page_num)), HttpStatus.OK);
 //    }
 
-//    @GetMapping("/applicants")
-//    public ResponseEntity<?> adminFilterAction(){
-////        System.out.println(filters);
-//        //System.out.println(new Gson().toJson(scienceDAO.getScienceAllJsonFromFilters()));
-//        return new ResponseEntity<>(new Gson().toJson(scienceDAO.getScienceAllJsonFromFilters()), HttpStatus.OK);
-//    }
+    @GetMapping("/applicants")
+    public ResponseEntity<?> adminFilterAction(){
+//        System.out.println(filters);
+        //System.out.println(new Gson().toJson(scienceDAO.getScienceAllJsonFromFilters()));
+        return new ResponseEntity<>(new Gson().toJson(scienceDAO.getScienceAllJsonFromFilters()), HttpStatus.OK);
+    }
 
     /**
      * Отправляет информацию по графику дат для соискателя
@@ -81,9 +81,9 @@ public class ScienceController {
         System.out.println(scienceDateRequestDTO);
         ScienceDissertations sd = scienceDissertationsRepository.findById(id);
         //sd.setScienceDissertationId(id);
-        sd.setDateDefense(scienceDateRequestDTO.getDate_defense());
-        sd.setDateDocument(scienceDateRequestDTO.getDate_dog());
-        sd.setTimeDefense(Time.valueOf(LocalTime.parse(scienceDateRequestDTO.getTime_defense())));
+        sd.setDateDefense(scienceDateRequestDTO.getDateDefense());
+        sd.setDateDocument(scienceDateRequestDTO.getDateDog());
+        sd.setTimeDefense(Time.valueOf(LocalTime.parse(scienceDateRequestDTO.getTimeDefense())));
 //        sd.getAuditoryId()
         scienceDissertationsRepository.save(sd);
         return new ResponseEntity<>( HttpStatus.OK);//new ResponseEntity<>(new Gson().toJson(scienceDAO.getEmployersJsonFromFilters(filters, 30, 0)), HttpStatus.OK);

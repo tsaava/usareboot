@@ -10,12 +10,12 @@ import lombok.NoArgsConstructor;
 
 public class ScienceListPersonsDTO {
     //для вывода списка персон
-    private long person_id;
-    private String fname;
-    private String iname;
-    private String oname;
+    private long personId;
+    private String fName;
+    private String iName;
+    private String oName;
     private String sex;
-    private String birth_date;
+    private String birthDate;
     private String country;
-    private String person_status;
+    private String personStatus;
 }

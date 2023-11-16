@@ -1,10 +1,10 @@
 package ru.spmi.backend.dto.interfaces.dictionaries;
 
 public interface DAuditoriesResponse {
-    Long getauditoryId();
-    Long getducationCenterId();
-    Long getbuildingId();
-    Long getauditoryTypeId();
+    long getauditoryId();
+    long getducationCenterId();
+    long getbuildingId();
+    long getauditoryTypeId();
     String getauditoryCode();
     String getauditoryName();
     int getactive();

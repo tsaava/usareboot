@@ -1,7 +1,14 @@
 package ru.spmi.backend.entities.dictionaries;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.util.Objects;
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name = "d_degree_details", schema = "public", catalog = "university")
 public class DDegreeDetails {

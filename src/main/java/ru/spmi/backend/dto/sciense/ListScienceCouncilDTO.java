@@ -10,16 +10,16 @@ import lombok.NoArgsConstructor;
 
 public class ListScienceCouncilDTO {
     //для вывода списка персон
-    private long science_council_spec_id;
-    private long  science_council_id;
-    private long spec_id;
-    private long order_id;
-    private String order_number;
-    private String order_date;
-    private String science_council_name;
-    private String date_from;
-    private String date_to;
-    private String spec_name;
+    private long scienceCouncilSpecId;
+    private long scienceCouncilId;
+    private long specId;
+    private long orderId;
+    private String orderNumber;
+    private String orderDate;
+    private String scienceCouncilName;
+    private String dateFrom;
+    private String dateTo;
+    private String specName;
     private String phone;
-    private String e_mail;
+    private String eMail;
 }

@@ -13,13 +13,16 @@ public class DAuditories {
     @Column(name = "education_center_id")
     private long educationCenterId;
     @Column(name = "building_id")
-    private long buildingId;
+    private Long buildingId;
     @Column(name = "auditory_type_id")
-    private long auditoryTypeId;
+    private Long auditoryTypeId;
     @Column(name = "auditory_code")
     private String auditoryCode;
     @Column(name = "auditory_name")
     private String auditoryName;
+
+    @Column(name = "sd")
+    private int sd;
     @Column(name = "active")
     private int active;
 
@@ -70,6 +73,15 @@ public class DAuditories {
     public void setAuditoryName(String auditoryName) {
         this.auditoryName = auditoryName;
     }
+
+
+    public int getSd() {
+        return sd;
+    }
+    public void setSd(int sd) {
+        this.sd = sd;
+    }
+
 
     public int getActive() {
         return active;

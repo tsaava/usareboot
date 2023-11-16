@@ -7,8 +7,6 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-
-
 public class DDegreeDetailsDTO {
 
     private long degreeDetailId;
@@ -19,6 +17,7 @@ public class DDegreeDetailsDTO {
     private String scienceShort;
     private String scienceEng;
     private Short active;
+
 
 
 }
