@@ -1,0 +1,68 @@
+package com.usareboot.back.entities.auth;
+
+import jakarta.persistence.*;
+
+import java.util.Objects;
+
+@Entity
+@Table(name = "d_roles", schema = "public", catalog = "usa_reboot")
+public class DRolesEntity {
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @Column(name = "role_id")
+    private long roleId;
+//    @Basic
+//    @Column(name = "role_code")
+//    private String    roleName;
+    @Basic
+    @Column(name = "role_name")
+    private String    roleName;
+    @Basic
+    @Column(name = "active")
+    private int active;
+
+    public long getRoleId() {
+        return roleId;
+    }
+
+    public void setRoleId(long roleId) {
+        this.roleId = roleId;
+    }
+
+    public String getRoleName() {
+        return roleName;
+    }
+
+    public void setRoleName(String roleCode) {
+        this.roleName = roleCode;
+    }
+
+//    public String getRoleName() {
+//        return roleName;
+//    }
+//
+//    public void setRoleName(String roleName) {
+//        this.roleName = roleName;
+//    }
+
+    public int getActive() {
+        return active;
+    }
+
+    public void setActive(int active) {
+        this.active = active;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        DRolesEntity that = (DRolesEntity) o;
+        return roleId == that.roleId && active == that.active && Objects.equals(roleName, that.roleName);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(roleId, roleName, active);
+    }
+}
