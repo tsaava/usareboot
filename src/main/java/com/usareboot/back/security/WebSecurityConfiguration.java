@@ -52,7 +52,7 @@ public class WebSecurityConfiguration {
                                 .requestMatchers("/api/auth/**", "/home/**").permitAll()
 //                                .requestMatchers("/swagger-ui/index.html#/").permitAll()
                                 //.requestMatchers("/api/university/**").hasAnyAuthority("COUNCIL", "COUNCIL_SUPER")
-                                .requestMatchers("/api/usareboot/**").hasAnyAuthority("admin","user" )
+                                .requestMatchers("/api/usareboot/**").hasAnyAuthority("admin","user" ,"admin_vik","usareboot")
                              //   .requestMatchers("/api/science/**").hasAnyAuthority("COUNCIL", "COUNCIL_SUPER")
                                // .requestMatchers("/api/student/**").hasAnyAuthority("COUNCIL", "COUNCIL_SUPER")
 
@@ -85,7 +85,7 @@ public class WebSecurityConfiguration {
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**").allowedOrigins("http://localhost:4200","http://nit-frontend1-virt1.spmi.ru");
+                registry.addMapping("/**").allowedOrigins("http://localhost:4200","http://nit-frontend1-virt1.spmi.ru","https://195.161.41.75","https://ce041e1d6dfa.vps.myjino.ru");
 //                registry.addMapping("/**").allowedOrigins("http://nit-frontend1-virt1.spmi.ru:22");
 
             }

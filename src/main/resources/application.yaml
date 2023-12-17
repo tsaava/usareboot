@@ -1,34 +1,53 @@
 spring:
-
-#    jpa:
-#        hibernate:
-#            dll-auto: create-drop
-#        show-sql: false
-#        properties:
-#            hibernate:
-##                hbm2ddl:
-##                    auto: update
-
+    config:
+        activate:
+            on-profile: test
     jpa:
-#        hibernate:
-#            dll-auto: create-drop
         show-sql: false
         properties:
             hibernate:
-#                hbm2ddl:
-#                    auto: update
     datasource:
-        url: jdbc:postgresql://ep-cold-king-62125412.us-east-1.aws.neon.tech/usa_reboot
-        username: tsaawa2022
-        password: RsilHxz6d0YZ
+#        url: jdbc:postgresql://ep-cold-king-62125412.us-east-1.aws.neon.tech/usa_reboot
+        url: jdbc:postgresql://195.161.41.75:5432/usareboot
+        username: postgres
+        password: Katerina2022
         driver-class-name: org.postgresql.Driver
-#    datasource:
-#        url: jdbc:postgresql://db22.spmi.edu.ru:5432/university
-#        username: university_db
-#        password: osiris
-#        driver-class-name: org.postgresql.Driver
-#    flyway:
-#        baseline-on-migrate: true
+server:
+    port: 9000
+
+springdoc:
+    show-actuator: true
+    swagger-ui:
+        enabled: true
+        path: swagger-ui.html
+
+jwt:
+    header:
+        Authorization
+    secret:
+        spmi
+    time:
+        expired:
+            5000
+        accept:
+            300
+    issuer:
+        app
+---
+spring:
+    config:
+        activate:
+            on-profile: prod
+    jpa:
+        show-sql: false
+        properties:
+            hibernate:
+    datasource:
+        #        url: jdbc:postgresql://ep-cold-king-62125412.us-east-1.aws.neon.tech/usa_reboot
+        url: jdbc:postgresql://localhost:5432/usareboot
+        username: postgres
+        password: Katerina2022
+        driver-class-name: org.postgresql.Driver
 server:
     port: 9000
 
