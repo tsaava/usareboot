@@ -8,7 +8,8 @@ spring:
             hibernate:
     datasource:
 #        url: jdbc:postgresql://ep-cold-king-62125412.us-east-1.aws.neon.tech/usa_reboot
-        url: jdbc:postgresql://195.161.41.75:5432/usareboot
+        #url: jdbc:postgresql://217.107.219.182:5432/usareboot
+        url: jdbc:postgresql://localhost:5432/usareboot
         username: postgres
         password: Katerina2022
         driver-class-name: org.postgresql.Driver
@@ -34,6 +35,7 @@ jwt:
     issuer:
         app
 ---
+
 spring:
     config:
         activate:

@@ -1,6 +1,7 @@
 package com.usareboot.back.repositories;
 
 import com.usareboot.back.dto.interfaces.ImportListResponse;
+import com.usareboot.back.dto.interfaces.ItemListResponse;
 import com.usareboot.back.entities.ImportItemListEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -14,4 +15,13 @@ public interface ImportListRepository extends JpaRepository<ImportItemListEntity
 
     @Query(value = "SELECT * FROM public.vf_import_list(  :list_albom);", nativeQuery = true)
     ArrayList<ImportListResponse> importListProcedure(@Param("list_albom") String data_list);
+
+    /**
+     * Получение списка всех товаров для ввода статуса и веса
+     * @return ArrayList<ItemListResponse>
+     */
+    @Query(value = "SELECT * FROM public.vf_item_list_status_and_weight();", nativeQuery = true)
+    ArrayList<ItemListResponse> itemListProcedure();
+
 }
+

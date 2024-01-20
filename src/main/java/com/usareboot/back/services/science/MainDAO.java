@@ -1,6 +1,7 @@
 package com.usareboot.back.services.science;
 
 import com.usareboot.back.dto.ImportDTO;
+import com.usareboot.back.dto.ItemListDTO;
 import com.usareboot.back.entities.ImportItemListEntity;
 import com.usareboot.back.repositories.ImportListRepository;
 import com.usareboot.back.repositories.ImportRepository;
@@ -57,6 +58,7 @@ public class MainDAO {
         }
         return scienceDiplomsList;
     }
+
     @PersistenceContext
     EntityManager em;
 
@@ -74,4 +76,31 @@ public class MainDAO {
         }
     }
 
+
+    public ArrayList<ItemListDTO> getItemListDao() {
+        ArrayList<ItemListDTO> scienceDiplomsList = new ArrayList<>();
+        var bdFuncResponse = importListRepository.itemListProcedure();
+        if (bdFuncResponse.size() > 0) {
+            bdFuncResponse.forEach(x -> scienceDiplomsList.add(new ItemListDTO(
+                    x.getitem_id(),
+                    x.getclient_id(),
+                    x.getstatus_id(),
+                    x.getalbom_id(),
+                    x.getvk_id(),
+                    x.getorder_id(),
+                    x.getfi(),
+                    x.getfio(),
+                    x.getitem_name(),
+                    x.getalbom_name(),
+                    x.getitem_size(),
+                    x.getitem_count(),
+                    x.getstatus_name(),
+                    x.getitem_weight(),
+                    x.getdate_delivery(),
+                    x.getsp_help_id(),
+                    x.getrazdacha()
+                    )));
+        }
+        return scienceDiplomsList;
+    }
 }

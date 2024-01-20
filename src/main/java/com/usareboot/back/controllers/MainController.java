@@ -37,10 +37,11 @@ public class MainController {
         return new ResponseEntity<>(new Gson().toJson(mainDAO.getListImport(listAlbom)), HttpStatus.OK);
     }
 
-//    @GetMapping("/all")
-//    public ResponseEntity<?> scienceAllPage(@RequestBody String filters) {
-//        return new ResponseEntity<>(new Gson().toJson(scienceDAO.getScienceAllJsonFromFilters(filters, 30, 0)), HttpStatus.OK);
-//    }
+
+    @GetMapping("/item/list")
+    public ResponseEntity<?> getItemList() {
+        return new ResponseEntity<>(new Gson().toJson(mainDAO.getItemListDao()), HttpStatus.OK);
+    }
 
 //    @PostMapping("/all")
 //    public ResponseEntity<?> adminFilterAction(@RequestParam(name="page_rows",  defaultValue = "30") int page_rows,
