@@ -85,7 +85,7 @@ public class WebSecurityConfiguration {
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**").allowedOrigins("http://localhost:4200","http://nit-frontend1-virt1.spmi.ru","https://195.161.41.75","https://ce041e1d6dfa.vps.myjino.ru");
+                registry.addMapping("/**").allowedOrigins("http://localhost:4200","https://localhost:80","http://localhost:80","https://ce041e1d6dfa.vps.myjino.ru");
 //                registry.addMapping("/**").allowedOrigins("http://nit-frontend1-virt1.spmi.ru:22");
 
             }

@@ -23,15 +23,17 @@ public class HomeController {
     @Autowired
     private UserDAO userDAO;
 
-    @GetMapping("/")
+    @GetMapping("/home")
     public ResponseEntity<?> getHomePage() throws UnsupportedEncodingException, NoSuchAlgorithmException {
         return new ResponseEntity<>("home page", HttpStatus.OK);
     }
 //
-    @PostMapping("/test")
-    public ResponseEntity<?> testMethod(@RequestBody String filters) {
-
-        return new ResponseEntity<>(filters, HttpStatus.OK);
+    @PostMapping("/vk/server")
+    public String VkServer(@RequestBody String json) {
+        if (json.contains("224336762"))
+            return "a9440864";
+        else
+            return null;
     }
 
     @GetMapping("/users")
