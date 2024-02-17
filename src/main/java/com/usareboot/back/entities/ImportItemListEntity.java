@@ -16,7 +16,7 @@ import java.util.Objects;
 })
 
 @Entity
-@Table(name = "import_item_list", schema = "public", catalog = "usa_reboot")
+@Table(name = "import_item_list", schema = "public", catalog = "usareboot")
 public class ImportItemListEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id

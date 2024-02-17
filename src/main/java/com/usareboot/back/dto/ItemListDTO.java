@@ -23,7 +23,7 @@ public class ItemListDTO {
         Integer itemCount;
         String statusName;
         Number itemWeight;
-        Date dateDelivery;
+        String dateDelivery;
         String spHelpId;
         String razdacha;
 }

@@ -1,6 +1,7 @@
 package com.usareboot.back.controllers;
 
 import com.google.gson.Gson;
+import com.usareboot.back.dto.ItemsRequestDTO;
 import com.usareboot.back.services.science.MainDAO;
 import com.usareboot.back.services.science.ScienceDAO;
 import lombok.RequiredArgsConstructor;
@@ -42,6 +43,29 @@ public class MainController {
     public ResponseEntity<?> getItemList() {
         return new ResponseEntity<>(new Gson().toJson(mainDAO.getItemListDao()), HttpStatus.OK);
     }
+
+    @GetMapping("/item/statuses/{type}")
+    public ResponseEntity<?> getItemStatuses(@PathVariable int type) {
+        return new ResponseEntity<>(new Gson().toJson(mainDAO.getStatusesItem(type)), HttpStatus.OK);
+    }
+
+    @PatchMapping("/item/{id}")
+    public void patchItemWeightStatus(@PathVariable long id,
+                                      @RequestBody String data) {
+        System.out.println(data);
+        Gson g = new Gson();
+        mainDAO.saveItemWeightAndStatus(id,g.fromJson(data,ItemsRequestDTO.class));
+//        return new ResponseEntity<>(new Gson().toJson(mainDAO.getItemListDao()), HttpStatus.OK);
+    }
+
+    @PatchMapping("/item/set/date/all")
+    public void patchItemDate() {
+        mainDAO.setItemDate();
+//        return new ResponseEntity<>(new Gson().toJson(mainDAO.getItemListDao()), HttpStatus.OK);
+    }
+
+
+
 
 //    @PostMapping("/all")
 //    public ResponseEntity<?> adminFilterAction(@RequestParam(name="page_rows",  defaultValue = "30") int page_rows,

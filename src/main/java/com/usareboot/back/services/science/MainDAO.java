@@ -2,27 +2,35 @@ package com.usareboot.back.services.science;
 
 import com.usareboot.back.dto.ImportDTO;
 import com.usareboot.back.dto.ItemListDTO;
-import com.usareboot.back.entities.ImportItemListEntity;
-import com.usareboot.back.repositories.ImportListRepository;
-import com.usareboot.back.repositories.ImportRepository;
-import com.usareboot.back.repositories.MainRepository;
-import com.usareboot.back.repositories.science.ScienceRepository;
+import com.usareboot.back.dto.ItemsRequestDTO;
+import com.usareboot.back.entities.DStatusesEntity;
+import com.usareboot.back.entities.ItemsEntity;
+import com.usareboot.back.repositories.*;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.StoredProcedureQuery;
+import org.hibernate.annotations.Mutability;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.lang.reflect.Array;
+import java.sql.Date;
+import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.List;
 
 @Service
 public class MainDAO {
-    @Autowired
-//    private ImportRepository importRepository;
     private ImportListRepository importListRepository;
+    private ItemsRepository itemsRepository;
+    private DStatusRepository dStatusRepository;
+
+
+    @Autowired
+    public MainDAO(ImportListRepository importListRepository, ItemsRepository itemsRepository, DStatusRepository dStatusRepository){
+        this.importListRepository=importListRepository;
+        this.itemsRepository=itemsRepository;
+        this.dStatusRepository=dStatusRepository;
+    }
 
     public ArrayList<ImportDTO> getListImport(String listAlbom) {
         ArrayList<ImportDTO> scienceDiplomsList = new ArrayList<>();
@@ -71,6 +79,7 @@ public class MainDAO {
             System.out.println("выполняется процедура импорта");
             StoredProcedureQuery spq = em.createNamedStoredProcedureQuery("vpImportDataInList");
             spq.setParameter("data", data);
+            System.out.println(data+' '+albomName);
             spq.setParameter("albom_name", albomName);
             spq.execute();
         }
@@ -102,5 +111,38 @@ public class MainDAO {
                     )));
         }
         return scienceDiplomsList;
+    }
+
+    public void saveItemWeightAndStatus(long itemId, ItemsRequestDTO itemsRequestDTO) {
+        ItemsEntity ie = itemsRepository.getItemsEntitiesByItemId(itemId);
+        ie.setItemWeight(itemsRequestDTO.getItemWeight());
+        ie.setItemStatus(itemsRequestDTO.getStatusId());
+        if(itemsRequestDTO.getDateDelivery()!=null)
+            ie.setDateDelivery(new java.sql.Date(itemsRequestDTO.getDateDelivery().getTime()));
+        else ie.setDateDelivery(null);
+        System.out.println(ie);
+        itemsRepository.save(ie);
+    }
+
+    public ArrayList<DStatusesEntity>getStatusesItem(int type){
+//        System.out.println(dStatusRepository.getDStatusesEntityByActiveAndStatusType(1,type));
+        return dStatusRepository.getDStatusesEntityByActiveAndStatusType(1,type);
+    }
+
+
+
+    @Transactional
+    public void setItemDate(){
+//        java.util.Date date = new java.util.Date();
+        long millis=System.currentTimeMillis();
+        java.sql.Date date = new java.sql.Date(millis);
+        System.out.println(date);
+//        System.out.println(date);
+//        itemsRepository.setDate(date);
+        itemsRepository.item_set_date_all();
+//        itemsRepository.setDate(new java.sql.Date(date.getTime()));
+
+        System.out.println("обновление прошло успешно");
+
     }
 }

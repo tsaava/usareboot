@@ -18,7 +18,7 @@ public interface ItemListResponse {
     Integer getitem_count();
     String getstatus_name();
     Number getitem_weight();
-    Date getdate_delivery();
+    String getdate_delivery();
     String getsp_help_id();
     String getrazdacha();
 }

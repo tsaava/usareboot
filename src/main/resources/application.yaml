@@ -8,11 +8,19 @@ spring:
             hibernate:
     datasource:
 #        url: jdbc:postgresql://ep-cold-king-62125412.us-east-1.aws.neon.tech/usa_reboot
-        #url: jdbc:postgresql://217.107.219.182:5432/usareboot
-        url: jdbc:postgresql://localhost:5432/usareboot
+        url: jdbc:postgresql://217.107.219.182:5432/usareboot
+#        url: jdbc:postgresql://localhost:5432/usareboot
         username: postgres
         password: Katerina2022
         driver-class-name: org.postgresql.Driver
+#        hikari:
+#            maxLifeTime:6000000 #10 minutes wait time
+        hikari:
+            minimumIdle: 2
+            maximumPoolSize: 10
+            idleTimeout: 120000
+            connectionTimeout: 300000
+            maxLifetime: 6000000
 server:
     port: 9000
 
