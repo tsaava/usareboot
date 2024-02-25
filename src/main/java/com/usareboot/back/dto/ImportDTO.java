@@ -36,4 +36,6 @@ public class ImportDTO {
     private String spHelpId;
 //    private String comment;
     private Double itemCost;
+    private String dateStop;
+
 }

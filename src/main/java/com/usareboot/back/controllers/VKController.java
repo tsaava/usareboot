@@ -1,14 +1,11 @@
 package com.usareboot.back.controllers;
 import com.google.gson.Gson;
 import com.usareboot.back.services.auth.VkService;
-import com.usareboot.back.services.science.MainDAO;
-import com.usareboot.back.services.science.ScienceDAO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import com.usareboot.back.repositories.science.ScienceDissertationsRepository;
 
 import java.io.IOException;
 

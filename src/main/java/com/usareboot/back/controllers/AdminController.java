@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import com.usareboot.back.dto.FilterDTO;
 import com.usareboot.back.services.science.ScienceDAO;
 
 @RestController
@@ -20,11 +19,7 @@ public class AdminController {
     @Autowired
     private ScienceDAO scienceDAO;
 //    @PreAuthorize("ADMIN")
-    @GetMapping("/page")
-    public ResponseEntity<?> adminPage() {
-        System.out.println("success login\nbro admin");
-        return new ResponseEntity<>(new FilterDTO("success login\nbro admin"), HttpStatus.OK);
-    }
+
 
 //    @PostMapping("/filter")
 //    public ResponseEntity<?> adminFilterAction(@RequestBody String filters) {

@@ -3,7 +3,7 @@ package com.usareboot.back.controllers;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import com.usareboot.back.services.science.MainDAO;
+import com.usareboot.back.services.MainDAO;
 
 @RestController
 @CrossOrigin(origins = "*")/*!!!!обязательно во все контроллеры вставлять!!*/

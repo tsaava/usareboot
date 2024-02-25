@@ -5,7 +5,7 @@ import java.util.Date;
 public interface ItemListResponse {
     long getitem_id();
     long getclient_id();
-    long getstatus_id();
+    Long getstatus_id();
     long getalbom_id();
     long getvk_id();
     long getorder_id();

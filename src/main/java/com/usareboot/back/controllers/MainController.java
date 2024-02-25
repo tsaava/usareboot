@@ -2,14 +2,12 @@ package com.usareboot.back.controllers;
 
 import com.google.gson.Gson;
 import com.usareboot.back.dto.ItemsRequestDTO;
-import com.usareboot.back.services.science.MainDAO;
-import com.usareboot.back.services.science.ScienceDAO;
+import com.usareboot.back.services.MainDAO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import com.usareboot.back.repositories.science.ScienceDissertationsRepository;
 
 @RestController
 @CrossOrigin(origins = "*")/*!!!!обязательно во все контроллеры вставлять!!*/
@@ -21,7 +19,6 @@ public class MainController {
     @Autowired
     private MainDAO mainDAO;
 
-    private final ScienceDissertationsRepository scienceDissertationsRepository;
 
     @PostMapping ("/import/data/{albom}")
     public ResponseEntity<?> importData(@PathVariable String albom,

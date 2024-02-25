@@ -30,4 +30,5 @@ public interface ImportListResponse {
     String getsp_help_id();
 //    String getcomment();
     Double getitem_cost();
+    String getdate_stop();
 }

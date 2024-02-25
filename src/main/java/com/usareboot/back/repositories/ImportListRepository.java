@@ -14,7 +14,7 @@ public interface ImportListRepository extends JpaRepository<ImportItemListEntity
     ArrayList<ImportItemListEntity> getImportItemListEntitiesByVikup(String albomName);
 
     @Query(value = "SELECT * FROM public.vf_import_list(  :list_albom);", nativeQuery = true)
-    ArrayList<ImportListResponse> importListProcedure(@Param("list_albom") String data_list);
+    ArrayList<ImportListResponse> importListProcedure(@Param("list_albom") String list_albom);
 
     /**
      * Получение списка всех товаров для ввода статуса и веса

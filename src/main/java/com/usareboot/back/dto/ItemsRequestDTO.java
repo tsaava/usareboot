@@ -11,7 +11,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ItemsRequestDTO {
-        long statusId;
+        Long statusId;
         String statusName;
         BigInteger itemWeight;
         Date dateDelivery;

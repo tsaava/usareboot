@@ -1,4 +1,4 @@
-package com.usareboot.back.services.science;
+package com.usareboot.back.services;
 
 import com.usareboot.back.dto.ImportDTO;
 import com.usareboot.back.dto.ItemListDTO;
@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Objects;
 
 @Service
 public class MainDAO {
@@ -34,6 +35,8 @@ public class MainDAO {
 
     public ArrayList<ImportDTO> getListImport(String listAlbom) {
         ArrayList<ImportDTO> scienceDiplomsList = new ArrayList<>();
+        if(!Objects.equals(listAlbom, "[]"))
+            listAlbom=listAlbom.replace("[","").replace("]","");
         var bdFuncResponse = importListRepository.importListProcedure(listAlbom);
         if (bdFuncResponse.size() > 0) {
             bdFuncResponse.forEach(x -> scienceDiplomsList.add(new ImportDTO(
@@ -60,7 +63,8 @@ public class MainDAO {
                     x.getitem_count(),
                     x.getsp_help_id(),
 //                    x.getcomment(),
-                    x.getitem_cost()
+                    x.getitem_cost(),
+                    x.getdate_stop()
                     )));
 
         }

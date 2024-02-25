@@ -11,7 +11,7 @@ import java.util.Date;
 public class ItemListDTO {
         long itemId;
         long clientId;
-        long statusId;
+        Long statusId;
         long albomId;
         long vkId;
         long orderId;

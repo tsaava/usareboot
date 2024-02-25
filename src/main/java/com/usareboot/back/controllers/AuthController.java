@@ -13,7 +13,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import com.usareboot.back.services.menu.MenuDAO;
 
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
@@ -30,8 +29,7 @@ public class AuthController {
     @Autowired
     private UserDAO userDAO;
 
-    @Autowired
-    private MenuDAO menuDAO;
+
     @Autowired
     private JwtUtils jwtUtils;
 
