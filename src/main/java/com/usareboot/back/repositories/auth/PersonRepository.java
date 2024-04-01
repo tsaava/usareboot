@@ -11,4 +11,5 @@ public interface PersonRepository extends JpaRepository<PersonUsersEntity, Long>
 
     Set<PersonUsersEntity> findPersonUsersEntitiesByUserId(Long personId);
 
+    PersonUsersEntity findPersonUsersEntityByRoleId(long roleId);
 }

@@ -8,6 +8,7 @@ import com.usareboot.back.entities.auth.DRolesEntity;
 public interface RolesRepository extends JpaRepository<DRolesEntity, Long> {
 
     DRolesEntity findDRolesEntityByRoleId(Long roleId);
+
 //    DRolesEntity findDRolesEntityByRoleName(String roleName);
 
 //    DRolesEntity findDRolesEntitiesByActive(int active);

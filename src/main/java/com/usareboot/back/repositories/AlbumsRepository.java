@@ -6,5 +6,7 @@ import java.util.Date;
 import java.util.ArrayList;
 
 public interface AlbumsRepository extends JpaRepository<AlbumsEntity, Long> {
-    ArrayList<AlbumsEntity> getAllByAlbumDate(Date albumDate);
+    ArrayList<AlbumsEntity> getAlbumsEntitiesByAlbumDateAfterOrderByAlbumDate(Date albumDate);
+
+    AlbumsEntity findAlbumsEntityByAlbumId(long albumId);
 }

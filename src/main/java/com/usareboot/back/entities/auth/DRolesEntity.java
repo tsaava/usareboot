@@ -1,11 +1,13 @@
 package com.usareboot.back.entities.auth;
 
 import jakarta.persistence.*;
+import lombok.Getter;
 
 import java.util.Objects;
 
+@Getter
 @Entity
-@Table(name = "d_roles", schema = "public", catalog = "usa_reboot")
+@Table(name = "d_roles", schema = "public", catalog = "usareboot")
 public class DRolesEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
@@ -21,16 +23,8 @@ public class DRolesEntity {
     @Column(name = "active")
     private int active;
 
-    public long getRoleId() {
-        return roleId;
-    }
-
     public void setRoleId(long roleId) {
         this.roleId = roleId;
-    }
-
-    public String getRoleName() {
-        return roleName;
     }
 
     public void setRoleName(String roleCode) {
@@ -44,10 +38,6 @@ public class DRolesEntity {
 //    public void setRoleName(String roleName) {
 //        this.roleName = roleName;
 //    }
-
-    public int getActive() {
-        return active;
-    }
 
     public void setActive(int active) {
         this.active = active;

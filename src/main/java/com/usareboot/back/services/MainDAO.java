@@ -9,13 +9,10 @@ import com.usareboot.back.repositories.*;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.StoredProcedureQuery;
-import org.hibernate.annotations.Mutability;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Date;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -130,7 +127,7 @@ public class MainDAO {
 
     public ArrayList<DStatusesEntity>getStatusesItem(int type){
 //        System.out.println(dStatusRepository.getDStatusesEntityByActiveAndStatusType(1,type));
-        return dStatusRepository.getDStatusesEntityByActiveAndStatusType(1,type);
+        return dStatusRepository.getDStatusesEntityByActiveAndStatusTypeOrderByStatusName(1,type);
     }
 
 

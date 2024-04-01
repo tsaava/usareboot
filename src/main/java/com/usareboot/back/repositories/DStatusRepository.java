@@ -7,6 +7,7 @@ import java.util.ArrayList;
 
 public interface DStatusRepository extends JpaRepository<DStatusesEntity, Long> {
 
-    ArrayList<DStatusesEntity> getDStatusesEntityByActiveAndStatusType(int active, int type);
+    ArrayList<DStatusesEntity> getDStatusesEntityByActiveAndStatusTypeOrderByStatusName(int active, int type);
+    DStatusesEntity findDStatusesEntityByStatusName(String statusName);
 }
 

@@ -2,7 +2,6 @@ package com.usareboot.back.repositories.science;
 
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
-import com.usareboot.back.dto.interfaces.sciense.*;
 import com.usareboot.back.entities.auth.TestEntity;
 
 @Repository

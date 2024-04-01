@@ -1,5 +1,6 @@
 package com.usareboot.back.dto;
 
+import com.usareboot.back.entities.DStatusesEntity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,25 +13,36 @@ import java.util.Date;
 @NoArgsConstructor
 
 public class AlbumsDTO {
-    long albumId;
-    String albumName;
-    Date albumDate;
-    Double courseExchange;
-    Date albumDatePlane;
-    Integer countOrder;
-    String country;
-    String shopName;
-    String shopUrl;
-    String albumVkUrl;
-    Long packageId;
-    Double courseBank;
-    Double courseAlbum;
-    String bankName;
-    String trackNumber;
-    String warehouse;
-    Date albumDateStop;
-    long albumVkId;
-    Date dateStop;
-    long albumStatus;
-    Long courseBankId ;
+    private long albumId;
+    private String albumName;
+    private String albumDate;
+    private String albumDatePlane;
+    private Integer countOrder;
+    private String country;
+    private String albumDesc;
+    private String shopUrl;
+    private String albumVkUrl;
+    private Long packageId;
+    private String courseBank;
+    private String courseAlbum;
+    private String bankName;
+    private String trackNumber;
+    private String warehouse;
+    private String albumDateStop;
+    private long albumVkId;
+    private Long courseBankId;
+    private Long albumStatus;
+    private String albumStatusName;
+    private Long cardId;
+    private String cardName;
+
 }
+/*  private long albumId;
+    private long albumVkId;
+    private String albumDesc;
+    private String courseAlbum;
+    private String albumDatePlane;
+    private Integer countOrder;
+    private String albumDateStop;
+    private String albumStatus;
+    private String card;*/

@@ -29,11 +29,11 @@ public class HomeController {
     }
 //
     @PostMapping("/vk/server")
-    public String VkServer(@RequestBody String json) {
-        if (json.contains("224336762"))
-            return "a9440864";
-        else
-            return null;
+    public String VkServer(/*@RequestBody String json*/) {
+//        if (json.contains("224336762"))
+            return "98639192";
+//        else
+//            return null;
     }
 
     @GetMapping("/users")

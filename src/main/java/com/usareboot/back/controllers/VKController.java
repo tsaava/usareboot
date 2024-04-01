@@ -1,6 +1,6 @@
 package com.usareboot.back.controllers;
 import com.google.gson.Gson;
-import com.usareboot.back.services.auth.VkService;
+import com.usareboot.back.services.auth.VkDAO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,7 +16,7 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class VKController {
     @Autowired
-    private VkService vkService;
+    private VkDAO vkService;
 
     @PostMapping("/auth")
     public ResponseEntity<?> getVkAuth(@RequestBody String silent_token,

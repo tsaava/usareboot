@@ -20,9 +20,7 @@ public class AlbumsEntity {
     @Basic
     @Column(name = "albom_date")
     private Date albumDate;
-    @Basic
-    @Column(name = "course_exchange")
-    private Double courseExchange;
+
     @Basic
     @Column(name = "albom_date_plane")
     private Date albumDatePlane;
@@ -33,8 +31,8 @@ public class AlbumsEntity {
     @Column(name = "country")
     private String country;
     @Basic
-    @Column(name = "shop_name")
-    private String shopName;
+    @Column(name = "albom_desc")
+    private String albumDesc;
     @Basic
     @Column(name = "shop_url")
     private String shopUrl;
@@ -46,10 +44,10 @@ public class AlbumsEntity {
     private Long packageId;
     @Basic
     @Column(name = "course_bank")
-    private Double courseBank;
+    private String courseBank;
     @Basic
     @Column(name = "course_albom")
-    private Double courseAlbum;
+    private String courseAlbum;
     @Basic
     @Column(name = "bank_name")
     private String bankName;
@@ -65,18 +63,36 @@ public class AlbumsEntity {
     @Basic
     @Column(name = "albom_vk_id")
     private long albumVkId;
-    @Basic
-    @Column(name = "date_stop")
-    private Date dateStop;
-    @Basic
-    @Column(name = "albom_status")
-    private long albumStatus;
+//    @Basic
+//    @Column(name = "date_stop")
+//    private Date dateStop;
+//    @Basic
+//    @Column(name = "status_id")
+//    private long statusId;
+    @OneToOne
+    @JoinColumn(name = "status_id")
+    private DStatusesEntity statuses;
     @Basic
     @Column(name = "course_bank_id")
     private Long courseBankId;
     @Basic
     @Column(name = "year")
     private int year;
+//    @Basic
+//    @Column(name = "card_id")
+//    private Long cardId;
+    @OneToOne
+    @JoinColumn(name = "card_id")
+    private CardsEntity cards;
+
+
+    public void setStatuses(DStatusesEntity statuses) {
+        this.statuses = statuses;
+    }
+
+    public void setCards(CardsEntity cards) {
+        this.cards = cards;
+    }
 
     public void setAlbumId(long albumId) {
         this.albumId = albumId;
@@ -90,9 +106,6 @@ public class AlbumsEntity {
         this.albumDate = albomDate;
     }
 
-    public void setCourseExchange(Double courseExchange) {
-        this.courseExchange = courseExchange;
-    }
 
     public void setAlbumDatePlane(Date albumDatePlane) {
         this.albumDatePlane = albumDatePlane;
@@ -106,8 +119,8 @@ public class AlbumsEntity {
         this.country = country;
     }
 
-    public void setShopName(String shopName) {
-        this.shopName = shopName;
+    public void setAlbumDesc(String albumDesc) {
+        this.albumDesc = albumDesc;
     }
 
     public void setShopUrl(String shopUrl) {
@@ -122,11 +135,11 @@ public class AlbumsEntity {
         this.packageId = packageId;
     }
 
-    public void setCourseBank(Double courseBank) {
+    public void setCourseBank(String courseBank) {
         this.courseBank = courseBank;
     }
 
-    public void setCourseAlbum(Double courseAlbum) {
+    public void setCourseAlbum(String courseAlbum) {
         this.courseAlbum = courseAlbum;
     }
 
@@ -150,13 +163,10 @@ public class AlbumsEntity {
         this.albumVkId = albumVkId;
     }
 
-    public void setDateStop(Date dateStop) {
-        this.dateStop = dateStop;
-    }
 
-    public void setAlbumStatus(long albumStatus) {
-        this.albumStatus = albumStatus;
-    }
+//    public void setStatusId(long albumStatus) {
+//        this.statusId = albumStatus;
+//    }
 
     public void setCourseBankId(Long courseBankId) {
         this.courseBankId = courseBankId;
@@ -165,17 +175,21 @@ public class AlbumsEntity {
     public void setYear(int year) {
         this.year = year;
     }
+//    public void setCardId(Long card) {
+//        this.cardId = card;
+//    }
+
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         AlbumsEntity that = (AlbumsEntity) o;
-        return albumId == that.albumId && albumVkId == that.albumVkId && albumStatus == that.albumStatus && Objects.equals(albumName, that.albumName) && Objects.equals(albumDate, that.albumDate) && Objects.equals(courseExchange, that.courseExchange) && Objects.equals(albumDatePlane, that.albumDatePlane) && Objects.equals(countOrder, that.countOrder) && Objects.equals(country, that.country) && Objects.equals(shopName, that.shopName) && Objects.equals(shopUrl, that.shopUrl) && Objects.equals(albumVkUrl, that.albumVkUrl) && Objects.equals(packageId, that.packageId) && Objects.equals(courseBank, that.courseBank) && Objects.equals(courseAlbum, that.courseAlbum) && Objects.equals(bankName, that.bankName) && Objects.equals(trackNumber, that.trackNumber) && Objects.equals(warehouse, that.warehouse) && Objects.equals(albumDateStop, that.albumDateStop) && Objects.equals(dateStop, that.dateStop) && Objects.equals(courseBankId, that.courseBankId);
+        return albumId == that.albumId && albumVkId == that.albumVkId /*&& statusId == that.statusId*/ && Objects.equals(albumName, that.albumName) && Objects.equals(albumDate, that.albumDate) && Objects.equals(albumDatePlane, that.albumDatePlane) && Objects.equals(countOrder, that.countOrder) && Objects.equals(country, that.country) && Objects.equals(albumDesc, that.albumDesc) && Objects.equals(shopUrl, that.shopUrl) && Objects.equals(albumVkUrl, that.albumVkUrl) && Objects.equals(packageId, that.packageId) && Objects.equals(courseBank, that.courseBank) && Objects.equals(courseAlbum, that.courseAlbum) && Objects.equals(bankName, that.bankName) && Objects.equals(trackNumber, that.trackNumber) && Objects.equals(warehouse, that.warehouse) && Objects.equals(albumDateStop, that.albumDateStop)  && Objects.equals(courseBankId, that.courseBankId)/*&& Objects.equals(cardId, that.cardId)*/;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(albumId, albumName, albumDate, courseExchange, albumDatePlane, countOrder, country, shopName, shopUrl, albumVkUrl, packageId, courseBank, courseAlbum, bankName, trackNumber, warehouse, albumDateStop, albumVkId, dateStop, albumStatus, courseBankId);
+        return Objects.hash(albumId, albumName, albumDate, albumDatePlane, countOrder, country, albumDesc, shopUrl, albumVkUrl, packageId, courseBank, courseAlbum, bankName, trackNumber, warehouse, albumDateStop, albumVkId,  /*statusId,*/ courseBankId/*, cardId*/);
     }
 }

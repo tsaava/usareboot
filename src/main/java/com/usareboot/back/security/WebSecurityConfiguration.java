@@ -38,12 +38,11 @@ public class WebSecurityConfiguration {
         return new BCryptPasswordEncoder();
     }
 
-//    private String roles(){
-//        String str ;// = new String[]{"COUNCIL", "COUNCIL_SUPER"};
-//        str=roleDAO.getAllRoles();
-//        System.out.println(str);
-//        return  str;
-//    }
+    @Bean
+    public ModelMapper modelMapper() {
+        return new ModelMapper();
+    }
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
 
@@ -85,17 +84,17 @@ public class WebSecurityConfiguration {
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**").allowedOrigins("http://localhost:4200","https://localhost:80","http://localhost:80","https://ce041e1d6dfa.vps.myjino.ru");
+                registry.addMapping("/**").allowedOrigins("http://localhost:4200","https://localhost:80","http://localhost:80","https://ce041e1d6dfa.vps.myjino.ru","https://usareboot.ru","https://busareboot.ru");
 //                registry.addMapping("/**").allowedOrigins("http://nit-frontend1-virt1.spmi.ru:22");
 
             }
         };
     }
 
-    @Bean
-    public ModelMapper getMapper() {
-        return new ModelMapper();
-    }
+//    @Bean
+//    public ModelMapper getMapper() {
+//        return new ModelMapper();
+//    }
 
 }
 

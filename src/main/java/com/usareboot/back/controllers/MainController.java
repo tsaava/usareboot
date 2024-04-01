@@ -41,7 +41,7 @@ public class MainController {
         return new ResponseEntity<>(new Gson().toJson(mainDAO.getItemListDao()), HttpStatus.OK);
     }
 
-    @GetMapping("/item/statuses/{type}")
+    @GetMapping("/statuses/list/{type}")
     public ResponseEntity<?> getItemStatuses(@PathVariable int type) {
         return new ResponseEntity<>(new Gson().toJson(mainDAO.getStatusesItem(type)), HttpStatus.OK);
     }
@@ -60,6 +60,7 @@ public class MainController {
         mainDAO.setItemDate();
 //        return new ResponseEntity<>(new Gson().toJson(mainDAO.getItemListDao()), HttpStatus.OK);
     }
+
 
 
 

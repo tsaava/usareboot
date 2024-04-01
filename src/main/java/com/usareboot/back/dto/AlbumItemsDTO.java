@@ -11,18 +11,18 @@ import java.util.Date;
 @NoArgsConstructor
 
 public class AlbumItemsDTO {
-    long albomItemId;
-    long albomId;
-    long vkItemId;
-    long tgItemId;
-    String photoPath;
-    String description;
-    String descriptionShort;
-    Number albomItemWeight;
-    String albomItemName;
-    Date dateCreate;
-    Integer albomItemCount;
-    Double albomItemCost;
-    Double albomItemRate;
-    Short albomItemStatus;
+    private  long albomItemId;
+    private long albomId;
+    private long vkItemId;
+    private long tgItemId;
+    private String photoPath;
+    private String description;
+    private String descriptionShort;
+    private Number albomItemWeight;
+    private String albomItemName;
+    private Date dateCreate;
+    private Integer albomItemCount;
+    private Double albomItemCost;
+    private  Double albomItemRate;
+    private  Short albomItemStatus;
 }

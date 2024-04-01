@@ -11,9 +11,9 @@ import java.util.Set;
 @NoArgsConstructor
 public class ChosenRoleDTO {
 
-    // этот дто можно упразднить (заменить любым общим дто с 1 стринг полем)
+    /*!ЭТО ТО ЧТО ПРИХОДИТ С ФРОНТА КОГДА ВЫБИРАЕМ РОЛЬ!!
+    * ПОЭТОМУ НУЖНО НА ФРОНТЕ ДОБАВИТЬ ПОЛЕ */
     private Long roleId;
-//    private String roleName;
     private String roleCode;
 
 }

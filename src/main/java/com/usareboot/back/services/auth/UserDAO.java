@@ -53,6 +53,8 @@ public class UserDAO {
         return userRepository.findUsersEntityByLogin(login).get();
     }
 
+
+
     public UsersEntity findUserByLoginAndPassword(String login, String password) throws UnsupportedEncodingException, NoSuchAlgorithmException {
 //        System.out.println( toSha1(password));
         return userRepository.findUsersEntityByLoginAndPassword(login, toSha1(password)).get();
@@ -107,6 +109,10 @@ public class UserDAO {
 
     public Set<Long> getRoleEntityByLogin(String login) {
         return personRepository.findPersonUsersEntitiesByUserId(userRepository.findUsersEntityByLogin(login).get().getUserId()).stream().map(x -> x.getRoleId()).collect(Collectors.toSet());
+    }
+
+    private long getPersonUsersId(long roleId){
+        return personRepository.findPersonUsersEntityByRoleId(roleId).getPersonUserId();
     }
 
     public DRolesEntity getRoleById(Long roleId) {
