@@ -2,9 +2,11 @@ package com.usareboot.back.services;
 
 import com.usareboot.back.dto.AlbumRowRequestDTO;
 import com.usareboot.back.dto.AlbumsDTO;
+import com.usareboot.back.dto.AlbumsItemsDTO;
 import com.usareboot.back.dto.CardsDTO;
 import com.usareboot.back.entities.AlbumsEntity;
 import com.usareboot.back.entities.DStatusesEntity;
+import com.usareboot.back.repositories.AlbumsItemsRepository;
 import com.usareboot.back.repositories.AlbumsRepository;
 import com.usareboot.back.repositories.CardsRepository;
 import com.usareboot.back.repositories.DStatusRepository;
@@ -31,6 +33,9 @@ public class AlbumsDAO {
 
     @Autowired
     private DStatusRepository statusRepository;
+
+    @Autowired
+    private AlbumsItemsRepository albumsItemsRepository;
 
     @Autowired
     ModelMapper modelMapper;
@@ -158,5 +163,6 @@ public class AlbumsDAO {
 //        }
 //        return album;
     }
+
 
 }

@@ -9,15 +9,15 @@ import java.util.Objects;
 
 @Getter
 @Entity
-@Table(name = "albom_items", schema = "public", catalog = "usareboot")
-public class AlbumItemsEntity {
+@Table(name = "alboms_items", schema = "public", catalog = "usareboot")
+public class AlbumsItemsEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "albom_item_id")
     private long albumItemId;
-    @Basic
-    @Column(name = "albom_id")
-    private Long albumId;
+    @ManyToOne
+    @JoinColumn(name = "albom_id")
+    private AlbumsEntity album;
     @Basic
     @Column(name = "vk_item_id")
     private Long vkItemId;
@@ -47,20 +47,21 @@ public class AlbumItemsEntity {
     private Date dateCreate;
     @Basic
     @Column(name = "albom_item_cost")
-    private Object albumItemCost;
+    private Double albumItemCost;
     @Basic
     @Column(name = "albom_item_rate")
-    private Object albumItemRate;
-    @Basic
-    @Column(name = "albom_item_status")
-    private Short albumItemStatus;
+    private Double albumItemRate;
+    @OneToOne
+    @JoinColumn(name = "status_id")
+    private DStatusesEntity statuses;
+
 
     public void setAlbumItemId(long albumItemId) {
         this.albumItemId = albumItemId;
     }
 
-    public void setAlbumId(Long albumId) {
-        this.albumId = albumId;
+    public void setAlbumId(AlbumsEntity album) {
+        this.album = album;
     }
 
     public void setVkItemId(Long vkItemId) {
@@ -99,28 +100,28 @@ public class AlbumItemsEntity {
         this.dateCreate = dateCreate;
     }
 
-    public void setAlbumItemCost(Object albumItemCost) {
+    public void setAlbumItemCost(Double albumItemCost) {
         this.albumItemCost = albumItemCost;
     }
 
-    public void setAlbumItemRate(Object albumItemRate) {
+    public void setAlbumItemRate(Double albumItemRate) {
         this.albumItemRate = albumItemRate;
     }
 
-    public void setAlbumItemStatus(Short albumItemStatus) {
-        this.albumItemStatus = albumItemStatus;
+    public void setAlbumItemStatus(DStatusesEntity statuses) {
+        this.statuses = statuses;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        AlbumItemsEntity that = (AlbumItemsEntity) o;
-        return albumItemId == that.albumItemId && Objects.equals(albumId, that.albumId) && Objects.equals(vkItemId, that.vkItemId) && Objects.equals(tgItemId, that.tgItemId) && Objects.equals(photoPath, that.photoPath) && Objects.equals(description, that.description) && Objects.equals(descriptionShort, that.descriptionShort) && Objects.equals(albumItemWeight, that.albumItemWeight) && Objects.equals(albumItemName, that.albumItemName) && Objects.equals(albumItemCount, that.albumItemCount) && Objects.equals(dateCreate, that.dateCreate) && Objects.equals(albumItemCost, that.albumItemCost) && Objects.equals(albumItemRate, that.albumItemRate) && Objects.equals(albumItemStatus, that.albumItemStatus);
+        AlbumsItemsEntity that = (AlbumsItemsEntity) o;
+        return albumItemId == that.albumItemId && Objects.equals(album, that.album) && Objects.equals(vkItemId, that.vkItemId) && Objects.equals(tgItemId, that.tgItemId) && Objects.equals(photoPath, that.photoPath) && Objects.equals(description, that.description) && Objects.equals(descriptionShort, that.descriptionShort) && Objects.equals(albumItemWeight, that.albumItemWeight) && Objects.equals(albumItemName, that.albumItemName) && Objects.equals(albumItemCount, that.albumItemCount) && Objects.equals(dateCreate, that.dateCreate) && Objects.equals(albumItemCost, that.albumItemCost) && Objects.equals(albumItemRate, that.albumItemRate) && Objects.equals(statuses, that.statuses);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(albumItemId, albumId, vkItemId, tgItemId, photoPath, description, descriptionShort, albumItemWeight, albumItemName, albumItemCount, dateCreate, albumItemCost, albumItemRate, albumItemStatus);
+        return Objects.hash(albumItemId, album, vkItemId, tgItemId, photoPath, description, descriptionShort, albumItemWeight, albumItemName, albumItemCount, dateCreate, albumItemCost, albumItemRate, statuses);
     }
 }
