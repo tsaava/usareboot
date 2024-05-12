@@ -27,7 +27,7 @@ public class AlbumsItemsDAO {
 //        return modelMapper.map(albumsItems, AlbumsItemsDTO.class);
 
         ArrayList<AlbumsItemsDTO> list = new ArrayList<>();
-        var bdFuncResponse = albumsItemsRepository.getAlbumsItemsEntitiesByAlbumId(albumId);
+        var bdFuncResponse = albumsItemsRepository.getAlbumsItemsEntitiesByAlbum_AlbumId(albumId);
         if (!bdFuncResponse.isEmpty()) {
             bdFuncResponse.forEach(x -> list.add(new AlbumsItemsDTO(
                     x.getAlbumItemId(),
@@ -45,7 +45,8 @@ public class AlbumsItemsDAO {
                     x.getAlbumItemCost(),
                     x.getAlbumItemRate(),
                     x.getStatuses().getStatusId(),
-                    x.getStatuses().getStatusName()
+                    x.getStatuses().getStatusName(),
+                    null
             )));
         }
         System.out.println(list);

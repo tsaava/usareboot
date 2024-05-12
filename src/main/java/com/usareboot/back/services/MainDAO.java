@@ -127,6 +127,7 @@ public class MainDAO {
 
     public ArrayList<DStatusesEntity>getStatusesItem(int type){
 //        System.out.println(dStatusRepository.getDStatusesEntityByActiveAndStatusType(1,type));
+//        return dStatusRepository.getDStatusesEntityByActiveAndStatusTypeOrderByStatusName(1,type);
         return dStatusRepository.getDStatusesEntityByActiveAndStatusTypeOrderByStatusName(1,type);
     }
 

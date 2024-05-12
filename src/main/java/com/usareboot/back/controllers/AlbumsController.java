@@ -2,21 +2,17 @@ package com.usareboot.back.controllers;
 
 import com.google.gson.Gson;
 import com.usareboot.back.dto.AlbumRowRequestDTO;
-import com.usareboot.back.dto.AlbumsDTO;
 import com.usareboot.back.entities.AlbumsEntity;
 import com.usareboot.back.services.AlbumsDAO;
-import com.usareboot.back.services.auth.VkDAO;
+import com.usareboot.back.services.VkDAO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.Date;
 
 @RestController
 @CrossOrigin(origins = "*")/*!!!!обязательно во все контроллеры вставлять!!*/
@@ -67,9 +63,9 @@ public class AlbumsController {
                                         @RequestBody AlbumRowRequestDTO data) throws IOException, ParseException {
 //        System.out.printf("patchAlbum +%s %s %s %s",id,vkId,token,data);
         System.out.println(data);
-        //var vk=vkDAO.updAlbum(String.valueOf(data.getAlbumVkId()),token, data);
-        //System.out.println(vk);
-//        System.out.println("в вк альбом обновился, id = " + data.getAlbumVkId());
+        var vk=vkDAO.updAlbum(String.valueOf(data.getAlbumVkId()),token, data);
+        System.out.println(vk);
+        System.out.println("в вк альбом обновился, id = " + data.getAlbumVkId());
 //        albumsDAO.convertToEntity(data);
 //        AlbumsEntity albumsEntity = albumsDAO.convertToEntity(data);
 //        System.out.println(albumsEntity);

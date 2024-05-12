@@ -8,6 +8,6 @@ import java.util.ArrayList;
 import java.util.Date;
 
 public interface AlbumsItemsRepository extends JpaRepository<AlbumsItemsEntity, Long> {
-    ArrayList<AlbumsItemsEntity> getAlbumsItemsEntitiesByAlbumId(long albumId);
+    ArrayList<AlbumsItemsEntity> getAlbumsItemsEntitiesByAlbum_AlbumId(long albumId);
 
 }

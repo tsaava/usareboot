@@ -1,10 +1,8 @@
-package com.usareboot.back.services.auth;
+package com.usareboot.back.services;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.usareboot.back.dto.AlbumRowRequestDTO;
-import com.usareboot.back.dto.AlbumsDTO;
-import com.usareboot.back.dto.VkResponse;
+import com.usareboot.back.dto.*;
 import com.usareboot.back.entities.AlbumsEntity;
 import com.vk.api.sdk.client.TransportClient;
 import com.vk.api.sdk.client.VkApiClient;
@@ -13,7 +11,6 @@ import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpPatch;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
@@ -21,6 +18,7 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -178,7 +176,7 @@ public class VkDAO {
     }
 
     public String updAlbum(String vkId, String token, AlbumRowRequestDTO albumsEntity) throws IOException {
-//        GROUPID=environment.getRequiredProperty("vk.groupId");
+        GROUPID=environment.getRequiredProperty("vk.groupId");
         version = environment.getRequiredProperty("vk.version");
         final CloseableHttpClient httpclient = HttpClients.createDefault();
         final HttpPost httpPost = new HttpPost("https://api.vk.com/method/photos.editAlbum");
@@ -186,6 +184,7 @@ public class VkDAO {
         params.add(new BasicNameValuePair("access_token", token));
         params.add(new BasicNameValuePair("v", version));
         params.add(new BasicNameValuePair("album_id", vkId));
+        params.add(new BasicNameValuePair("owner_id", "-"+GROUPID));
 //        params.add(new BasicNameValuePair("title", albumsDTO.getAlbumName()));
         System.out.println(albumsEntity.getAlbumDesc());
         params.add(new BasicNameValuePair("description", albumsEntity.getAlbumDesc()));
@@ -227,24 +226,63 @@ public class VkDAO {
 //        }
     }
 
-    public String uploadPhotoInAlbumVk(String token, AlbumsEntity albumsEntity) throws IOException {
+    public String getUrlPhotoInAlbumVk(long albumId, String token) throws IOException {
         final CloseableHttpClient httpclient = HttpClients.createDefault();
-
+        GROUPID=environment.getRequiredProperty("vk.groupId");
+        version = environment.getRequiredProperty("vk.version");
         final HttpPost httpPost = new HttpPost("https://api.vk.com/method/photos.getUploadServer");
         final List<NameValuePair> params = new ArrayList<>();
         params.add(new BasicNameValuePair("access_token", token));
         params.add(new BasicNameValuePair("v", version));
-        params.add(new BasicNameValuePair("album_id", String.valueOf(albumsEntity.getAlbumVkId())));
+        params.add(new BasicNameValuePair("album_id", String.valueOf(albumId)));
         params.add(new BasicNameValuePair("group_id", GROUPID));
         httpPost.setEntity(new UrlEncodedFormEntity(params));
         System.out.println(httpPost);
         try (
                 CloseableHttpResponse response2 = httpclient.execute(httpPost)
         ) {
+//            final HttpEntity entity2 = response2.getEntity();
+//            return EntityUtils.toString(entity2);
             final HttpEntity entity2 = response2.getEntity();
-            return EntityUtils.toString(entity2);
+            String tempString = EntityUtils.toString(entity2);
+            ObjectMapper mapper = new ObjectMapper();
+            System.out.println(tempString );
+            VkResponse userDtoList = mapper.readValue(tempString, VkResponse.class);
+            return userDtoList.getResponse().getUpload_url();
         }
     }
+    public VkPhotoSaveDTO savePhotoInVk(String photos_list,
+                                                String album_id,
+                                                String server,
+                                                String hash,
+                                                String access_token) throws IOException {
+        final CloseableHttpClient httpclient = HttpClients.createDefault();
+        GROUPID=environment.getRequiredProperty("vk.groupId");
+        version = environment.getRequiredProperty("vk.version");
+        final HttpPost httpPost = new HttpPost("https://api.vk.com/method/photos.save");
+        final List<NameValuePair> params = new ArrayList<>();
+        params.add(new BasicNameValuePair("access_token", access_token));
+        params.add(new BasicNameValuePair("v", version));
+        params.add(new BasicNameValuePair("album_id", String.valueOf(album_id)));
+        params.add(new BasicNameValuePair("group_id", GROUPID));
+        params.add(new BasicNameValuePair("photos_list", photos_list));
+        params.add(new BasicNameValuePair("server", server));
+        params.add(new BasicNameValuePair("hash", hash));
+
+        httpPost.setEntity(new UrlEncodedFormEntity(params));
+        System.out.println(httpPost);
+        try (
+                CloseableHttpResponse response2 = httpclient.execute(httpPost)
+        ) {
+            final HttpEntity entity2 = response2.getEntity();
+            String tempString = EntityUtils.toString(entity2);
+            ObjectMapper mapper = new ObjectMapper();
+            System.out.println(tempString );
+            VkPhotoSaveDTO albumVkDto = mapper.readValue(tempString, VkPhotoSaveDTO.class);
+            return albumVkDto;
+        }
+    }
+
 
 }
 

@@ -21,6 +21,15 @@ spring:
             idleTimeout: 120000
             connectionTimeout: 300000
             maxLifetime: 6000000
+#    cloud:
+#        openfeign:
+#            client:
+#                config:
+#                    default:
+#                        read-timeout: 300000
+#                        connect-timeout: 30000
+#                        loggerLevel: full
+
 server:
     port: 9000
 
@@ -46,6 +55,8 @@ vk:
     groupId: '224336762'
     version: '5.139'
     redirectUrl: 'https://localhost:80/vkAuth'
+    pathPhoto: ''
+
 ---
 
 spring:
@@ -62,6 +73,14 @@ spring:
         username: postgres
         password: Katerina2022
         driver-class-name: org.postgresql.Driver
+#    cloud:
+#        openfeign:
+#            client:
+#                config:
+#                    default:
+#                        read-timeout: 300000
+#                        connect-timeout: 30000
+#                        logger-level: full
 server:
     port: 9000
 
@@ -87,3 +106,4 @@ vk:
     groupId: '224336762'
     version: '5.139'
     redirectUrl: 'https://usareboot.ru/vkAuth'
+    pathPhoto: '\\usr\\'

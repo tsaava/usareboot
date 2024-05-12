@@ -3,8 +3,11 @@ package com.usareboot.back.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigInteger;
+import java.sql.Blob;
 
 @Data
 @AllArgsConstructor
@@ -27,4 +30,6 @@ public class AlbumsItemsDTO {
     private Double albumItemRate;
     private long albumItemStatus;
     private String albumItemStatusName;
+    private ByteArrayResource[] photoBlob;
+
 }

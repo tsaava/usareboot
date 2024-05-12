@@ -1,6 +1,6 @@
 package com.usareboot.back.controllers;
 import com.google.gson.Gson;
-import com.usareboot.back.services.auth.VkDAO;
+import com.usareboot.back.services.VkDAO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
