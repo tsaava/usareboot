@@ -1,4 +1,4 @@
-package com.usareboot.back.dto.interfaces;
+package com.usareboot.back.models.interfaces;
 
 
 public interface MenuResponse {

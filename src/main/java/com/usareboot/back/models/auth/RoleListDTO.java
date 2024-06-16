@@ -1,4 +1,4 @@
-package com.usareboot.back.dto.auth;
+package com.usareboot.back.models.auth;
 
 import com.usareboot.back.entities.auth.DRolesEntity;
 import lombok.AllArgsConstructor;

@@ -21,14 +21,14 @@ spring:
             idleTimeout: 120000
             connectionTimeout: 300000
             maxLifetime: 6000000
-#    cloud:
-#        openfeign:
-#            client:
-#                config:
-#                    default:
-#                        read-timeout: 300000
-#                        connect-timeout: 30000
-#                        loggerLevel: full
+    cloud:
+        openfeign:
+            client:
+                config:
+                    default:
+                        read-timeout: 300000
+                        connect-timeout: 30000
+                        loggerLevel: full
 
 server:
     port: 9000
@@ -103,7 +103,10 @@ jwt:
     issuer:
         app
 vk:
-    groupId: '224336762'
-    version: '5.139'
-    redirectUrl: 'https://usareboot.ru/vkAuth'
-    pathPhoto: '\\usr\\'
+    api:
+        groupId: '224336762'
+        version: '5.139'
+        redirectUri: 'https://usareboot.ru/vkAuth'
+        pathPhoto: '/usr/vk_img/'
+        clientId: '51727454'
+        secret: 'Lp8in0hLVi4I7SR7VMKz'

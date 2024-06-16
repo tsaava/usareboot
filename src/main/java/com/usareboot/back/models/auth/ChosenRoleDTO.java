@@ -1,10 +1,8 @@
-package com.usareboot.back.dto.auth;
+package com.usareboot.back.models.auth;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.Set;
 
 @Data
 @AllArgsConstructor

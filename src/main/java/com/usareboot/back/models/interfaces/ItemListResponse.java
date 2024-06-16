@@ -1,6 +1,4 @@
-package com.usareboot.back.dto.interfaces;
-
-import java.util.Date;
+package com.usareboot.back.models.interfaces;
 
 public interface ItemListResponse {
     long getitem_id();

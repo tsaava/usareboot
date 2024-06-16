@@ -1,6 +1,4 @@
-package com.usareboot.back.dto.interfaces;
-
-import java.math.BigInteger;
+package com.usareboot.back.models.interfaces;
 
 public interface ImportListResponse {
 //    long getimport_item_list_id();

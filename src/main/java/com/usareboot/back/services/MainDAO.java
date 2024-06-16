@@ -1,8 +1,8 @@
 package com.usareboot.back.services;
 
-import com.usareboot.back.dto.ImportDTO;
-import com.usareboot.back.dto.ItemListDTO;
-import com.usareboot.back.dto.ItemsRequestDTO;
+import com.usareboot.back.models.ImportDTO;
+import com.usareboot.back.models.ItemListDTO;
+import com.usareboot.back.models.ItemsRequestDTO;
 import com.usareboot.back.entities.DStatusesEntity;
 import com.usareboot.back.entities.ItemsEntity;
 import com.usareboot.back.repositories.*;

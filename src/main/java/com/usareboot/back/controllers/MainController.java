@@ -1,7 +1,7 @@
 package com.usareboot.back.controllers;
 
 import com.google.gson.Gson;
-import com.usareboot.back.dto.ItemsRequestDTO;
+import com.usareboot.back.models.ItemsRequestDTO;
 import com.usareboot.back.services.MainDAO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,7 +1,7 @@
 package com.usareboot.back.client;
 
 import com.usareboot.back.client.config.VkClientConfig;
-import com.usareboot.back.dto.VkPhotoSaveDTO;
+import com.usareboot.back.models.VkPhotoSaveDTO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;

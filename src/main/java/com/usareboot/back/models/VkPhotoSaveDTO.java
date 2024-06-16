@@ -1,16 +1,22 @@
-package com.usareboot.back.dto;
+package com.usareboot.back.models;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class VkPhotoSaveDTO {
-    String albumId;
+    String album_id;
     String date;
     String id;
-    String sizes;
+    List<VkPhotoSizeResponse> sizes;
+    String owner_id;
+    String text;
+    String user_id;
+    String web_view_token;
     String has_tags;
 }

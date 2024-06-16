@@ -31,6 +31,9 @@ public class AlbumsItemsEntity {
     @Column(name = "description")
     private String description;
     @Basic
+    @Column(name = "item_url")
+    private String itemUrl;
+    @Basic
     @Column(name = "description_short")
     private String descriptionShort;
     @Basic
@@ -54,8 +57,9 @@ public class AlbumsItemsEntity {
     @OneToOne
     @JoinColumn(name = "status_id")
     private DStatusesEntity statuses;
-
-
+    @Basic
+    @Column(name = "vk_photo_path")
+    private String vkPhotoPath;
     public void setAlbumItemId(long albumItemId) {
         this.albumItemId = albumItemId;
     }
@@ -78,6 +82,10 @@ public class AlbumsItemsEntity {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public void setItemUrl(String itemUrl) {
+        this.itemUrl = itemUrl;
     }
 
     public void setDescriptionShort(String descriptionShort) {
@@ -112,16 +120,20 @@ public class AlbumsItemsEntity {
         this.statuses = statuses;
     }
 
+    public void setVkPhotoPath(String vkPhotoPath) {
+        this.vkPhotoPath = vkPhotoPath;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         AlbumsItemsEntity that = (AlbumsItemsEntity) o;
-        return albumItemId == that.albumItemId && Objects.equals(album, that.album) && Objects.equals(vkItemId, that.vkItemId) && Objects.equals(tgItemId, that.tgItemId) && Objects.equals(photoPath, that.photoPath) && Objects.equals(description, that.description) && Objects.equals(descriptionShort, that.descriptionShort) && Objects.equals(albumItemWeight, that.albumItemWeight) && Objects.equals(albumItemName, that.albumItemName) && Objects.equals(albumItemCount, that.albumItemCount) && Objects.equals(dateCreate, that.dateCreate) && Objects.equals(albumItemCost, that.albumItemCost) && Objects.equals(albumItemRate, that.albumItemRate) && Objects.equals(statuses, that.statuses);
+        return albumItemId == that.albumItemId && Objects.equals(album, that.album) && Objects.equals(vkItemId, that.vkItemId) && Objects.equals(tgItemId, that.tgItemId) && Objects.equals(photoPath, that.photoPath) && Objects.equals(description, that.description) && Objects.equals(itemUrl, that.itemUrl) && Objects.equals(descriptionShort, that.descriptionShort) && Objects.equals(albumItemWeight, that.albumItemWeight) && Objects.equals(albumItemName, that.albumItemName) && Objects.equals(albumItemCount, that.albumItemCount) && Objects.equals(dateCreate, that.dateCreate) && Objects.equals(albumItemCost, that.albumItemCost) && Objects.equals(albumItemRate, that.albumItemRate) && Objects.equals(statuses, that.statuses);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(albumItemId, album, vkItemId, tgItemId, photoPath, description, descriptionShort, albumItemWeight, albumItemName, albumItemCount, dateCreate, albumItemCost, albumItemRate, statuses);
+        return Objects.hash(albumItemId, album, vkItemId, tgItemId, photoPath, description, itemUrl, descriptionShort, albumItemWeight, albumItemName, albumItemCount, dateCreate, albumItemCost, albumItemRate, statuses);
     }
 }

@@ -1,9 +1,8 @@
 package com.usareboot.back.services;
 
-import com.usareboot.back.dto.AlbumRowRequestDTO;
-import com.usareboot.back.dto.AlbumsDTO;
-import com.usareboot.back.dto.AlbumsItemsDTO;
-import com.usareboot.back.dto.CardsDTO;
+import com.usareboot.back.models.AlbumRowRequestDTO;
+import com.usareboot.back.models.AlbumsDTO;
+import com.usareboot.back.models.CardsDTO;
 import com.usareboot.back.entities.AlbumsEntity;
 import com.usareboot.back.entities.DStatusesEntity;
 import com.usareboot.back.repositories.AlbumsItemsRepository;
@@ -12,14 +11,12 @@ import com.usareboot.back.repositories.CardsRepository;
 import com.usareboot.back.repositories.DStatusRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import org.jetbrains.annotations.NotNull;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Date;
 import java.text.ParseException;
 import java.util.ArrayList;
 

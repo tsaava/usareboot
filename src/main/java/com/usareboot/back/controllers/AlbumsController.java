@@ -1,7 +1,7 @@
 package com.usareboot.back.controllers;
 
 import com.google.gson.Gson;
-import com.usareboot.back.dto.AlbumRowRequestDTO;
+import com.usareboot.back.models.AlbumRowRequestDTO;
 import com.usareboot.back.entities.AlbumsEntity;
 import com.usareboot.back.services.AlbumsDAO;
 import com.usareboot.back.services.VkDAO;

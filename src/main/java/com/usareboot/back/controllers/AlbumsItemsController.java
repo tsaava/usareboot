@@ -2,13 +2,13 @@ package com.usareboot.back.controllers;
 
 import com.google.gson.Gson;
 import com.usareboot.back.client.config.ConfigureFeignUrlController;
-import com.usareboot.back.dto.AlbumsItemsDTO;
+import com.usareboot.back.models.AlbumsItemsDTO;
 import com.usareboot.back.services.AlbumsItemsDAO;
 import com.usareboot.back.services.VkDAO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.core.io.ByteArrayResource;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -19,10 +19,10 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Map;
 import java.util.Objects;
+
 import static org.springframework.http.ResponseEntity.ok;
 
 @RestController
@@ -37,9 +37,13 @@ public class AlbumsItemsController {
     private VkDAO vkDAO;
     @Autowired
     private ConfigureFeignUrlController configureFeignUrlController;
+    @Autowired
+    private Environment environment;
+    private String GROUPID;//="224336762";
+    private String PATHPHOTO;
 
     @GetMapping("/list/{albumId}")
-    public ResponseEntity<?> albumItemsList(@PathVariable long albumId){
+    public ResponseEntity<?> albumItemsList(@PathVariable long albumId) {
         return new ResponseEntity<>(new Gson().toJson(albumsItemsDAO.getAlbumsItems(albumId)), HttpStatus.OK);
     }
 
@@ -47,8 +51,7 @@ public class AlbumsItemsController {
     public void itemCreate(
             @PathVariable long albumId,
             @RequestBody AlbumsItemsDTO albumsItemsDTO,
-            @RequestBody ByteArrayResource photo)
-    {
+            @RequestBody ByteArrayResource photo) {
         System.out.println(albumsItemsDTO);
 //        byte[] bytes = photo.getByteArray();
 //        scienceDAO.sciencePhotoUpd(id,format, bytes);
@@ -58,43 +61,67 @@ public class AlbumsItemsController {
     public ResponseEntity<Map<String, String>> itemPhotoUpload(
             @PathVariable String token,
             @RequestParam(name = "album") long albumId,
-            @RequestParam(name = "itemName") String itemName,
-            @RequestPart (name = "file") MultipartFile file) throws IOException {
+            @RequestPart(name = "file") MultipartFile file,
+            @RequestPart(name = "data") String data) throws IOException {
 
         var photoUploadVk = vkDAO.getUrlPhotoInAlbumVk(albumId, token);
         ////////////////////////////////////////////////////////////
         try {
-            File f = new ClassPathResource("").getFile();
-            final Path path = Paths.get(f.getAbsolutePath() + File.separator + "static" + File.separator + "image");
+//            File f = new ClassPathResource("").getFile();
+//            final Path path = Paths.get(f.getAbsolutePath() + File.separator + "static" + File.separator + "image");
+//            System.out.println(path);
+//            if (!Files.exists(path)) {
+//                Files.createDirectories(path);
+//            }
 
-            if (!Files.exists(path)) {
-                Files.createDirectories(path);
-            }
+            System.out.println("Upload photo in vk");
+            var vkPhotoList = configureFeignUrlController.uploadPhotoInVk(photoUploadVk, file);
 
-            Path filePath = path.resolve(Objects.requireNonNull(file.getOriginalFilename()));
+            System.out.println("Save photo in vk");
+            var photo = vkDAO.savePhotoInVk(
+                    vkPhotoList.getPhotos_list(),
+                    String.valueOf(albumId),
+                    String.valueOf(vkPhotoList.getServer()),
+                    vkPhotoList.getHash(),
+                    token);
+
+            System.out.println("Edit photo in vk");
+            Gson g = new Gson();
+            var albumsItemsDTO = g.fromJson(data, AlbumsItemsDTO.class);
+            var allDesc = albumsItemsDTO.getAlbumItemName() + "\n" +
+                    albumsItemsDTO.getDescription() + "\n" +
+                    "цена: " + albumsItemsDTO.getAlbumItemCost().toString() + ", курс: " +
+                    albumsItemsDTO.getAlbumItemRate().toString() + "\n" +
+                    albumsItemsDTO.getItemUrl();
+            albumsItemsDTO.setDescription(allDesc);
+            vkDAO.EditPhotoInVk(photo, token, allDesc);
+
+
+            albumsItemsDTO.setVkItemId(Long.parseLong(photo));
+            GROUPID = environment.getRequiredProperty("vk.groupId");
+            PATHPHOTO = environment.getRequiredProperty("vk.pathPhoto")+file.getOriginalFilename();
+            albumsItemsDTO.setVkPhotoPath("https://vk.com/photo-" + GROUPID + "_" + photo);
+
+//            Path filePath = path.resolve(Objects.requireNonNull(file.getOriginalFilename()));
+            Path filePath = Path.of(PATHPHOTO);
+
             Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+
+            System.out.println("Save photo in bd");
+            albumsItemsDTO.setPhotoPath(String.valueOf(filePath));
+            System.out.println("albumsItemsDTO: " + albumsItemsDTO);
+            albumsItemsDAO.saveAlbumItem(albumsItemsDTO);
 
             String fileUri = ServletUriComponentsBuilder.fromCurrentContextPath()
                     .path("/image/")
-                    .path(file.getOriginalFilename())
+                    .path(Objects.requireNonNull(file.getOriginalFilename()))
                     .toUriString();
 
             var result = Map.of(
                     "filename", file.getOriginalFilename(),
                     "fileUri", fileUri
             );
-            System.out.println("configureFeignUrlController.uploadPhotoInVk");
-            var vkPhotoList= configureFeignUrlController.uploadPhotoInVk(photoUploadVk,file);
-            System.out.println("vkPhotoList: "+vkPhotoList);
-            var str=//configureFeignUrlController.savePhotoInVk(
-                    vkDAO.savePhotoInVk(
-                    vkPhotoList.getPhotos_list(),
-                    String.valueOf(albumId),
-                    String.valueOf(vkPhotoList.getServer()),
-                    vkPhotoList.getHash(),
-                    token
-            );
-            System.out.println(str);
+
             return ok().body(result);
 
         } catch (IOException e) {

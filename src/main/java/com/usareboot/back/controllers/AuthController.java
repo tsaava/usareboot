@@ -1,7 +1,7 @@
 package com.usareboot.back.controllers;
 
 import com.google.gson.Gson;
-import com.usareboot.back.dto.auth.*;
+import com.usareboot.back.models.auth.*;
 import com.usareboot.back.security.JwtUtils;
 import com.usareboot.back.services.auth.UserDAO;
 import org.springframework.beans.factory.annotation.Autowired;

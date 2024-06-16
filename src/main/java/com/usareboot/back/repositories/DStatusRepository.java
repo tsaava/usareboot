@@ -9,5 +9,6 @@ public interface DStatusRepository extends JpaRepository<DStatusesEntity, Long> 
 
     ArrayList<DStatusesEntity> getDStatusesEntityByActiveAndStatusTypeOrderByStatusName(int active, int type);
     DStatusesEntity findDStatusesEntityByStatusName(String statusName);
+    DStatusesEntity findDStatusesEntityByStatusId(Long statusId);
 }
 

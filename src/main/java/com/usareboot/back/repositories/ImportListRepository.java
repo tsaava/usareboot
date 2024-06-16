@@ -1,7 +1,7 @@
 package com.usareboot.back.repositories;
 
-import com.usareboot.back.dto.interfaces.ImportListResponse;
-import com.usareboot.back.dto.interfaces.ItemListResponse;
+import com.usareboot.back.models.interfaces.ImportListResponse;
+import com.usareboot.back.models.interfaces.ItemListResponse;
 import com.usareboot.back.entities.ImportItemListEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
