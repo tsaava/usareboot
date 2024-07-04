@@ -8,9 +8,9 @@ spring:
             hibernate:
     datasource:
 #        url: jdbc:postgresql://ep-cold-king-62125412.us-east-1.aws.neon.tech/usa_reboot
-        url: jdbc:postgresql://217.107.219.182:5432/usareboot
+        url: jdbc:postgresql://77.222.43.175:5432/usareboot
 #        url: jdbc:postgresql://localhost:5432/usareboot
-        username: postgres
+        username: usareboot
         password: Katerina2022
         driver-class-name: org.postgresql.Driver
 #        hikari:
@@ -52,11 +52,18 @@ jwt:
     issuer:
         app
 vk:
-    groupId: '224336762'
-    version: '5.139'
-    redirectUrl: 'https://localhost:80/vkAuth'
-    pathPhoto: ''
-
+    api:
+        groupId: '224336762'
+        version: '5.139'
+        redirectUri: 'https://localhost:80/vkAuth'
+        pathPhoto: ''
+    token: 'YOUR_ACCESS_TOKEN'
+    client:
+        id: '51727454'
+        secret: 'Lp8in0hLVi4I7SR7VMKz'
+    config:
+        file:
+            path: 'src/main/resources/application.yaml'
 ---
 
 spring:
@@ -70,7 +77,7 @@ spring:
     datasource:
         #        url: jdbc:postgresql://ep-cold-king-62125412.us-east-1.aws.neon.tech/usa_reboot
         url: jdbc:postgresql://localhost:5432/usareboot
-        username: postgres
+        username: usareboot
         password: Katerina2022
         driver-class-name: org.postgresql.Driver
 #    cloud:
@@ -108,5 +115,10 @@ vk:
         version: '5.139'
         redirectUri: 'https://usareboot.ru/vkAuth'
         pathPhoto: '/usr/vk_img/'
-        clientId: '51727454'
+    token: 'YOUR_ACCESS_TOKEN'
+    client:
+        id: '51727454'
         secret: 'Lp8in0hLVi4I7SR7VMKz'
+    config:
+        file:
+            path: 'src/main/resources/application.yaml'

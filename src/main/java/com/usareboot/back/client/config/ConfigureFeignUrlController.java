@@ -9,6 +9,7 @@ import feign.Target;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
 import org.springframework.cloud.openfeign.FeignClientsConfiguration;
 import org.springframework.cloud.openfeign.support.HttpMessageConverterCustomizer;
@@ -26,14 +27,13 @@ import java.io.IOException;
 @RestController
 @Import(FeignClientsConfiguration.class)
 public class ConfigureFeignUrlController {
-    private String GROUPID;//="224336762";
-    private String version;//="5.139";
+    @Value("${vk.api.version}")
+    private String apiVersion;
+
+    @Value("${vk.api.groupId}")
+    private String groupId;
     private final ObjectFactory<HttpMessageConverters> messageConverters;
     private final ObjectProvider<HttpMessageConverterCustomizer> customizers;
-
-    @Autowired
-    private Environment environment;
-
 
     public ConfigureFeignUrlController(ObjectFactory<HttpMessageConverters> messageConverters, ObjectProvider<HttpMessageConverterCustomizer> customizers) {
         this.messageConverters = messageConverters;
@@ -68,9 +68,8 @@ public class ConfigureFeignUrlController {
                                         String hash,
                                         String access_token
     ) {
-        GROUPID = environment.getRequiredProperty("vk.groupId");
-        version = environment.getRequiredProperty("vk.version");
+
         VkClient client = getVkClient("https://api.vk.com/method/photos.save");
-        return client.savePhotoInVk(photo, album_id, server, hash, access_token, version, GROUPID);
+        return client.savePhotoInVk(photo, album_id, server, hash, access_token, apiVersion, groupId);
     }
 }

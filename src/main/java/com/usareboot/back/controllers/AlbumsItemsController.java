@@ -7,6 +7,7 @@ import com.usareboot.back.services.AlbumsItemsDAO;
 import com.usareboot.back.services.VkDAO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpStatus;
@@ -39,9 +40,11 @@ public class AlbumsItemsController {
     private ConfigureFeignUrlController configureFeignUrlController;
     @Autowired
     private Environment environment;
-    private String GROUPID;//="224336762";
-    private String PATHPHOTO;
+    @Value("${vk.api.pathPhoto}")
+    private String pathPhoto;
 
+    @Value("${vk.api.groupId}")
+    private String groupId;
     @GetMapping("/list/{albumId}")
     public ResponseEntity<?> albumItemsList(@PathVariable long albumId) {
         return new ResponseEntity<>(new Gson().toJson(albumsItemsDAO.getAlbumsItems(albumId)), HttpStatus.OK);
@@ -94,16 +97,14 @@ public class AlbumsItemsController {
                     albumsItemsDTO.getAlbumItemRate().toString() + "\n" +
                     albumsItemsDTO.getItemUrl();
             albumsItemsDTO.setDescription(allDesc);
-            vkDAO.EditPhotoInVk(photo, token, allDesc);
+            vkDAO.EditPhotoInVk(photo, allDesc);
 
 
             albumsItemsDTO.setVkItemId(Long.parseLong(photo));
-            GROUPID = environment.getRequiredProperty("vk.groupId");
-            PATHPHOTO = environment.getRequiredProperty("vk.pathPhoto")+file.getOriginalFilename();
-            albumsItemsDTO.setVkPhotoPath("https://vk.com/photo-" + GROUPID + "_" + photo);
 
-//            Path filePath = path.resolve(Objects.requireNonNull(file.getOriginalFilename()));
-            Path filePath = Path.of(PATHPHOTO);
+            albumsItemsDTO.setVkPhotoPath("https://vk.com/photo-" + groupId + "_" + photo);
+
+            Path filePath = Path.of(pathPhoto);
 
             Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 

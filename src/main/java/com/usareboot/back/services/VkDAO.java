@@ -39,8 +39,6 @@ public class VkDAO {
     public VkDAO(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
     }
-    @Autowired
-    private Environment environment;
 
     @Value("${vk.api.version}")
     private String apiVersion;
@@ -57,13 +55,10 @@ public class VkDAO {
     @Value("${vk.client.secret}")
     private String clientSecret;
 
-    /**
-     * Получение silent_token
-     * @param silent_token
-     * @param uuid
-     * @return
-     * @throws IOException
-     */
+    @Value("${vk.api.token}")
+    private String accessToken;
+
+
     public String vkAuth(String silent_token, String uuid) throws IOException {
         TransportClient transportClient = new HttpTransportClient();
         VkApiClient vk = new VkApiClient(transportClient);
@@ -89,58 +84,32 @@ public class VkDAO {
 
 
     public String vkOAuth(String code) throws IOException {
-//        final CloseableHttpClient httpclient = HttpClients.createDefault();
-//        final HttpPost httpPost = new HttpPost("https://oauth.vk.com/access_token");
-//        final List<NameValuePair> params = new ArrayList<>();
-//        params.add(new BasicNameValuePair("client_id", "51727454"));
-//        params.add(new BasicNameValuePair("client_secret", "Lp8in0hLVi4I7SR7VMKz"));
-//        params.add(new BasicNameValuePair("redirect_uri", redirectUri));
-//        params.add(new BasicNameValuePair("code", code));
-//        httpPost.setEntity(new UrlEncodedFormEntity(params));
-//        System.out.println(httpPost);
-//        try (
-//                CloseableHttpResponse response2 = httpclient.execute(httpPost)
-//        ) {
-////            saveAccessTokenToProperties(accessToken);
-//            final HttpEntity entity2 = response2.getEntity();
-//            return EntityUtils.toString(entity2);
-//        }
-        String tokenUrl = UriComponentsBuilder.fromHttpUrl("https://oauth.vk.com/access_token")
-                .queryParam("client_id", clientId)
-                .queryParam("client_secret", clientSecret)
-                .queryParam("redirect_uri", redirectUri)
-                .queryParam("code", code)
-                .build().toUriString();
-
-        String response = restTemplate.getForObject(tokenUrl, String.class);
-        JsonObject json = JsonParser.parseString(response).getAsJsonObject();
-        String accessToken = json.get("access_token").getAsString();
-        saveAccessTokenToProperties(accessToken);
-        return "redirect:/";
-    }
-    private void saveAccessTokenToProperties(String accessToken) {
-        try (OutputStream output = new FileOutputStream("src/main/resources/application.properties", true)) {
-            Properties properties = new Properties();
-
-            // Загрузка текущих свойств
-            properties.load(new FileInputStream("src/main/resources/application.properties"));
-
-            // Установка нового access_token
-            properties.setProperty("vk.api.token", accessToken);
-
-            // Сохранение обновленных свойств
-            properties.store(output, null);
-        } catch (IOException io) {
-            io.printStackTrace();
+        final CloseableHttpClient httpclient = HttpClients.createDefault();
+        final HttpPost httpPost = new HttpPost("https://oauth.vk.com/access_token");
+        final List<NameValuePair> params = new ArrayList<>();
+        params.add(new BasicNameValuePair("client_id", "51727454"));
+        params.add(new BasicNameValuePair("client_secret", "Lp8in0hLVi4I7SR7VMKz"));
+        params.add(new BasicNameValuePair("redirect_uri", redirectUri));
+        params.add(new BasicNameValuePair("code", code));
+        httpPost.setEntity(new UrlEncodedFormEntity(params));
+        System.out.println(httpPost);
+        try (
+                CloseableHttpResponse response2 = httpclient.execute(httpPost)
+        ) {
+//            saveAccessTokenToProperties(accessToken);
+            final HttpEntity entity2 = response2.getEntity();
+            return EntityUtils.toString(entity2);
         }
+
     }
+
 
 
     public Integer createAlbum(String token, AlbumsEntity albumsEntity) throws IOException {
         final CloseableHttpClient httpclient = HttpClients.createDefault();
         final HttpPost httpPost = new HttpPost("https://api.vk.com/method/photos.createAlbum");
         final List<NameValuePair> params = new ArrayList<>();
-        params.add(new BasicNameValuePair("access_token", token));
+        params.add(new BasicNameValuePair("access_token", accessToken));
         params.add(new BasicNameValuePair("v", apiVersion));
         params.add(new BasicNameValuePair("title", albumsEntity.getAlbumName()));
         params.add(new BasicNameValuePair("group_id", groupId));
@@ -179,7 +148,7 @@ public class VkDAO {
         final CloseableHttpClient httpclient = HttpClients.createDefault();
         final HttpPost httpPost = new HttpPost("https://api.vk.com/method/photos.editAlbum");
         final List<NameValuePair> params = new ArrayList<>();
-        params.add(new BasicNameValuePair("access_token", token));
+        params.add(new BasicNameValuePair("access_token", accessToken));
         params.add(new BasicNameValuePair("v", apiVersion));
         params.add(new BasicNameValuePair("album_id", vkId));
         params.add(new BasicNameValuePair("owner_id", "-"+ groupId));
@@ -201,7 +170,7 @@ public class VkDAO {
         final CloseableHttpClient httpclient = HttpClients.createDefault();
         final HttpPost httpPost = new HttpPost("https://api.vk.com/method/photos.getUploadServer");
         final List<NameValuePair> params = new ArrayList<>();
-        params.add(new BasicNameValuePair("access_token", token));
+        params.add(new BasicNameValuePair("access_token", accessToken));
         params.add(new BasicNameValuePair("v", apiVersion));
         params.add(new BasicNameValuePair("album_id", String.valueOf(albumId)));
         params.add(new BasicNameValuePair("group_id", groupId));
@@ -229,7 +198,7 @@ public class VkDAO {
         final CloseableHttpClient httpclient = HttpClients.createDefault();
         final HttpPost httpPost = new HttpPost("https://api.vk.com/method/photos.save");
         final List<NameValuePair> params = new ArrayList<>();
-        params.add(new BasicNameValuePair("access_token", access_token));
+        params.add(new BasicNameValuePair("access_token", accessToken));
         params.add(new BasicNameValuePair("v", apiVersion));
         params.add(new BasicNameValuePair("album_id", String.valueOf(album_id)));
         params.add(new BasicNameValuePair("group_id", groupId));
@@ -252,15 +221,14 @@ public class VkDAO {
         }
     }
     public String EditPhotoInVk(String photo_id,
-                                        String access_token,
+//                                        String access_token,
                                         String caption) throws IOException {
         final CloseableHttpClient httpclient = HttpClients.createDefault();
         final HttpPost httpPost = new HttpPost("https://api.vk.com/method/photos.edit");
         final List<NameValuePair> params = new ArrayList<>();
-        params.add(new BasicNameValuePair("access_token", access_token));
+        params.add(new BasicNameValuePair("access_token", accessToken));
         params.add(new BasicNameValuePair("v", apiVersion));
         params.add(new BasicNameValuePair("photo_id", String.valueOf(photo_id)));
-//        params.add(new BasicNameValuePair("group_id", GROUPID));
         params.add(new BasicNameValuePair("owner_id", "-"+ groupId));
         params.add(new BasicNameValuePair("caption", caption));
         params.add(new BasicNameValuePair("http.protocol.content-charset", "UTF-8"));
@@ -274,41 +242,40 @@ public class VkDAO {
         }
     }
 
-    public String getCallbackConfirmationCode(String accessToken) {
+    public String getCallbackConfirmationCode() {
         String url = UriComponentsBuilder.fromHttpUrl("https://api.vk.com/method/groups.getCallbackConfirmationCode")
                 .queryParam("group_id", groupId)
                 .queryParam("access_token", accessToken)
                 .queryParam("v", apiVersion)
                 .build().toUriString();
-
         String response = restTemplate.getForObject(url, String.class);
         JsonObject json = JsonParser.parseString(response).getAsJsonObject();
         return json.getAsJsonObject("response").get("code").getAsString();
     }
 
-    public String getComments(String postId) {
-        String url = UriComponentsBuilder.fromHttpUrl("https://api.vk.com/method/photos.getComments")
-                .queryParam("access_token", accessToken)
-                .queryParam("v", apiVersion)
-                .queryParam("photo_id", postId)
-                .queryParam("extended", 1)
-                .build().toUriString();
-
-        return restTemplate.getForObject(url, String.class);
-    }
-
-    public String getUserName(int userId) {
-        String url = UriComponentsBuilder.fromHttpUrl("https://api.vk.com/method/users.get")
-                .queryParam("user_ids", userId)
-                .queryParam("access_token", accessToken)
-                .queryParam("v", apiVersion)
-                .build().toUriString();
-
-        String response = restTemplate.getForObject(url, String.class);
-        JsonObject json = JsonParser.parseString(response).getAsJsonObject();
-        JsonObject user = json.getAsJsonArray("response").get(0).getAsJsonObject();
-        return user.get("first_name").getAsString() + " " + user.get("last_name").getAsString();
-    }
+//    public String getComments(String postId) {
+//        String url = UriComponentsBuilder.fromHttpUrl("https://api.vk.com/method/photos.getComments")
+//                .queryParam("access_token", accessToken)
+//                .queryParam("v", apiVersion)
+//                .queryParam("photo_id", postId)
+//                .queryParam("extended", 1)
+//                .build().toUriString();
+//
+//        return restTemplate.getForObject(url, String.class);
+//    }
+//
+//    public String getUserName(int userId) {
+//        String url = UriComponentsBuilder.fromHttpUrl("https://api.vk.com/method/users.get")
+//                .queryParam("user_ids", userId)
+//                .queryParam("access_token", accessToken)
+//                .queryParam("v", apiVersion)
+//                .build().toUriString();
+//
+//        String response = restTemplate.getForObject(url, String.class);
+//        JsonObject json = JsonParser.parseString(response).getAsJsonObject();
+//        JsonObject user = json.getAsJsonArray("response").get(0).getAsJsonObject();
+//        return user.get("first_name").getAsString() + " " + user.get("last_name").getAsString();
+//    }
 
 }
 

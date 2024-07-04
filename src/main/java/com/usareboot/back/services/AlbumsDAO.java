@@ -24,8 +24,9 @@ import java.util.ArrayList;
 public class AlbumsDAO {
     @Autowired
     private Environment environment;
+    @Autowired
     private  AlbumsRepository albumsRepository;
-
+    @Autowired
     private CardsRepository cardsRepository;
 
     @Autowired

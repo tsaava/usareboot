@@ -28,7 +28,6 @@ public class AlbumsController {
     public AlbumsController(AlbumsDAO albumsDAO, VkDAO vkDAO/*, Environment environment*/) {
         this.albumsDAO = albumsDAO;
         this.vkDAO =vkDAO;
-        //this.environment =environment;
     }
 
     @GetMapping("/list")
@@ -45,9 +44,6 @@ public class AlbumsController {
     @PostMapping("/add/{token}")
     public ResponseEntity<?> addAlbum(@PathVariable String token,
                                       @RequestBody AlbumsEntity data) throws IOException {
-//        System.out.print("addAlbum data");
-//        System.out.println(data.gets);
-
         Integer album = vkDAO.createAlbum(token, data);
         System.out.println("в вк альбом создался, id = "+album);
         albumsDAO.albumsAdd(data,album);
@@ -56,19 +52,13 @@ public class AlbumsController {
     }
 
     @PatchMapping("/update/{token}")
-    public ResponseEntity<?> patchAlbum(/*@RequestParam(name = "id") Integer id,
-                                        @RequestParam(name = "vkId") String vkId,
-                                        @RequestParam(name = "token") String token*/
+    public ResponseEntity<?> patchAlbum(
                                         @PathVariable String token,
-                                        @RequestBody AlbumRowRequestDTO data) throws IOException, ParseException {
-//        System.out.printf("patchAlbum +%s %s %s %s",id,vkId,token,data);
+                                        @RequestBody AlbumRowRequestDTO data) throws IOException{
         System.out.println(data);
         var vk=vkDAO.updAlbum(String.valueOf(data.getAlbumVkId()),token, data);
         System.out.println(vk);
         System.out.println("в вк альбом обновился, id = " + data.getAlbumVkId());
-//        albumsDAO.convertToEntity(data);
-//        AlbumsEntity albumsEntity = albumsDAO.convertToEntity(data);
-//        System.out.println(albumsEntity);
         albumsDAO.albumsUpd(data, data.getAlbumId());
         System.out.println("в базе альбом обновился");
         return new ResponseEntity<>(HttpStatus.OK);
