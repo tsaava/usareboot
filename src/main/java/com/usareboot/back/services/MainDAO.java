@@ -1,13 +1,10 @@
 package com.usareboot.back.services;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.usareboot.back.entities.*;
+import com.usareboot.back.entities.DStatusesEntity;
+import com.usareboot.back.entities.ItemsEntity;
 import com.usareboot.back.models.ImportDTO;
 import com.usareboot.back.models.ItemListDTO;
 import com.usareboot.back.models.ItemsRequestDTO;
-import com.usareboot.back.models.ParsedComment;
-import com.usareboot.back.parser.CommentParser;
 import com.usareboot.back.repositories.*;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -17,14 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Objects;
-import java.util.Optional;
-
-import static com.usareboot.back.models.constant.Constant.ALBUM_STATUS_OPEN;
 
 @Service
 @Slf4j

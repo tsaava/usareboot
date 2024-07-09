@@ -1,7 +1,6 @@
 package com.usareboot.back.repositories;
 
 import com.usareboot.back.entities.OrdersEntity;
-import com.usareboot.back.entities.auth.TestEntity;
 import org.springframework.data.repository.CrudRepository;
 
 public interface OrdersRepository extends CrudRepository<OrdersEntity, Long> {

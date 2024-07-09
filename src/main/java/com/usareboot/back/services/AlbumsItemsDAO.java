@@ -1,9 +1,7 @@
 package com.usareboot.back.services;
 
-import com.google.gson.Gson;
-import com.usareboot.back.client.config.ConfigureFeignUrlController;
-import com.usareboot.back.models.AlbumsItemsDTO;
 import com.usareboot.back.entities.AlbumsItemsEntity;
+import com.usareboot.back.models.AlbumsItemsDTO;
 import com.usareboot.back.repositories.AlbumsItemsRepository;
 import com.usareboot.back.repositories.AlbumsRepository;
 import com.usareboot.back.repositories.DStatusRepository;
@@ -11,7 +9,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;

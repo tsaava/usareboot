@@ -7,10 +7,7 @@ import com.usareboot.back.services.AlbumsItemsDAO;
 import com.usareboot.back.services.VkDAO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.FileUtils;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpStatus;
@@ -18,17 +15,9 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
+import java.io.IOException;
 import java.util.Map;
-import java.util.Objects;
-
-import static org.springframework.http.ResponseEntity.ok;
 
 @RestController
 @CrossOrigin(origins = "*")/*!!!!обязательно во все контроллеры вставлять!!*/
@@ -68,7 +57,5 @@ public class AlbumsItemsController {
 
         var albumsItemsDTO = vkDAO.saveFileInVk(albumId, file, data);
         return albumsItemsDAO.saveFile( file, albumsItemsDTO);
-//        var photoUploadVk = vkDAO.getUrlPhotoInAlbumVk(albumId, token);
-//        return albumsItemsDAO.saveFile(token, albumId, file, data, photoUploadVk);
     }
 }
