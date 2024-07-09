@@ -3,7 +3,6 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.usareboot.back.client.config.PropertiesConfigService;
-import com.usareboot.back.client.config.YamlConfigService;
 import com.usareboot.back.services.VkDAO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +20,7 @@ import java.util.Properties;
 @CrossOrigin(origins = "*")/*!!!!обязательно во все контроллеры вставлять!!*/
 @RequestMapping("/api/usareboot/vk")
 @RequiredArgsConstructor
-public class VKController {
+public class VKMethodController {
     @Value("${vk.config.file.path}")
     private String configFilePath;
 
@@ -46,7 +45,7 @@ public class VKController {
 
     private final PropertiesConfigService yamlConfigService;
     @Autowired
-    public VKController(RestTemplate restTemplate, VkDAO vkService) {
+    public VKMethodController(RestTemplate restTemplate, VkDAO vkService) {
         this.restTemplate = restTemplate;
         this.yamlConfigService = new PropertiesConfigService(configFilePath);
         this.vkService = vkService;

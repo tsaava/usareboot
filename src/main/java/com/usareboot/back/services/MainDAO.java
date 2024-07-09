@@ -1,39 +1,58 @@
 package com.usareboot.back.services;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.usareboot.back.entities.*;
 import com.usareboot.back.models.ImportDTO;
 import com.usareboot.back.models.ItemListDTO;
 import com.usareboot.back.models.ItemsRequestDTO;
-import com.usareboot.back.entities.DStatusesEntity;
-import com.usareboot.back.entities.ItemsEntity;
+import com.usareboot.back.models.ParsedComment;
+import com.usareboot.back.parser.CommentParser;
 import com.usareboot.back.repositories.*;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.StoredProcedureQuery;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Objects;
+import java.util.Optional;
+
+import static com.usareboot.back.models.constant.Constant.ALBUM_STATUS_OPEN;
 
 @Service
+@Slf4j
 public class MainDAO {
     private ImportListRepository importListRepository;
     private ItemsRepository itemsRepository;
     private DStatusRepository dStatusRepository;
 
+    private AlbumsItemsRepository albumsItemsRepository;
+    private OrdersRepository ordersRepository;
 
     @Autowired
-    public MainDAO(ImportListRepository importListRepository, ItemsRepository itemsRepository, DStatusRepository dStatusRepository){
-        this.importListRepository=importListRepository;
-        this.itemsRepository=itemsRepository;
-        this.dStatusRepository=dStatusRepository;
+    public MainDAO(ImportListRepository importListRepository,
+                   ItemsRepository itemsRepository,
+                   DStatusRepository dStatusRepository,
+                   AlbumsItemsRepository albumsItemsRepository,
+                   OrdersRepository ordersRepository) {
+        this.importListRepository = importListRepository;
+        this.itemsRepository = itemsRepository;
+        this.dStatusRepository = dStatusRepository;
+        this.albumsItemsRepository = albumsItemsRepository;
+        this.ordersRepository = ordersRepository;
     }
 
     public ArrayList<ImportDTO> getListImport(String listAlbom) {
         ArrayList<ImportDTO> scienceDiplomsList = new ArrayList<>();
-        if(!Objects.equals(listAlbom, "[]"))
-            listAlbom=listAlbom.replace("[","").replace("]","");
+        if (!Objects.equals(listAlbom, "[]"))
+            listAlbom = listAlbom.replace("[", "").replace("]", "");
         var bdFuncResponse = importListRepository.importListProcedure(listAlbom);
         if (bdFuncResponse.size() > 0) {
             bdFuncResponse.forEach(x -> scienceDiplomsList.add(new ImportDTO(
@@ -62,7 +81,7 @@ public class MainDAO {
 //                    x.getcomment(),
                     x.getitem_cost(),
                     x.getdate_stop()
-                    )));
+            )));
 
         }
         return scienceDiplomsList;
@@ -72,15 +91,15 @@ public class MainDAO {
     EntityManager em;
 
     @Transactional
-    public void getImportList(String data , String albomName){
+    public void getImportList(String data, String albomName) {
 //        System.out.println(albomName.replace("\"",""));
-        var isHave=importListRepository.getImportItemListEntitiesByVikup(albomName);
-        System.out.println("isHave: "+isHave);
-        if(isHave.isEmpty()) {
+        var isHave = importListRepository.getImportItemListEntitiesByVikup(albomName);
+        System.out.println("isHave: " + isHave);
+        if (isHave.isEmpty()) {
             System.out.println("выполняется процедура импорта");
             StoredProcedureQuery spq = em.createNamedStoredProcedureQuery("vpImportDataInList");
             spq.setParameter("data", data);
-            System.out.println(data+' '+albomName);
+            System.out.println(data + ' ' + albomName);
             spq.setParameter("albom_name", albomName);
             spq.execute();
         }
@@ -109,7 +128,7 @@ public class MainDAO {
                     x.getdate_delivery(),
                     x.getsp_help_id(),
                     x.getrazdacha()
-                    )));
+            )));
         }
         return scienceDiplomsList;
     }
@@ -118,25 +137,24 @@ public class MainDAO {
         ItemsEntity ie = itemsRepository.getItemsEntitiesByItemId(itemId);
         ie.setItemWeight(itemsRequestDTO.getItemWeight());
         ie.setItemStatus(itemsRequestDTO.getStatusId());
-        if(itemsRequestDTO.getDateDelivery()!=null)
+        if (itemsRequestDTO.getDateDelivery() != null)
             ie.setDateDelivery(new java.sql.Date(itemsRequestDTO.getDateDelivery().getTime()));
         else ie.setDateDelivery(null);
         System.out.println(ie);
         itemsRepository.save(ie);
     }
 
-    public ArrayList<DStatusesEntity>getStatusesItem(int type){
+    public ArrayList<DStatusesEntity> getStatusesItem(int type) {
 //        System.out.println(dStatusRepository.getDStatusesEntityByActiveAndStatusType(1,type));
 //        return dStatusRepository.getDStatusesEntityByActiveAndStatusTypeOrderByStatusName(1,type);
-        return dStatusRepository.getDStatusesEntityByActiveAndStatusTypeOrderByStatusName(1,type);
+        return dStatusRepository.getDStatusesEntityByActiveAndStatusTypeOrderByStatusName(1, type);
     }
 
 
-
     @Transactional
-    public void setItemDate(){
+    public void setItemDate() {
 //        java.util.Date date = new java.util.Date();
-        long millis=System.currentTimeMillis();
+        long millis = System.currentTimeMillis();
         java.sql.Date date = new java.sql.Date(millis);
         System.out.println(date);
 //        System.out.println(date);
@@ -147,4 +165,6 @@ public class MainDAO {
         System.out.println("обновление прошло успешно");
 
     }
+
+
 }

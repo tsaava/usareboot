@@ -13,6 +13,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,7 +38,8 @@ public class AlbumsDAO {
 
     @Autowired
     ModelMapper modelMapper;
-
+    @Value("${vk.api.groupId}")
+    private String groupId;
     @PersistenceContext
     private EntityManager entityManager;
     @Autowired
@@ -95,7 +97,6 @@ public class AlbumsDAO {
     public void albumsAdd( AlbumsEntity albumsEntity, Integer id) {
         DStatusesEntity dst=new DStatusesEntity();
         dst.setStatusId(17);
-        String groupId=environment.getRequiredProperty("vk.groupId");
         albumsEntity.setAlbumVkUrl("https://vk.com/album-"+groupId+"_"+id);
         albumsEntity.setStatuses(dst);
         System.out.println("https://vk.com/album-"+groupId+"_"+id);

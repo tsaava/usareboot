@@ -6,6 +6,9 @@ import com.usareboot.back.models.AlbumsItemsDTO;
 import com.usareboot.back.services.AlbumsItemsDAO;
 import com.usareboot.back.services.VkDAO;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FileUtils;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
@@ -20,6 +23,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Map;
 import java.util.Objects;
@@ -30,7 +34,7 @@ import static org.springframework.http.ResponseEntity.ok;
 @CrossOrigin(origins = "*")/*!!!!обязательно во все контроллеры вставлять!!*/
 @RequestMapping("/api/usareboot/album/item")
 @RequiredArgsConstructor
-
+@Slf4j
 public class AlbumsItemsController {
     @Autowired
     private AlbumsItemsDAO albumsItemsDAO;
@@ -40,11 +44,8 @@ public class AlbumsItemsController {
     private ConfigureFeignUrlController configureFeignUrlController;
     @Autowired
     private Environment environment;
-    @Value("${vk.api.pathPhoto}")
-    private String pathPhoto;
 
-    @Value("${vk.api.groupId}")
-    private String groupId;
+
     @GetMapping("/list/{albumId}")
     public ResponseEntity<?> albumItemsList(@PathVariable long albumId) {
         return new ResponseEntity<>(new Gson().toJson(albumsItemsDAO.getAlbumsItems(albumId)), HttpStatus.OK);
@@ -56,8 +57,6 @@ public class AlbumsItemsController {
             @RequestBody AlbumsItemsDTO albumsItemsDTO,
             @RequestBody ByteArrayResource photo) {
         System.out.println(albumsItemsDTO);
-//        byte[] bytes = photo.getByteArray();
-//        scienceDAO.sciencePhotoUpd(id,format, bytes);
     }
 
     @PostMapping(value = "/photo/upload/{token}/param", consumes = MediaType.MULTIPART_FORM_DATA_VALUE/*, consumes=MediaType.APPLICATION_OCTET_STREAM_VALUE*/ /*MediaType.MULTIPART_FORM_DATA_VALUE*//* MediaType.IMAGE_JPEG_VALUE*//*.ALL_VALUE*//*MediaType.IMAGE_GIF_VALUE*/)
@@ -67,67 +66,9 @@ public class AlbumsItemsController {
             @RequestPart(name = "file") MultipartFile file,
             @RequestPart(name = "data") String data) throws IOException {
 
-        var photoUploadVk = vkDAO.getUrlPhotoInAlbumVk(albumId, token);
-        ////////////////////////////////////////////////////////////
-        try {
-//            File f = new ClassPathResource("").getFile();
-//            final Path path = Paths.get(f.getAbsolutePath() + File.separator + "static" + File.separator + "image");
-//            System.out.println(path);
-//            if (!Files.exists(path)) {
-//                Files.createDirectories(path);
-//            }
-
-            System.out.println("Upload photo in vk");
-            var vkPhotoList = configureFeignUrlController.uploadPhotoInVk(photoUploadVk, file);
-
-            System.out.println("Save photo in vk");
-            var photo = vkDAO.savePhotoInVk(
-                    vkPhotoList.getPhotos_list(),
-                    String.valueOf(albumId),
-                    String.valueOf(vkPhotoList.getServer()),
-                    vkPhotoList.getHash(),
-                    token);
-
-            System.out.println("Edit photo in vk");
-            Gson g = new Gson();
-            var albumsItemsDTO = g.fromJson(data, AlbumsItemsDTO.class);
-            var allDesc = albumsItemsDTO.getAlbumItemName() + "\n" +
-                    albumsItemsDTO.getDescription() + "\n" +
-                    "цена: " + albumsItemsDTO.getAlbumItemCost().toString() + ", курс: " +
-                    albumsItemsDTO.getAlbumItemRate().toString() + "\n" +
-                    albumsItemsDTO.getItemUrl();
-            albumsItemsDTO.setDescription(allDesc);
-            vkDAO.EditPhotoInVk(photo, allDesc);
-
-
-            albumsItemsDTO.setVkItemId(Long.parseLong(photo));
-
-            albumsItemsDTO.setVkPhotoPath("https://vk.com/photo-" + groupId + "_" + photo);
-
-            Path filePath = Path.of(pathPhoto);
-
-            Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
-
-            System.out.println("Save photo in bd");
-            albumsItemsDTO.setPhotoPath(String.valueOf(filePath));
-            System.out.println("albumsItemsDTO: " + albumsItemsDTO);
-            albumsItemsDAO.saveAlbumItem(albumsItemsDTO);
-
-            String fileUri = ServletUriComponentsBuilder.fromCurrentContextPath()
-                    .path("/image/")
-                    .path(Objects.requireNonNull(file.getOriginalFilename()))
-                    .toUriString();
-
-            var result = Map.of(
-                    "filename", file.getOriginalFilename(),
-                    "fileUri", fileUri
-            );
-
-            return ok().body(result);
-
-        } catch (IOException e) {
-            System.out.println(e.getMessage());
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        var albumsItemsDTO = vkDAO.saveFileInVk(albumId, file, data);
+        return albumsItemsDAO.saveFile( file, albumsItemsDTO);
+//        var photoUploadVk = vkDAO.getUrlPhotoInAlbumVk(albumId, token);
+//        return albumsItemsDAO.saveFile(token, albumId, file, data, photoUploadVk);
     }
 }

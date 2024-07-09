@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 public class ParsedComment {
     private String size;
     private String color;
-    private String quantity;
+    private String count;
     private String link;
 
     @Override
@@ -18,7 +18,7 @@ public class ParsedComment {
         return "ParsedComment{" +
                 "size='" + size + '\'' +
                 ", color='" + color + '\'' +
-                ", quantity='" + quantity + '\'' +
+                ", count='" + count + '\'' +
                 ", link='" + link + '\'' +
                 '}';
     }

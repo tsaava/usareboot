@@ -12,6 +12,7 @@ public interface ItemsRepository extends JpaRepository<ItemsEntity, Long> {
 
     ItemsEntity getItemsEntitiesByItemId(long itemId);
 
+//    ItemsEntity getItemsEntitiesBypho(long itemId);
     @Procedure
     void item_set_date_all();
 

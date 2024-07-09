@@ -5,6 +5,8 @@ import lombok.Getter;
 
 import java.math.BigInteger;
 import java.sql.Date;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Getter
@@ -42,6 +44,25 @@ public class ItemsEntity {
     @Basic
     @Column(name = "date_delivery")
     private Date dateDelivery;
+    @Basic
+    @Column(name = "point_type")
+    private String pointType;
+    @Basic
+    @Column(name = "vk_url")
+    private String vkUrl;
+    @Basic
+    @Column(name = "item_url")
+    private String itemUrl;
+    @Basic
+    @Column(name = "comment")
+    private String comment;
+    @Basic
+    @Column(name = "date_comment")
+    private LocalDateTime dateComment;
+    @Getter
+    @Basic
+    @Column(name = "cost_status")
+    private Long costStatus;
 
     public void setItemId(long itemId) {
         this.itemId = itemId;
@@ -83,16 +104,43 @@ public class ItemsEntity {
         this.dateDelivery = dateDelivery;
     }
 
+
+    public void setPointType(String pointType) {
+        this.pointType = pointType;
+    }
+
+
+    public void setVkUrl(String vkUrl) {
+        this.vkUrl = vkUrl;
+    }
+
+
+    public void setItemUrl(String itemUrl) {
+        this.itemUrl = itemUrl;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
+
+      public void setDateComment(LocalDateTime dateComment) {
+        this.dateComment = dateComment;
+    }
+
+    public void setCostStatus(Long costStatus) {
+        this.costStatus = costStatus;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ItemsEntity that = (ItemsEntity) o;
-        return itemId == that.itemId && Objects.equals(orderId, that.orderId) && Objects.equals(itemColor, that.itemColor) && Objects.equals(itemSize, that.itemSize) && Objects.equals(itemWeight, that.itemWeight) && Objects.equals(itemStatus, that.itemStatus) && Objects.equals(itemName, that.itemName) && Objects.equals(itemCount, that.itemCount) && Objects.equals(importItemListId, that.importItemListId) && Objects.equals(dateDelivery, that.dateDelivery);
+        return itemId == that.itemId && Objects.equals(itemStatus, that.itemStatus) && Objects.equals(orderId, that.orderId) && Objects.equals(itemColor, that.itemColor) && Objects.equals(itemSize, that.itemSize) && Objects.equals(itemWeight, that.itemWeight) && Objects.equals(itemName, that.itemName) && Objects.equals(itemCount, that.itemCount) && Objects.equals(importItemListId, that.importItemListId) && Objects.equals(dateDelivery, that.dateDelivery) && Objects.equals(pointType, that.pointType) && Objects.equals(vkUrl, that.vkUrl) && Objects.equals(itemUrl, that.itemUrl) && Objects.equals(comment, that.comment) && Objects.equals(dateComment, that.dateComment) && Objects.equals(costStatus, that.costStatus);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(itemId, orderId, itemColor, itemSize, itemWeight, itemStatus, itemName, itemCount, importItemListId, dateDelivery);
+        return Objects.hash(itemId, orderId, itemColor, itemSize, itemWeight, itemStatus, itemName, itemCount, importItemListId, dateDelivery, pointType, vkUrl, itemUrl, comment, dateComment, costStatus);
     }
 }

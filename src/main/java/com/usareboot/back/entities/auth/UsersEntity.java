@@ -3,6 +3,8 @@ package com.usareboot.back.entities.auth;
 import jakarta.persistence.*;
 import lombok.Getter;
 
+import java.sql.Date;
+import java.time.LocalDate;
 import java.util.Objects;
 import java.util.Set;
 
@@ -34,7 +36,7 @@ public class UsersEntity {
 
     @Basic
     @Column(name = "i_name")
-    private String iNAme;
+    private String iName;
 
     @Basic
     @Column(name = "o_name")
@@ -42,15 +44,15 @@ public class UsersEntity {
 
     @Basic
     @Column(name = "birdth_date")
-    private String birdthDate;
+    private LocalDate birdthDate;
 
     @Basic
     @Column(name = "vk_id")
-    private String vkId;
+    private Long vkId;
 
     @Basic
     @Column(name = "tg_id")
-    private String tgId;
+    private Long tgId;
 
     @Basic
     @Column(name = "email")
@@ -58,10 +60,8 @@ public class UsersEntity {
 
     @Basic
     @Column(name = "fio")
+
     private String fio;
-//    @Basic
-//    @Column(name = "roles")
-//    private String roles;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
@@ -78,7 +78,6 @@ public class UsersEntity {
     public void setUserId(long userId) {
         this.userId = userId;
     }
-
     public String getLogin() {
         return login;
     }
@@ -88,8 +87,6 @@ public class UsersEntity {
     }
 
     public String getPassword(){
-//        System.out.println("пароль из базы: getPassword "+password);
-
         return password;
     }
 
@@ -102,14 +99,6 @@ public class UsersEntity {
         this.phone = phone;
     }
 
-
-//    public String getRoles() {
-//        return roles;
-//    }
-//
-//    public void setRoles(String roles) {
-//        this.roles = roles;
-//    }
     public Set<DRolesEntity> getRoles(){
     return roles;
 }
@@ -118,7 +107,37 @@ public class UsersEntity {
         this.roles = roles;
         return roles;
     }
+    public void setVkId(Long vkId) {
+        this.vkId = vkId;
+    }
 
+
+    public void setTgId(Long tgId) {
+        this.tgId = tgId;
+    }
+
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+
+    public void setFio(String fio) {
+        this.fio = fio;
+    }
+
+    public void setfName(String fName) {
+        this.fName = fName;
+    }
+    public void setiName(String iName) {
+        this.iName = iName;
+    }
+    public void setoName(String oName) {
+        this.oName = oName;
+    }
+    public void setBirdthDate(LocalDate birdthDate) {
+        this.birdthDate = birdthDate;
+    }
 //    @Override
 //    public boolean equals(Object o) {
 //        if (this == o) return true;

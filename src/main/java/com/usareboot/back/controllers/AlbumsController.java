@@ -41,10 +41,9 @@ public class AlbumsController {
         return new ResponseEntity<>(new Gson().toJson(albumsDAO.getAlbumCards()), HttpStatus.OK);
     }
 
-    @PostMapping("/add/{token}")
-    public ResponseEntity<?> addAlbum(@PathVariable String token,
-                                      @RequestBody AlbumsEntity data) throws IOException {
-        Integer album = vkDAO.createAlbum(token, data);
+    @PostMapping("/add")
+    public ResponseEntity<?> addAlbum(@RequestBody AlbumsEntity data) throws IOException {
+        Integer album = vkDAO.createAlbum(data);
         System.out.println("в вк альбом создался, id = "+album);
         albumsDAO.albumsAdd(data,album);
         System.out.println("в базу альбом добавился");
