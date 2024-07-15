@@ -79,7 +79,6 @@ public class AlbumsItemsDAO {
                     x.getAlbumItemRate(),
                     x.getStatuses().getStatusId(),
                     x.getStatuses().getStatusName(),
-                    null,
                     x.getVkPhotoPath()
             )));
         }

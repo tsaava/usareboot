@@ -30,7 +30,6 @@ public class AlbumsItemsDTO {
     private Double albumItemRate;
     private long albumItemStatus;
     private String albumItemStatusName;
-    private ByteArrayResource[] photoBlob;
     private String vkPhotoPath;
 
 }
