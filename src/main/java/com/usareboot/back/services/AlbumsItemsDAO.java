@@ -40,23 +40,15 @@ public class AlbumsItemsDAO {
     @Autowired
     private AlbumsRepository albumsRepository;
 
-    @Autowired
-    private VkDAO vkDAO;
+
 
     @Autowired
     ModelMapper modelMapper;
     @Value("${vk.api.pathPhoto}")
     private String pathPhoto;
 
-    @Value("${vk.api.groupId}")
-    private String groupId;
- 
 
     public ArrayList<AlbumsItemsDTO> getAlbumsItems(long albumId) {
-
-//        ArrayList<AlbumsItemsEntity> albumsItems = albumsItemsRepository.getAlbumsItemsEntitiesByAlbumId(albumId);
-//        System.out.println(albumsItems);
-//        return modelMapper.map(albumsItems, AlbumsItemsDTO.class);
 
         ArrayList<AlbumsItemsDTO> list = new ArrayList<>();
         var bdFuncResponse = albumsItemsRepository.getAlbumsItemsEntitiesByAlbum_AlbumId(albumId);
