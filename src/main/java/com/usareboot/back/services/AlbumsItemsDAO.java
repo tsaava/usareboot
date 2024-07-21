@@ -40,7 +40,8 @@ public class AlbumsItemsDAO {
     @Autowired
     private AlbumsRepository albumsRepository;
 
-
+    @Autowired
+    private VkDAO vkDAO;
 
     @Autowired
     ModelMapper modelMapper;
@@ -78,9 +79,7 @@ public class AlbumsItemsDAO {
         return list;
     }
 
-    public void saveAlbumItem(AlbumsItemsDTO albumsItemsDTO) {
-//        AlbumsItemsEntity post = modelMapper.map(albumsItemsDTO, AlbumsItemsEntity.class);
-//        albumsItemsRepository.save(post);
+    public void saveAlbumItem(AlbumsItemsDTO albumsItemsDTO) throws IOException {
         AlbumsItemsEntity albumsItemsEntity = new AlbumsItemsEntity();
         albumsItemsEntity.setAlbumItemStatus(dStatusRepository.findDStatusesEntityByStatusId(albumsItemsDTO.getAlbumItemStatus()));
         albumsItemsEntity.setAlbumItemName(albumsItemsDTO.getAlbumItemName());
@@ -91,13 +90,22 @@ public class AlbumsItemsDAO {
         albumsItemsEntity.setAlbumId(albumsRepository.findAlbumsEntityByAlbumId(albumsItemsDTO.getAlbumId()));
         LocalDate localDate = LocalDate.now();
         albumsItemsEntity.setDateCreate(Date.valueOf(localDate));
-        albumsItemsEntity.setPhotoPath(albumsItemsDTO.getPhotoPath());
+
+//        albumsItemsEntity.setPhotoPath(albumsItemsDTO.getPhotoPath());
         albumsItemsEntity.setVkPhotoPath(albumsItemsDTO.getVkPhotoPath());
         albumsItemsEntity.setDescription(albumsItemsDTO.getDescription());
+
+        try {
+            var photoUrl = vkDAO.getCommentPhotoVk(albumsItemsDTO.getVkItemId());
+            albumsItemsEntity.setPhotoPath(photoUrl);
+        } catch (Exception e) {
+            log.error("Не удалось получить ссылку на фото в Вк", e);
+        }
+
         albumsItemsRepository.save(albumsItemsEntity);
     }
 
-    public ResponseEntity<Map<String, String>> saveFile( MultipartFile file,  AlbumsItemsDTO albumsItemsDTO) {
+    public ResponseEntity<Map<String, String>> saveFile( MultipartFile file,  AlbumsItemsDTO albumsItemsDTO) throws IOException {
         copyFile(file);
         log.info("Сохранение фото в БД");
         saveAlbumItem(albumsItemsDTO);

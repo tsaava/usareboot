@@ -1,4 +1,4 @@
-package com.usareboot.back.controllers;
+package com.usareboot.back.controllers.VK;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;

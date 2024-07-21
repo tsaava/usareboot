@@ -3,6 +3,7 @@ package com.usareboot.back.repositories;
 import com.usareboot.back.models.interfaces.ImportListResponse;
 import com.usareboot.back.models.interfaces.ItemListResponse;
 import com.usareboot.back.entities.ImportItemListEntity;
+import com.usareboot.back.models.interfaces.ItemWeightListResponse;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -21,7 +22,15 @@ public interface ImportListRepository extends JpaRepository<ImportItemListEntity
      * @return ArrayList<ItemListResponse>
      */
     @Query(value = "SELECT * FROM public.vf_item_list_status_and_weight();", nativeQuery = true)
-    ArrayList<ItemListResponse> itemListProcedure();
+    ArrayList<ItemWeightListResponse> weightItemListProcedure();
+
+
+    /**
+     * Получение оставленных комментов в вк из таблицы item
+     * @return ArrayList<ItemListResponse>
+     */
+    @Query(value = "SELECT * FROM public.vf_item_list(:statusId);", nativeQuery = true)
+    ArrayList<ItemListResponse> itemListProcedure(@Param("statusId") int statusId);
 
 }
 

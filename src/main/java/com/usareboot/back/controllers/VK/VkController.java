@@ -1,4 +1,4 @@
-package com.usareboot.back.controllers;
+package com.usareboot.back.controllers.VK;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -45,10 +45,6 @@ public class VkController {
         return "ok";
     }
     private void handlePhotoCommentNew(JsonObject object) throws IOException {
-        String commentText = object.get("text").getAsString();
-//        String photoId = object.get("photo_id").getAsString();
-//        var photoComment = vkDAO.getCommentPhotoVk(photoId);
-        log.info(String.valueOf(commentText));
         vkDAO.saveCommentUser(object);
     }
 }

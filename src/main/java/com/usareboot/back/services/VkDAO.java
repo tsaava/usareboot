@@ -12,11 +12,10 @@ import com.usareboot.back.entities.OrdersEntity;
 import com.usareboot.back.entities.auth.UsersEntity;
 import com.usareboot.back.models.*;
 import com.usareboot.back.entities.AlbumsEntity;
+import com.usareboot.back.models.vk.VkAlbumItemResponse;
+import com.usareboot.back.models.vk.VkAlbumResponse;
 import com.usareboot.back.parser.CommentParser;
-import com.usareboot.back.repositories.AlbumsItemsRepository;
-import com.usareboot.back.repositories.ItemsRepository;
-import com.usareboot.back.repositories.OrdersRepository;
-import com.usareboot.back.repositories.UsersRepository;
+import com.usareboot.back.repositories.*;
 import com.vk.api.sdk.client.TransportClient;
 import com.vk.api.sdk.client.VkApiClient;
 import com.vk.api.sdk.httpclient.HttpTransportClient;
@@ -82,6 +81,8 @@ public class VkDAO {
     private ConfigureFeignUrlController configureFeignUrlController;
     @Autowired
     private ItemsRepository itemsRepository;
+    @Autowired
+    private AlbumsRepository albumsRepository;
     @Autowired
     private AlbumsItemsRepository albumsItemsRepository;
     @Autowired
@@ -357,9 +358,11 @@ public class VkDAO {
             long orderId = getOrderId(object, albumId);
 
             log.info("Сохранение комментария в itemsEntity");
-            var firstByVkItemId = albumsItemsRepository.findFirstByVkItemId(photoId);
-            var itemName = firstByVkItemId.getAlbumItemName();
-            saveInAlbumItem(object, orderId, photoId, itemName);
+            var album = albumsRepository.findAlbumsEntityByAlbumId(albumId);
+            var albumsItems = albumsItemsRepository.findFirstByVkItemIdAndAlbum(photoId, album);
+            var itemName = albumsItems.getAlbumItemName();
+            var photoUrl = getCommentPhotoVk(photoId);
+            saveInAlbumItem(object, orderId, photoId, itemName, photoUrl);
 
         } catch (Exception e) {
             throw new RuntimeException("Не удалось записать комментарий в базу\n" + e);
@@ -374,8 +377,8 @@ public class VkDAO {
             JsonObject userName = getUserName((int) fromId);
             user = new UsersEntity();
             user.setVkId(fromId);
-            user.setfName(userName.get("first_name").getAsString());
-            user.setiName(userName.get("last_name").getAsString());
+            user.setiName(userName.get("first_name").getAsString());
+            user.setfName(userName.get("last_name").getAsString());
             usersRepository.save(user);
             log.info("Новый пользователь успешно создан: {}", fromId);
         }
@@ -398,33 +401,38 @@ public class VkDAO {
         return ordersId;
     }
 
-    private void saveInAlbumItem(JsonObject object, long orderId, long photoId, String photoComment) {
-        long dateInSeconds = object.get("date").getAsLong();
-        String commentText = object.get("text").getAsString();
-        LocalDateTime commentDate = LocalDateTime.ofInstant(Instant.ofEpochSecond(dateInSeconds), ZoneId.systemDefault());// Преобразование даты в LocalDateTime
-        CommentParser parser = new CommentParser();// Вызов парсера комментариев
-        ParsedComment parsedComment = parser.parse(commentText);
+    private void saveInAlbumItem(JsonObject object, long orderId, long photoId, String photoComment, String photoUrl) {
+        try {
+            long dateInSeconds = object.get("date").getAsLong();
+            String commentText = object.get("text").getAsString();
+            LocalDateTime commentDate = LocalDateTime.ofInstant(Instant.ofEpochSecond(dateInSeconds), ZoneId.systemDefault());// Преобразование даты в LocalDateTime
+            CommentParser parser = new CommentParser();// Вызов парсера комментариев
+            ParsedComment parsedComment = parser.parse(commentText);
 
-        ItemsEntity itemsEntity = new ItemsEntity();
-        itemsEntity.setComment(commentText);
-        itemsEntity.setDateComment(commentDate);
-        itemsEntity.setOrderId(orderId);
-        itemsEntity.setItemName(photoComment);
-        itemsEntity.setVkUrl("https://vk.com/photo-" + groupId + "_" + photoId);
-        itemsEntity.setItemSize(parsedComment.getSize());
-        itemsEntity.setItemUrl(parsedComment.getLink());
-        itemsEntity.setItemColor(parsedComment.getColor());
-        log.info("parsedComment.getColor(), {}", parsedComment.getColor());
-        itemsEntity.setItemStatus(24L);
+            ItemsEntity itemsEntity = new ItemsEntity();
+            itemsEntity.setComment(commentText);
+            itemsEntity.setDateComment(commentDate);
+            itemsEntity.setOrderId(orderId);
+            itemsEntity.setItemName(photoComment);
+            itemsEntity.setVkUrl(photoUrl);
+//        itemsEntity.setVkUrl("https://vk.com/photo-" + groupId + "_" + photoId);
+            itemsEntity.setItemSize(parsedComment.getSize());
+            itemsEntity.setItemUrl(parsedComment.getLink());
+            itemsEntity.setItemColor(parsedComment.getColor());
+            log.info("parsedComment.getColor(), {}", parsedComment.getColor());
+            itemsEntity.setItemStatus(24L);
 
-        if (parsedComment.getCount() != null)
-            itemsEntity.setItemCount(Integer.valueOf(parsedComment.getCount()));
+            if (parsedComment.getCount() != null)
+                itemsEntity.setItemCount(Integer.valueOf(parsedComment.getCount()));
 
-        itemsRepository.save(itemsEntity);
-        log.info("Сохранение комментария в itemsEntity прошло успешно");
+            itemsRepository.save(itemsEntity);
+            log.info("Сохранение комментария в itemsEntity прошло успешно");
+        }catch (Exception e) {
+            log.error("Ошибка при сохранения комментария: ",e);
+        }
     }
 
-    /*public String getCommentPhotoVk(String photo_id) throws IOException {
+    public String getCommentPhotoVk(long photo_id) throws IOException {
         final CloseableHttpClient httpclient = HttpClients.createDefault();
         final HttpPost httpPost = new HttpPost("https://api.vk.com/method/photos.getById");
         final List<NameValuePair> params = new ArrayList<>();
@@ -438,9 +446,14 @@ public class VkDAO {
                 CloseableHttpResponse response2 = httpclient.execute(httpPost)
         ) {
             final HttpEntity entity2 = response2.getEntity();
-            return EntityUtils.toString(entity2);
+            String tempString = EntityUtils.toString(entity2);
+            ObjectMapper mapper = new ObjectMapper();
+            System.out.println(tempString);
+            VkAlbumItemResponse response = mapper.readValue(tempString, VkAlbumItemResponse.class);
+            System.out.println("response: " + response);
+            return response.getResponse().get(0).getSizes().get(3).getUrl();
         }
-    }*/
+    }
 }
 
 

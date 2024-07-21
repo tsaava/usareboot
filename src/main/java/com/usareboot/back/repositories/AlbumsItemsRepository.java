@@ -1,5 +1,6 @@
 package com.usareboot.back.repositories;
 
+import com.usareboot.back.entities.AlbumsEntity;
 import com.usareboot.back.entities.AlbumsItemsEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -10,5 +11,5 @@ public interface AlbumsItemsRepository extends JpaRepository<AlbumsItemsEntity, 
     ArrayList<AlbumsItemsEntity> getAlbumsItemsEntitiesByAlbum_AlbumId(long albumId);
 //    AlbumsItemsEntity getAlbumsItemsEntitiesByVkItemId(Long vkItemId);
     List<AlbumsItemsEntity> findAllByVkItemId(Long vkItemId);
-    AlbumsItemsEntity findFirstByVkItemId(Long vkItemId);
+    AlbumsItemsEntity findFirstByVkItemIdAndAlbum(Long vkItemId, AlbumsEntity albums);
 }

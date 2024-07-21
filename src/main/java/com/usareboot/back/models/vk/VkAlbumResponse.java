@@ -1,4 +1,4 @@
-package com.usareboot.back.models;
+package com.usareboot.back.models.vk;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

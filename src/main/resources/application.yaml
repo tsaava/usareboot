@@ -56,7 +56,7 @@ vk:
         groupId: '224336762'
         version: '5.139'
         redirectUri: 'https://localhost:80/vkAuth'
-        pathPhoto: ''
+        pathPhoto: '/vk_img/'
     token: 'YOUR_ACCESS_TOKEN'
     client:
         id: '51727454'

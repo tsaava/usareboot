@@ -1,4 +1,4 @@
-package com.usareboot.back.models;
+package com.usareboot.back.models.vk;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -19,4 +19,5 @@ public class VkPhotoSaveDTO {
     String user_id;
     String web_view_token;
     String has_tags;
+    Object orig_photo;
 }

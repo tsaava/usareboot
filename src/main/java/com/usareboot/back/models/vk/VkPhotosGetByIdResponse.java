@@ -1,4 +1,4 @@
-package com.usareboot.back.models;
+package com.usareboot.back.models.vk;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,6 +9,6 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class VkAlbumItemResponse {
+public class VkPhotosGetByIdResponse {
   List<VkPhotoSaveDTO> response;
 }

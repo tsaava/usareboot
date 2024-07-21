@@ -1,4 +1,4 @@
-package com.usareboot.back.controllers;
+package com.usareboot.back.controllers.product;
 
 import com.google.gson.Gson;
 import com.usareboot.back.entities.AlbumsEntity;

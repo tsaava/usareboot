@@ -4,6 +4,7 @@ import com.usareboot.back.entities.DStatusesEntity;
 import com.usareboot.back.entities.ItemsEntity;
 import com.usareboot.back.models.ImportDTO;
 import com.usareboot.back.models.ItemListDTO;
+import com.usareboot.back.models.ItemWeightListDTO;
 import com.usareboot.back.models.ItemsRequestDTO;
 import com.usareboot.back.repositories.*;
 import jakarta.persistence.EntityManager;
@@ -96,12 +97,41 @@ public class MainDAO {
         }
     }
 
-
-    public ArrayList<ItemListDTO> getItemListDao() {
+    public ArrayList<ItemListDTO> getItemListDao(int statusId) {
         ArrayList<ItemListDTO> scienceDiplomsList = new ArrayList<>();
-        var bdFuncResponse = importListRepository.itemListProcedure();
+        var bdFuncResponse = importListRepository.itemListProcedure(statusId);
         if (bdFuncResponse.size() > 0) {
             bdFuncResponse.forEach(x -> scienceDiplomsList.add(new ItemListDTO(
+                    x.getitem_id(),
+                    x.getclient_id(),
+                    x.getstatus_id(),
+                    x.getalbom_id(),
+                    x.getalbom_item_id(),
+                    x.getvk_id(),
+                    x.getorder_id(),
+                    x.getfi(),
+                    x.getitem_name(),
+                    x.getalbom_name(),
+                    x.getitem_size(),
+                    x.getitem_color(),
+                    x.getitem_count(),
+                    x.getitem_url(),
+                    x.getitem_status(),
+                    x.getpay_status(),
+                    x.getitem_weight(),
+                    x.getdate_comment(),
+                    x.getphoto_path(),
+                    x.getcomment()
+            )));
+        }
+        return scienceDiplomsList;
+    }
+
+    public ArrayList<ItemWeightListDTO> getItemWeightListDao() {
+        ArrayList<ItemWeightListDTO> scienceDiplomsList = new ArrayList<>();
+        var bdFuncResponse = importListRepository.weightItemListProcedure();
+        if (bdFuncResponse.size() > 0) {
+            bdFuncResponse.forEach(x -> scienceDiplomsList.add(new ItemWeightListDTO(
                     x.getitem_id(),
                     x.getclient_id(),
                     x.getstatus_id(),

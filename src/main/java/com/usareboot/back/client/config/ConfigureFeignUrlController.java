@@ -2,8 +2,8 @@ package com.usareboot.back.client.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.usareboot.back.client.VkClient;
-import com.usareboot.back.models.VkPhotoGetListDTO;
-import com.usareboot.back.models.VkPhotoSaveDTO;
+import com.usareboot.back.models.vk.VkPhotoGetListDTO;
+import com.usareboot.back.models.vk.VkPhotoSaveDTO;
 import feign.Feign;
 import feign.Target;
 import org.springframework.beans.factory.ObjectFactory;

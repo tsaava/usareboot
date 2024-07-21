@@ -7,25 +7,22 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ItemListDTO {
+public class ItemWeightListDTO {
         long itemId;
         long clientId;
         Long statusId;
         long albomId;
-        Long albomItemId;
         long vkId;
         long orderId;
         String fi;
+        String fio;
         String itemName;
         String albomName;
         String itemSize;
-        String itemColor;
         Integer itemCount;
-        String itemUrl;
-        String itemStatus;
-        String payStatus;
+        String statusName;
         Number itemWeight;
-        String dateComment;
-        String photoPath;
-        String comment;
+        String dateDelivery;
+        String spHelpId;
+        String razdacha;
 }
