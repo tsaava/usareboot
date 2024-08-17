@@ -1,12 +1,7 @@
 package com.usareboot.back.repositories;
 
-import jakarta.persistence.NamedNativeQuery;
-import org.hibernate.Session;
-import org.hibernate.annotations.NamedNativeQueries;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
 import com.usareboot.back.entities.auth.TestEntity;
-import org.springframework.data.repository.query.Param;
+import org.springframework.data.repository.CrudRepository;
 
 public interface MainRepository extends CrudRepository<TestEntity, Long> {
 

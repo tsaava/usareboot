@@ -3,7 +3,6 @@ package com.usareboot.back.entities;
 import jakarta.persistence.*;
 import lombok.Getter;
 
-import java.math.BigInteger;
 import java.sql.Date;
 import java.util.Objects;
 
