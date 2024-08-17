@@ -10,14 +10,17 @@ import lombok.NoArgsConstructor;
 public class ItemListDTO {
         long itemId;
         long clientId;
-        Long statusId;
-        long albomId;
-        Long albomItemId;
+        Long itemStatusId;
+        Long payStatusId;
+        long albumId;
+        Long albumItemId;
         long vkId;
         long orderId;
+        String clientUrl;
         String fi;
         String itemName;
-        String albomName;
+        String albumVkUrl;
+        String albumName;
         String itemSize;
         String itemColor;
         Integer itemCount;
@@ -27,5 +30,10 @@ public class ItemListDTO {
         Number itemWeight;
         String dateComment;
         String photoPath;
+        String vkPhotoPath;
         String comment;
+        Number albumItemCost;
+        Number albumItemRate;
+        Number cost;
+        String repaymentName;
 }

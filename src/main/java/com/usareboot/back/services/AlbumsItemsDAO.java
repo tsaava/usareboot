@@ -85,13 +85,12 @@ public class AlbumsItemsDAO {
         albumsItemsEntity.setAlbumItemName(albumsItemsDTO.getAlbumItemName());
         albumsItemsEntity.setAlbumItemCost(albumsItemsDTO.getAlbumItemCost());
         albumsItemsEntity.setAlbumItemRate(albumsItemsDTO.getAlbumItemRate());
+        albumsItemsEntity.setCost(albumsItemsDTO.getAlbumItemRate() * albumsItemsDTO.getAlbumItemCost());
         albumsItemsEntity.setItemUrl(albumsItemsDTO.getItemUrl());
         albumsItemsEntity.setVkItemId(albumsItemsDTO.getVkItemId());
         albumsItemsEntity.setAlbumId(albumsRepository.findAlbumsEntityByAlbumId(albumsItemsDTO.getAlbumId()));
         LocalDate localDate = LocalDate.now();
         albumsItemsEntity.setDateCreate(Date.valueOf(localDate));
-
-//        albumsItemsEntity.setPhotoPath(albumsItemsDTO.getPhotoPath());
         albumsItemsEntity.setVkPhotoPath(albumsItemsDTO.getVkPhotoPath());
         albumsItemsEntity.setDescription(albumsItemsDTO.getDescription());
 

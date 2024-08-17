@@ -354,15 +354,11 @@ public class VkDAO {
                     .map(AlbumsEntity::getAlbumId)
                     .orElseThrow(() -> new RuntimeException("не найден альбом, где хранится фото с комментарием"));
 
-            log.info("Сохранение комментария в orders");
-            long orderId = getOrderId(object, albumId);
-
             log.info("Сохранение комментария в itemsEntity");
             var album = albumsRepository.findAlbumsEntityByAlbumId(albumId);
             var albumsItems = albumsItemsRepository.findFirstByVkItemIdAndAlbum(photoId, album);
-            var itemName = albumsItems.getAlbumItemName();
-            var photoUrl = getCommentPhotoVk(photoId);
-            saveInAlbumItem(object, orderId, photoId, itemName, photoUrl);
+
+            saveInAlbumItem(albumsItems, object);
 
         } catch (Exception e) {
             throw new RuntimeException("Не удалось записать комментарий в базу\n" + e);
@@ -401,25 +397,44 @@ public class VkDAO {
         return ordersId;
     }
 
-    private void saveInAlbumItem(JsonObject object, long orderId, long photoId, String photoComment, String photoUrl) {
+    private void saveInAlbumItem(AlbumsItemsEntity albumsItems, JsonObject object) {
         try {
-            long dateInSeconds = object.get("date").getAsLong();
-            String commentText = object.get("text").getAsString();
+            var dateInSeconds = object.get("date").getAsLong();
+            var commentText = object.get("text").getAsString();
+            var itemName = albumsItems.getAlbumItemName();
+            var itemUrl = albumsItems.getItemUrl();
+            var itemColor = albumsItems.getItemColor();
+            var itemSize= albumsItems.getItemSize();
+            var photoId = object.get("photo_id").getAsLong();
+            var photoUrl = getCommentPhotoVk(photoId);
+            var albumId = albumsItems.getAlbum().getAlbumId();
+            var albumItemId = albumsItems.getAlbumItemId();
+            var orderId = getOrderId(object, albumId);
+
             LocalDateTime commentDate = LocalDateTime.ofInstant(Instant.ofEpochSecond(dateInSeconds), ZoneId.systemDefault());// Преобразование даты в LocalDateTime
             CommentParser parser = new CommentParser();// Вызов парсера комментариев
             ParsedComment parsedComment = parser.parse(commentText);
 
             ItemsEntity itemsEntity = new ItemsEntity();
+            itemsEntity.setAlbomItemId(albumItemId);
             itemsEntity.setComment(commentText);
             itemsEntity.setDateComment(commentDate);
             itemsEntity.setOrderId(orderId);
-            itemsEntity.setItemName(photoComment);
+            itemsEntity.setItemName(itemName);
             itemsEntity.setVkUrl(photoUrl);
 //        itemsEntity.setVkUrl("https://vk.com/photo-" + groupId + "_" + photoId);
-            itemsEntity.setItemSize(parsedComment.getSize());
-            itemsEntity.setItemUrl(parsedComment.getLink());
-            itemsEntity.setItemColor(parsedComment.getColor());
-            log.info("parsedComment.getColor(), {}", parsedComment.getColor());
+            if(parsedComment.getSize()!=null)
+                itemsEntity.setItemSize(parsedComment.getSize());
+            else
+                itemsEntity.setItemSize(itemSize);
+            if(parsedComment.getLink()!=null)
+                itemsEntity.setItemUrl(parsedComment.getLink());
+            else
+                itemsEntity.setItemUrl(itemUrl);
+            if(parsedComment.getColor()!=null)
+                itemsEntity.setItemColor(parsedComment.getColor());
+            else
+                itemsEntity.setItemColor(itemColor);
             itemsEntity.setItemStatus(24L);
 
             if (parsedComment.getCount() != null)

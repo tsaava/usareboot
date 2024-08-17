@@ -1,6 +1,7 @@
 package com.usareboot.back.controllers;
 
 import com.google.gson.Gson;
+import com.usareboot.back.models.ItemListDTO;
 import com.usareboot.back.models.ItemsRequestDTO;
 import com.usareboot.back.services.MainDAO;
 import lombok.RequiredArgsConstructor;
@@ -38,10 +39,16 @@ public class MainController {
     public ResponseEntity<?> getItemList(@PathVariable/*(name = "status", required = false)*/ int status) {
         return new ResponseEntity<>(new Gson().toJson(mainDAO.getItemListDao(status)), HttpStatus.OK);
     }
-
     @GetMapping("/item/weight/list")
-    public ResponseEntity<?> getWeightItemList() {
+    public ResponseEntity<?> getItemWeightList() {
         return new ResponseEntity<>(new Gson().toJson(mainDAO.getItemWeightListDao()), HttpStatus.OK);
+    }
+
+
+    @PostMapping("/item/list")
+    public ResponseEntity<?> saveItemList(@RequestBody ItemListDTO data) {
+        mainDAO.saveItemList(data);
+        return new ResponseEntity<>( HttpStatus.OK);
     }
 
     @GetMapping("/statuses/list/{type}")

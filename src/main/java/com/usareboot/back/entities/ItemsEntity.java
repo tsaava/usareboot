@@ -17,6 +17,9 @@ public class ItemsEntity {
     @Column(name = "item_id")
     private long itemId;
     @Basic
+    @Column(name = "albom_item_id")
+    private Long albomItemId;
+    @Basic
     @Column(name = "order_id")
     private Long orderId;
     @Basic
@@ -31,6 +34,7 @@ public class ItemsEntity {
     @Basic
     @Column(name = "item_status")
     private Long itemStatus;
+
     @Basic
     @Column(name = "item_name")
     private String itemName;
@@ -62,9 +66,20 @@ public class ItemsEntity {
     @Basic
     @Column(name = "cost_status")
     private Long costStatus;
+    @Getter
+    @Basic
+    @Column(name = "repayment_id")
+    private Long repaymentId;
+    @Getter
+    @Basic
+    @Column(name = "repayment_name")
+    private String repaymentName;
 
     public void setItemId(long itemId) {
         this.itemId = itemId;
+    }
+    public void setAlbomItemId(long albomItemId) {
+        this.albomItemId = albomItemId;
     }
 
     public void setOrderId(Long orderId) {
@@ -86,6 +101,7 @@ public class ItemsEntity {
     public void setItemStatus(Long itemStatus) {
         this.itemStatus = itemStatus;
     }
+
 
     public void setItemName(String itemName) {
         this.itemName = itemName;
@@ -128,6 +144,12 @@ public class ItemsEntity {
 
     public void setCostStatus(Long costStatus) {
         this.costStatus = costStatus;
+    }
+    public void setRepaymentId(Long repaymentId) {
+        this.repaymentId = repaymentId;
+    }
+    public void setRepaymentName(String repaymentName) {
+        this.repaymentName = repaymentName;
     }
 
     @Override

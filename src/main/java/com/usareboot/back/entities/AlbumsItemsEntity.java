@@ -34,6 +34,12 @@ public class AlbumsItemsEntity {
     @Column(name = "item_url")
     private String itemUrl;
     @Basic
+    @Column(name = "item_color")
+    private String itemColor;
+    @Basic
+    @Column(name = "item_size")
+    private String itemSize;
+    @Basic
     @Column(name = "description_short")
     private String descriptionShort;
     @Basic
@@ -60,6 +66,10 @@ public class AlbumsItemsEntity {
     @Basic
     @Column(name = "vk_photo_path")
     private String vkPhotoPath;
+
+    @Basic
+    @Column(name = "cost")
+    private Double cost;
     public void setAlbumItemId(long albumItemId) {
         this.albumItemId = albumItemId;
     }
@@ -86,6 +96,11 @@ public class AlbumsItemsEntity {
 
     public void setItemUrl(String itemUrl) {
         this.itemUrl = itemUrl;
+    }
+    public void setItemColor(String itemColor) {
+        this.itemColor = itemColor;
+    }public void setItemSize(String itemSize) {
+        this.itemSize = itemSize;
     }
 
     public void setDescriptionShort(String descriptionShort) {
@@ -122,6 +137,10 @@ public class AlbumsItemsEntity {
 
     public void setVkPhotoPath(String vkPhotoPath) {
         this.vkPhotoPath = vkPhotoPath;
+    }
+
+    public void setCost(Double cost) {
+        this.cost = cost;
     }
 
     @Override

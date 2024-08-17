@@ -3,13 +3,16 @@ package com.usareboot.back.models.interfaces;
 public interface ItemListResponse {
     long getitem_id();
     long getclient_id();
-    Long getstatus_id();
+    Long getitem_status_id();
+    Long getpay_status_id();
     long getalbom_id();
     Long getalbom_item_id();
     long getvk_id();
     long getorder_id();
     String getfi();
+    String getclient_Url();
     String getitem_name();
+    String getalbom_vk_url();
     String getalbom_name();
     String getitem_size();
     String getitem_color();
@@ -20,5 +23,10 @@ public interface ItemListResponse {
     Number getitem_weight();
     String getdate_comment();
     String getphoto_path();
+    String getvk_photo_path();
     String getcomment();
+    Number getalbom_item_cost();
+    Number getalbom_item_rate();
+
+    String getrepayment_name();
 }

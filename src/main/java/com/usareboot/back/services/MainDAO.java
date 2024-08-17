@@ -2,6 +2,7 @@ package com.usareboot.back.services;
 
 import com.usareboot.back.entities.DStatusesEntity;
 import com.usareboot.back.entities.ItemsEntity;
+import com.usareboot.back.entities.RepaymentsEntity;
 import com.usareboot.back.models.ImportDTO;
 import com.usareboot.back.models.ItemListDTO;
 import com.usareboot.back.models.ItemWeightListDTO;
@@ -14,9 +15,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.yaml.snakeyaml.tokens.ScalarToken;
 
 import java.util.ArrayList;
 import java.util.Objects;
+import java.util.Optional;
+
+import static com.usareboot.back.models.constant.Constant.ITEM_STATUS_REPAYMENT;
+import static com.usareboot.back.models.constant.Constant.PERCENTAGE_INCOME_DEFAULT;
 
 @Service
 @Slf4j
@@ -24,6 +30,7 @@ public class MainDAO {
     private ImportListRepository importListRepository;
     private ItemsRepository itemsRepository;
     private DStatusRepository dStatusRepository;
+    private RepaymentsRepository repaymentsRepository;
 
     private AlbumsItemsRepository albumsItemsRepository;
     private OrdersRepository ordersRepository;
@@ -33,12 +40,14 @@ public class MainDAO {
                    ItemsRepository itemsRepository,
                    DStatusRepository dStatusRepository,
                    AlbumsItemsRepository albumsItemsRepository,
-                   OrdersRepository ordersRepository) {
+                   OrdersRepository ordersRepository,
+                   RepaymentsRepository repaymentsRepository) {
         this.importListRepository = importListRepository;
         this.itemsRepository = itemsRepository;
         this.dStatusRepository = dStatusRepository;
         this.albumsItemsRepository = albumsItemsRepository;
         this.ordersRepository = ordersRepository;
+        this.repaymentsRepository = repaymentsRepository;
     }
 
     public ArrayList<ImportDTO> getListImport(String listAlbom) {
@@ -104,13 +113,16 @@ public class MainDAO {
             bdFuncResponse.forEach(x -> scienceDiplomsList.add(new ItemListDTO(
                     x.getitem_id(),
                     x.getclient_id(),
-                    x.getstatus_id(),
+                    x.getitem_status_id(),
+                    x.getpay_status_id(),
                     x.getalbom_id(),
                     x.getalbom_item_id(),
                     x.getvk_id(),
                     x.getorder_id(),
+                    x.getclient_Url(),
                     x.getfi(),
                     x.getitem_name(),
+                    x.getalbom_vk_url(),
                     x.getalbom_name(),
                     x.getitem_size(),
                     x.getitem_color(),
@@ -121,10 +133,57 @@ public class MainDAO {
                     x.getitem_weight(),
                     x.getdate_comment(),
                     x.getphoto_path(),
-                    x.getcomment()
+                    x.getvk_photo_path(),
+                    x.getcomment(),
+                    x.getalbom_item_cost(),
+                    x.getalbom_item_rate(),
+                    (x.getalbom_item_cost().doubleValue()*x.getalbom_item_rate().doubleValue()),
+                    x.getrepayment_name()
             )));
         }
         return scienceDiplomsList;
+    }
+
+    public void saveItemList(ItemListDTO itemListDTO) {
+        try {
+            ItemsEntity itemList = itemsRepository.getItemsEntitiesByItemId(itemListDTO.getItemId());
+            if (itemListDTO.getItemStatus() != null) {
+                var itemStatusId = dStatusRepository.findDStatusesEntityByStatusName(itemListDTO.getItemStatus()).getStatusId();
+                itemList.setItemStatus(itemStatusId);
+            }
+            if (itemListDTO.getPayStatus() != null) {
+                var payStatusId = dStatusRepository.findDStatusesEntityByStatusName(itemListDTO.getPayStatus()).getStatusId();
+                itemList.setCostStatus(payStatusId);
+            }
+            String repaymentName = itemListDTO.getRepaymentName();
+            itemList.setRepaymentName(repaymentName);
+            itemsRepository.save(itemList);
+            Optional<RepaymentsEntity> repaymentsEntityByRepaymentName = repaymentsRepository.findFirstByRepaymentName(repaymentName);
+
+            if (!repaymentName.isEmpty()) {
+                if (repaymentsEntityByRepaymentName.isEmpty()) {
+                    RepaymentsEntity repayment = new RepaymentsEntity();
+                    repayment.setRepaymentName(repaymentName);
+                    repayment.setPercentageIncome(PERCENTAGE_INCOME_DEFAULT);
+                    System.out.println("repayment.getPercentageIncome(): " + repayment.getPercentageIncome());
+                    RepaymentsEntity save = repaymentsRepository.save(repayment);
+                    itemList.setRepaymentId(save.getRepaymentId());
+                    itemsRepository.save(itemList);
+                    log.info("Успешное создание строки с repaymentName в таблице repayments и запись repaymentId в таблицу item ");
+                    itemList.setItemStatus(ITEM_STATUS_REPAYMENT);
+                    itemsRepository.save(itemList);
+                }
+            }
+            else {
+                if (repaymentsEntityByRepaymentName.isPresent()) {
+                    itemList.setRepaymentId(null);
+                    itemsRepository.save(itemList);
+                    log.info("Успешное удаление трека и обнуление ссылки на repayments");
+                }
+            }
+        } catch (Exception e) {
+            log.error("В бд не записался данный трек: {}: {}",itemListDTO.getRepaymentName(), e.getMessage());
+        }
     }
 
     public ArrayList<ItemWeightListDTO> getItemWeightListDao() {
