@@ -1,5 +1,6 @@
 package com.usareboot.back.services;
 
+import com.usareboot.back.entities.ApiTokenEntity;
 import com.usareboot.back.entities.DStatusesEntity;
 import com.usareboot.back.entities.ItemsEntity;
 import com.usareboot.back.entities.RepaymentsEntity;
@@ -11,43 +12,32 @@ import com.usareboot.back.repositories.*;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.StoredProcedureQuery;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static com.usareboot.back.models.constant.Constant.ITEM_STATUS_REPAYMENT;
 import static com.usareboot.back.models.constant.Constant.PERCENTAGE_INCOME_DEFAULT;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class MainDAO {
-    private ImportListRepository importListRepository;
-    private ItemsRepository itemsRepository;
-    private DStatusRepository dStatusRepository;
-    private RepaymentsRepository repaymentsRepository;
 
-    private AlbumsItemsRepository albumsItemsRepository;
-    private OrdersRepository ordersRepository;
+    private final ImportListRepository importListRepository;
+    private final ItemsRepository itemsRepository;
+    private final DStatusRepository dStatusRepository;
+    private final RepaymentsRepository repaymentsRepository;
+    private final ApiTokenRepository apiTokenRepository;
 
-    @Autowired
-    public MainDAO(ImportListRepository importListRepository,
-                   ItemsRepository itemsRepository,
-                   DStatusRepository dStatusRepository,
-                   AlbumsItemsRepository albumsItemsRepository,
-                   OrdersRepository ordersRepository,
-                   RepaymentsRepository repaymentsRepository) {
-        this.importListRepository = importListRepository;
-        this.itemsRepository = itemsRepository;
-        this.dStatusRepository = dStatusRepository;
-        this.albumsItemsRepository = albumsItemsRepository;
-        this.ordersRepository = ordersRepository;
-        this.repaymentsRepository = repaymentsRepository;
-    }
+
+
 
     public ArrayList<ImportDTO> getListImport(String listAlbom) {
         ArrayList<ImportDTO> scienceDiplomsList = new ArrayList<>();
@@ -56,33 +46,16 @@ public class MainDAO {
         var bdFuncResponse = importListRepository.importListProcedure(listAlbom);
         if (bdFuncResponse.size() > 0) {
             bdFuncResponse.forEach(x -> scienceDiplomsList.add(new ImportDTO(
-//                   x.getimport_item_list_id(),
                     x.getclient(),
                     x.getclient_id(),
                     x.getvikup(),
                     x.getrazdacha(),
-//                    x.getpack(),
-//                    x.getnote(),
-//                    x.getsender(),
-//                    x.getdate(),
-//                    x.getaddress(),
-//                    x.getfio(),
-//                    x.getphone(),
-//                    x.getemail(),
-//                    x.getstatus(),
-//                    x.getnum_order(),
-//                    x.getisdownload(),
-//                    x.getitem_color(),
-//                    x.getitem_size(),
-//                    x.getitem_weight(),
                     x.getitem_name(),
                     x.getitem_count(),
                     x.getsp_help_id(),
-//                    x.getcomment(),
                     x.getitem_cost(),
                     x.getdate_stop()
             )));
-
         }
         return scienceDiplomsList;
     }

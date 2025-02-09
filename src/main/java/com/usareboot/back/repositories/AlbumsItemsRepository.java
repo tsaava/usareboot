@@ -11,5 +11,6 @@ public interface AlbumsItemsRepository extends JpaRepository<AlbumsItemsEntity, 
     ArrayList<AlbumsItemsEntity> getAlbumsItemsEntitiesByAlbum_AlbumId(long albumId);
 //    AlbumsItemsEntity getAlbumsItemsEntitiesByVkItemId(Long vkItemId);
     List<AlbumsItemsEntity> findAllByVkItemId(Long vkItemId);
+    AlbumsItemsEntity findFirstByVkItemId(Long vkItemId);
     AlbumsItemsEntity findFirstByVkItemIdAndAlbum(Long vkItemId, AlbumsEntity albums);
 }

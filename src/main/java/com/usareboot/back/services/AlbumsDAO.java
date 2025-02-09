@@ -11,6 +11,7 @@ import com.usareboot.back.repositories.CardsRepository;
 import com.usareboot.back.repositories.DStatusRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,31 +23,16 @@ import java.text.ParseException;
 import java.util.ArrayList;
 
 @Service
+@RequiredArgsConstructor
 public class AlbumsDAO {
-    @Autowired
-    private Environment environment;
-    @Autowired
-    private  AlbumsRepository albumsRepository;
-    @Autowired
-    private CardsRepository cardsRepository;
+    private  final AlbumsRepository albumsRepository;
+    private final CardsRepository cardsRepository;
+    private final DStatusRepository statusRepository;
 
-    @Autowired
-    private DStatusRepository statusRepository;
-
-    @Autowired
-    private AlbumsItemsRepository albumsItemsRepository;
-
-    @Autowired
-    ModelMapper modelMapper;
     @Value("${vk.api.groupId}")
     private String groupId;
     @PersistenceContext
     private EntityManager entityManager;
-    @Autowired
-    public AlbumsDAO(AlbumsRepository albumsRepository,CardsRepository cardsRepository){
-        this.albumsRepository=albumsRepository;
-        this.cardsRepository=cardsRepository;
-    }
 
     /**
      * Список альбомов

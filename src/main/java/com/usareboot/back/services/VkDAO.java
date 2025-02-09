@@ -6,12 +6,11 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.usareboot.back.client.config.ConfigureFeignUrlController;
-import com.usareboot.back.entities.AlbumsItemsEntity;
-import com.usareboot.back.entities.ItemsEntity;
-import com.usareboot.back.entities.OrdersEntity;
+import com.usareboot.back.entities.*;
 import com.usareboot.back.entities.auth.UsersEntity;
-import com.usareboot.back.models.*;
-import com.usareboot.back.entities.AlbumsEntity;
+import com.usareboot.back.models.AlbumRowRequestDTO;
+import com.usareboot.back.models.AlbumsItemsDTO;
+import com.usareboot.back.models.ParsedComment;
 import com.usareboot.back.models.vk.VkAlbumItemResponse;
 import com.usareboot.back.models.vk.VkAlbumResponse;
 import com.usareboot.back.parser.CommentParser;
@@ -19,6 +18,7 @@ import com.usareboot.back.repositories.*;
 import com.vk.api.sdk.client.TransportClient;
 import com.vk.api.sdk.client.VkApiClient;
 import com.vk.api.sdk.httpclient.HttpTransportClient;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
@@ -29,14 +29,13 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.io.*;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -44,19 +43,14 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.usareboot.back.models.constant.Constant.ALBUM_STATUS_OPEN;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class VkDAO {
-
-    private final RestTemplate restTemplate;
-
-    public VkDAO(RestTemplate restTemplate) {
-        this.restTemplate = restTemplate;
-    }
 
     @Value("${vk.api.version}")
     private String apiVersion;
@@ -73,68 +67,62 @@ public class VkDAO {
     @Value("${vk.client.secret}")
     private String clientSecret;
 
-    @Value("${vk.api.token}")
+    //    @Value("${vk.api.token}")
     private String accessToken;
+
     @Value("${vk.api.pathPhoto}")
     private String pathPhoto;
-    @Autowired
-    private ConfigureFeignUrlController configureFeignUrlController;
-    @Autowired
-    private ItemsRepository itemsRepository;
-    @Autowired
-    private AlbumsRepository albumsRepository;
-    @Autowired
-    private AlbumsItemsRepository albumsItemsRepository;
-    @Autowired
-    private OrdersRepository ordersRepository;
-    @Autowired
-    private UsersRepository usersRepository;
 
-    public String vkAuth(String silent_token, String uuid) throws IOException {
-        TransportClient transportClient = new HttpTransportClient();
-        VkApiClient vk = new VkApiClient(transportClient);
-        final CloseableHttpClient httpclient = HttpClients.createDefault();
+    private final RestTemplate restTemplate;
+    private final ConfigureFeignUrlController configureFeignUrlController;
+    private final ItemsRepository itemsRepository;
+    private final AlbumsItemsRepository albumsItemsRepository;
+    private final OrdersRepository ordersRepository;
+    private final UsersRepository usersRepository;
+    private final ApiTokenRepository apiTokenRepository;
 
-        final HttpPost httpPost = new HttpPost("https://api.vk.com/method/auth.exchangeSilentAuthToken");
-        final List<NameValuePair> params = new ArrayList<>();
-        params.add(new BasicNameValuePair("v", apiVersion));
-        params.add(new BasicNameValuePair("token", silent_token));
-        params.add(new BasicNameValuePair("access_token", "b3c038ccb3c038ccb3c038ccb3b0d6c3e6bb3c0b3c038ccd66cc4d5a0b76abdf85929d2"));
-        params.add(new BasicNameValuePair("uuid", uuid));
-        httpPost.setEntity(new UrlEncodedFormEntity(params));
-        System.out.println(httpPost);
-
-        try (
-                CloseableHttpResponse response2 = httpclient.execute(httpPost)
-        ) {
-            final HttpEntity entity2 = response2.getEntity();
-            return EntityUtils.toString(entity2);
-        }
+    public Optional<String> getToken(String clientId) {
+        return apiTokenRepository.findApiTokenEntityByVkClientId(Long.parseLong(clientId))
+                .map(ApiTokenEntity::getToken);
     }
 
+    public void saveAccessToken(String code) {
+        String tokenUrl = UriComponentsBuilder.fromHttpUrl("https://oauth.vk.com/access_token")
+                .queryParam("client_id", clientId)
+                .queryParam("client_secret", clientSecret)
+                .queryParam("redirect_uri", redirectUri)
+                .queryParam("code", code)
+                .build().toUriString();
 
-    public String vkOAuth(String code) throws IOException {
-        final CloseableHttpClient httpclient = HttpClients.createDefault();
-        final HttpPost httpPost = new HttpPost("https://oauth.vk.com/access_token");
-        final List<NameValuePair> params = new ArrayList<>();
-        params.add(new BasicNameValuePair("client_id", "51727454"));
-        params.add(new BasicNameValuePair("client_secret", "Lp8in0hLVi4I7SR7VMKz"));
-        params.add(new BasicNameValuePair("redirect_uri", redirectUri));
-        params.add(new BasicNameValuePair("code", code));
-        httpPost.setEntity(new UrlEncodedFormEntity(params));
-        System.out.println(httpPost);
-        try (
-                CloseableHttpResponse response2 = httpclient.execute(httpPost)
-        ) {
-//            saveAccessTokenToProperties(accessToken);
-            final HttpEntity entity2 = response2.getEntity();
-            return EntityUtils.toString(entity2);
-        }
+        String response = restTemplate.getForObject(tokenUrl, String.class);
+        System.out.println(response);
+        assert response != null;
+        JsonObject json = JsonParser.parseString(response).getAsJsonObject();
+        String accessToken = json.get("access_token").getAsString();
+        var expires_in = json.get("expires_in").getAsLong();
+        var date = java.time.LocalDateTime.now();
+        var dataTokenEnd = date.plusSeconds(expires_in);
+        apiTokenRepository.findApiTokenEntityByVkClientId(Long.parseLong(clientId))
+                .ifPresentOrElse(s -> {
+                    s.setToken(accessToken);
+                    s.setTokenStart(date);
+                    s.setTokenEnd(dataTokenEnd);
+                    apiTokenRepository.save(s);
+                }, () -> {
+                    var data = new ApiTokenEntity();
+                    data.setVkClientId(Long.parseLong(clientId));
+                    data.setToken(accessToken);
+                    data.setTokenStart(date);
+                    data.setTokenEnd(dataTokenEnd);
+                    apiTokenRepository.save(data);
+                });
 
     }
 
 
     public Integer createAlbum(AlbumsEntity albumsEntity) throws IOException {
+        accessToken = getToken(clientId).orElse(null);
+        log.info(accessToken);
         final CloseableHttpClient httpclient = HttpClients.createDefault();
         final HttpPost httpPost = new HttpPost("https://api.vk.com/method/photos.createAlbum");
         final List<NameValuePair> params = new ArrayList<>();
@@ -174,6 +162,8 @@ public class VkDAO {
     }
 
     public String updAlbum(String vkId, String token, AlbumRowRequestDTO albumsEntity) throws IOException {
+        accessToken = getToken(clientId).orElse(null);
+
         final CloseableHttpClient httpclient = HttpClients.createDefault();
         final HttpPost httpPost = new HttpPost("https://api.vk.com/method/photos.editAlbum");
         final List<NameValuePair> params = new ArrayList<>();
@@ -196,6 +186,8 @@ public class VkDAO {
     }
 
     public String getUrlPhotoInAlbumVk(long albumId) throws IOException {
+        accessToken = getToken(clientId).orElse(null);
+
         final CloseableHttpClient httpclient = HttpClients.createDefault();
         final HttpPost httpPost = new HttpPost("https://api.vk.com/method/photos.getUploadServer");
         final List<NameValuePair> params = new ArrayList<>();
@@ -224,6 +216,8 @@ public class VkDAO {
                                 String server,
                                 String hash,
                                 String access_token) throws IOException {
+        accessToken = getToken(clientId).orElse(null);
+
         final CloseableHttpClient httpclient = HttpClients.createDefault();
         final HttpPost httpPost = new HttpPost("https://api.vk.com/method/photos.save");
         final List<NameValuePair> params = new ArrayList<>();
@@ -251,8 +245,11 @@ public class VkDAO {
     }
 
     public String editPhotoInVk(String photo_id,
+
 //                                        String access_token,
                                 String caption) throws IOException {
+        accessToken = getToken(clientId).orElse(null);
+
         final CloseableHttpClient httpclient = HttpClients.createDefault();
         final HttpPost httpPost = new HttpPost("https://api.vk.com/method/photos.edit");
         final List<NameValuePair> params = new ArrayList<>();
@@ -284,6 +281,8 @@ public class VkDAO {
     }
 
     public AlbumsItemsDTO saveFileInVk(Long albumId, MultipartFile file, String data) throws IOException {
+        accessToken = getToken(clientId).orElse(null);
+
         var photoUploadVk = getUrlPhotoInAlbumVk(albumId);
         log.info("Upload photo in vk");
         var vkPhotoList = configureFeignUrlController.uploadPhotoInVk(photoUploadVk, file);
@@ -328,6 +327,8 @@ public class VkDAO {
 //    }
 //
     public JsonObject getUserName(int userId) {
+        accessToken = getToken(clientId).orElse(null);
+
         String url = UriComponentsBuilder.fromHttpUrl("https://api.vk.com/method/users.get")
                 .queryParam("user_ids", userId)
                 .queryParam("access_token", accessToken)
@@ -342,22 +343,23 @@ public class VkDAO {
 
 
     public void saveCommentUser(JsonObject object) {
+        accessToken = getToken(clientId).orElse(null);
+
         try {
             log.info("Сохранение комментария");
 
             long photoId = object.get("photo_id").getAsLong();
-            var listAlbumItem = albumsItemsRepository.findAllByVkItemId(photoId);
-            var albumId = listAlbumItem.stream()
-                    .filter(s -> s.getStatuses().getStatusId() == ALBUM_STATUS_OPEN)
-                    .findFirst()
-                    .map(AlbumsItemsEntity::getAlbum)
-                    .map(AlbumsEntity::getAlbumId)
-                    .orElseThrow(() -> new RuntimeException("не найден альбом, где хранится фото с комментарием"));
+            var albumsItems = albumsItemsRepository.findFirstByVkItemId(photoId);
+//            var albumId = listAlbumItem.stream()
+//                    .filter(s -> s.getStatuses().getStatusId() == ALBUM_STATUS_OPEN)
+//                    .findFirst()
+//                    .map(AlbumsItemsEntity::getAlbum)
+//                    .map(AlbumsEntity::getAlbumId)
+//                    .orElseThrow(() -> new RuntimeException("не найден альбом, где хранится фото с комментарием"));
 
-            log.info("Сохранение комментария в itemsEntity");
-            var album = albumsRepository.findAlbumsEntityByAlbumId(albumId);
-            var albumsItems = albumsItemsRepository.findFirstByVkItemIdAndAlbum(photoId, album);
-
+//            var album = albumsRepository.findAlbumsEntityByAlbumId(albumId);
+//            var albumsItems = albumsItemsRepository.findFirstByVkItemIdAndAlbum(photoId, album);
+            log.info("Сохранение комментария в itemsEntity: {}", albumsItems);
             saveInAlbumItem(albumsItems, object);
 
         } catch (Exception e) {
@@ -366,6 +368,8 @@ public class VkDAO {
     }
 
     private long getOrderId(JsonObject object, Long albumId) {
+        accessToken = getToken(clientId).orElse(null);
+
         var fromId = object.get("from_id").getAsLong();
         //проверка на существующего пользователя в базе
         var user = usersRepository.getUsersEntityByVkId(fromId);
@@ -387,9 +391,9 @@ public class VkDAO {
 //            orders.setOrderCost(1);
             orders.setStatusId(24L);
             log.info(String.valueOf(orders));
-            ordersRepository.save(orders);
-            ordersId = 0;
-//            ordersId = ordersRepository.save(orders).getOrderId();
+//            ordersRepository.save(orders);
+//            ordersId = 0;
+            ordersId = ordersRepository.save(orders).getOrderId();
         } else
             ordersId = orders.getOrderId();
 
@@ -398,15 +402,19 @@ public class VkDAO {
     }
 
     private void saveInAlbumItem(AlbumsItemsEntity albumsItems, JsonObject object) {
+        accessToken = getToken(clientId).orElse(null);
+
         try {
             var dateInSeconds = object.get("date").getAsLong();
             var commentText = object.get("text").getAsString();
             var itemName = albumsItems.getAlbumItemName();
             var itemUrl = albumsItems.getItemUrl();
             var itemColor = albumsItems.getItemColor();
-            var itemSize= albumsItems.getItemSize();
+            var itemSize = albumsItems.getItemSize();
             var photoId = object.get("photo_id").getAsLong();
-            var photoUrl = getCommentPhotoVk(photoId);
+            var photoUrl = albumsItems.getItemUrl();
+//            var photoUrl = getCommentPhotoVk(photoId);
+
             var albumId = albumsItems.getAlbum().getAlbumId();
             var albumItemId = albumsItems.getAlbumItemId();
             var orderId = getOrderId(object, albumId);
@@ -423,15 +431,15 @@ public class VkDAO {
             itemsEntity.setItemName(itemName);
             itemsEntity.setVkUrl(photoUrl);
 //        itemsEntity.setVkUrl("https://vk.com/photo-" + groupId + "_" + photoId);
-            if(parsedComment.getSize()!=null)
+            if (parsedComment.getSize() != null)
                 itemsEntity.setItemSize(parsedComment.getSize());
             else
                 itemsEntity.setItemSize(itemSize);
-            if(parsedComment.getLink()!=null)
+            if (parsedComment.getLink() != null)
                 itemsEntity.setItemUrl(parsedComment.getLink());
             else
                 itemsEntity.setItemUrl(itemUrl);
-            if(parsedComment.getColor()!=null)
+            if (parsedComment.getColor() != null)
                 itemsEntity.setItemColor(parsedComment.getColor());
             else
                 itemsEntity.setItemColor(itemColor);
@@ -442,18 +450,20 @@ public class VkDAO {
 
             itemsRepository.save(itemsEntity);
             log.info("Сохранение комментария в itemsEntity прошло успешно");
-        }catch (Exception e) {
-            log.error("Ошибка при сохранения комментария: ",e);
+        } catch (Exception e) {
+            log.error("Ошибка при сохранения комментария: ", e);
         }
     }
 
     public String getCommentPhotoVk(long photo_id) throws IOException {
+        accessToken = getToken(clientId).orElse(null);
+
         final CloseableHttpClient httpclient = HttpClients.createDefault();
         final HttpPost httpPost = new HttpPost("https://api.vk.com/method/photos.getById");
         final List<NameValuePair> params = new ArrayList<>();
         params.add(new BasicNameValuePair("access_token", accessToken));
         params.add(new BasicNameValuePair("v", apiVersion));
-        params.add(new BasicNameValuePair("photos", "-" + groupId+"_"+photo_id));
+        params.add(new BasicNameValuePair("photos", "-" + groupId + "_" + photo_id));
         params.add(new BasicNameValuePair("http.protocol.content-charset", "UTF-8"));
         httpPost.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));
         System.out.println(httpPost);
