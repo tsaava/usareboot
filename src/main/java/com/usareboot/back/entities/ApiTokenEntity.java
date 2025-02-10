@@ -2,12 +2,14 @@ package com.usareboot.back.entities;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
 @Getter
+@Setter
 @Table(name = "api_token", schema = "public", catalog = "usareboot")
 public class ApiTokenEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,31 +23,16 @@ public class ApiTokenEntity {
     @Column(name = "token")
     private String token;
     @Basic
+    @Column(name = "refresh_token")
+    private String refreshToken;
+    @Basic
     @Column(name = "token_start")
     private LocalDateTime tokenStart;
     @Basic
     @Column(name = "token_end")
     private LocalDateTime tokenEnd;
 
-    public void setApiTokenId(long vkUserDataId) {
-        this.apiTokenId = vkUserDataId;
-    }
 
-    public void setVkClientId(long vkId) {
-        this.vkClientId = vkId;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
-    }
-
-    public void setTokenStart(LocalDateTime tokenStart) {
-        this.tokenStart = tokenStart;
-    }
-
-    public void setTokenEnd(LocalDateTime tokenEnd) {
-        this.tokenEnd = tokenEnd;
-    }
 
     @Override
     public boolean equals(Object o) {

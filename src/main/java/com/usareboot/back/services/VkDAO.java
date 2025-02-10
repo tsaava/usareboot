@@ -97,14 +97,19 @@ public class VkDAO {
         String response = restTemplate.getForObject(tokenUrl, String.class);
         System.out.println(response);
         assert response != null;
+        log.info("response: {}",response);
+
         JsonObject json = JsonParser.parseString(response).getAsJsonObject();
+        log.info("json: {}",json);
         String accessToken = json.get("access_token").getAsString();
+//        String refreshToken = json.get("refresh_token").getAsString();
         var expires_in = json.get("expires_in").getAsLong();
         var date = java.time.LocalDateTime.now();
         var dataTokenEnd = date.plusSeconds(expires_in);
         apiTokenRepository.findApiTokenEntityByVkClientId(Long.parseLong(clientId))
                 .ifPresentOrElse(s -> {
                     s.setToken(accessToken);
+//                    s.setRefreshToken(refreshToken);
                     s.setTokenStart(date);
                     s.setTokenEnd(dataTokenEnd);
                     apiTokenRepository.save(s);
