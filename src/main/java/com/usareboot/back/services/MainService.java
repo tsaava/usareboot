@@ -1,6 +1,5 @@
 package com.usareboot.back.services;
 
-import com.usareboot.back.entities.ApiTokenEntity;
 import com.usareboot.back.entities.DStatusesEntity;
 import com.usareboot.back.entities.ItemsEntity;
 import com.usareboot.back.entities.RepaymentsEntity;
@@ -20,7 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicReference;
 
 import static com.usareboot.back.models.constant.Constant.ITEM_STATUS_REPAYMENT;
 import static com.usareboot.back.models.constant.Constant.PERCENTAGE_INCOME_DEFAULT;
@@ -28,7 +26,7 @@ import static com.usareboot.back.models.constant.Constant.PERCENTAGE_INCOME_DEFA
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class MainDAO {
+public class MainService {
 
     private final ImportListRepository importListRepository;
     private final ItemsRepository itemsRepository;

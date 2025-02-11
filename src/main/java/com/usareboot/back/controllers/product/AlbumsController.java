@@ -3,8 +3,8 @@ package com.usareboot.back.controllers.product;
 import com.google.gson.Gson;
 import com.usareboot.back.entities.AlbumsEntity;
 import com.usareboot.back.models.AlbumRowRequestDTO;
-import com.usareboot.back.services.AlbumsDAO;
-import com.usareboot.back.services.VkDAO;
+import com.usareboot.back.services.AlbumsService;
+import com.usareboot.back.services.VkService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,31 +20,31 @@ import java.io.IOException;
 
 public class AlbumsController {
 
-    private AlbumsDAO albumsDAO;
-    private VkDAO vkDAO;
+    private AlbumsService albumsService;
+    private VkService vkService;
 
     @Autowired
-    public AlbumsController(AlbumsDAO albumsDAO, VkDAO vkDAO/*, Environment environment*/) {
-        this.albumsDAO = albumsDAO;
-        this.vkDAO =vkDAO;
+    public AlbumsController(AlbumsService albumsService, VkService vkService/*, Environment environment*/) {
+        this.albumsService = albumsService;
+        this.vkService = vkService;
     }
 
     @GetMapping("/list")
     public ResponseEntity<?> albumsList(/*@RequestParam(name="date")
                                             @DateTimeFormat(pattern = "dd.MM.yyyy") Date albumDate*/){
-        return new ResponseEntity<>(new Gson().toJson(albumsDAO.getListAlbums()), HttpStatus.OK);
+        return new ResponseEntity<>(new Gson().toJson(albumsService.getListAlbums()), HttpStatus.OK);
     }
 
     @GetMapping("/card")
     public ResponseEntity<?> cardList(){
-        return new ResponseEntity<>(new Gson().toJson(albumsDAO.getAlbumCards()), HttpStatus.OK);
+        return new ResponseEntity<>(new Gson().toJson(albumsService.getAlbumCards()), HttpStatus.OK);
     }
 
     @PostMapping("/add")
     public ResponseEntity<?> addAlbum(@RequestBody AlbumsEntity data) throws IOException {
-        Integer album = vkDAO.createAlbum(data);
+        Integer album = vkService.createAlbum(data);
         System.out.println("в вк альбом создался, id = "+album);
-        albumsDAO.albumsAdd(data,album);
+        albumsService.albumsAdd(data,album);
         System.out.println("в базу альбом добавился");
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -54,10 +54,10 @@ public class AlbumsController {
                                         @PathVariable String token,
                                         @RequestBody AlbumRowRequestDTO data) throws IOException{
         System.out.println(data);
-        var vk=vkDAO.updAlbum(String.valueOf(data.getAlbumVkId()),token, data);
+        var vk= vkService.updAlbum(String.valueOf(data.getAlbumVkId()),token, data);
         System.out.println(vk);
         System.out.println("в вк альбом обновился, id = " + data.getAlbumVkId());
-        albumsDAO.albumsUpd(data, data.getAlbumId());
+        albumsService.albumsUpd(data, data.getAlbumId());
         System.out.println("в базе альбом обновился");
         return new ResponseEntity<>(HttpStatus.OK);
     }

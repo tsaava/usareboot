@@ -5,17 +5,13 @@ import com.usareboot.back.models.AlbumsDTO;
 import com.usareboot.back.models.CardsDTO;
 import com.usareboot.back.entities.AlbumsEntity;
 import com.usareboot.back.entities.DStatusesEntity;
-import com.usareboot.back.repositories.AlbumsItemsRepository;
 import com.usareboot.back.repositories.AlbumsRepository;
 import com.usareboot.back.repositories.CardsRepository;
 import com.usareboot.back.repositories.DStatusRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,7 +20,7 @@ import java.util.ArrayList;
 
 @Service
 @RequiredArgsConstructor
-public class AlbumsDAO {
+public class AlbumsService {
     private  final AlbumsRepository albumsRepository;
     private final CardsRepository cardsRepository;
     private final DStatusRepository statusRepository;

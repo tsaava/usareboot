@@ -29,7 +29,7 @@ import static org.springframework.http.ResponseEntity.ok;
 
 @Service
 @Slf4j
-public class AlbumsItemsDAO {
+public class AlbumsItemsService {
 
     @Autowired
     private AlbumsItemsRepository albumsItemsRepository;
@@ -41,7 +41,7 @@ public class AlbumsItemsDAO {
     private AlbumsRepository albumsRepository;
 
     @Autowired
-    private VkDAO vkDAO;
+    private VkService vkService;
 
     @Autowired
     ModelMapper modelMapper;
@@ -95,7 +95,7 @@ public class AlbumsItemsDAO {
         albumsItemsEntity.setDescription(albumsItemsDTO.getDescription());
 
         try {
-            var photoUrl = vkDAO.getCommentPhotoVk(albumsItemsDTO.getVkItemId());
+            var photoUrl = vkService.getCommentPhotoVk(albumsItemsDTO.getVkItemId());
             albumsItemsEntity.setPhotoPath(photoUrl);
         } catch (Exception e) {
             log.error("Не удалось получить ссылку на фото в Вк", e);

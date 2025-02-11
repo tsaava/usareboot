@@ -3,8 +3,8 @@ package com.usareboot.back.controllers.product;
 import com.google.gson.Gson;
 import com.usareboot.back.client.config.ConfigureFeignUrlController;
 import com.usareboot.back.models.AlbumsItemsDTO;
-import com.usareboot.back.services.AlbumsItemsDAO;
-import com.usareboot.back.services.VkDAO;
+import com.usareboot.back.services.AlbumsItemsService;
+import com.usareboot.back.services.VkService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,9 +26,9 @@ import java.util.Map;
 @Slf4j
 public class AlbumsItemsController {
     @Autowired
-    private AlbumsItemsDAO albumsItemsDAO;
+    private AlbumsItemsService albumsItemsService;
     @Autowired
-    private VkDAO vkDAO;
+    private VkService vkService;
     @Autowired
     private ConfigureFeignUrlController configureFeignUrlController;
     @Autowired
@@ -37,7 +37,7 @@ public class AlbumsItemsController {
 
     @GetMapping("/list/{albumId}")
     public ResponseEntity<?> albumItemsList(@PathVariable long albumId) {
-        return new ResponseEntity<>(new Gson().toJson(albumsItemsDAO.getAlbumsItems(albumId)), HttpStatus.OK);
+        return new ResponseEntity<>(new Gson().toJson(albumsItemsService.getAlbumsItems(albumId)), HttpStatus.OK);
     }
 
     @PostMapping(value = "/create/{albumId}"/*, produces=MediaType.APPLICATION_OCTET_STREAM_VALUE, consumes=MediaType.APPLICATION_OCTET_STREAM_VALUE*/ /*MediaType.MULTIPART_FORM_DATA_VALUE*//* MediaType.IMAGE_JPEG_VALUE*//*.ALL_VALUE*//*MediaType.IMAGE_GIF_VALUE*/)
@@ -55,7 +55,7 @@ public class AlbumsItemsController {
             @RequestPart(name = "file") MultipartFile file,
             @RequestPart(name = "data") String data) throws IOException {
 
-        var albumsItemsDTO = vkDAO.saveFileInVk(albumId, file, data);
-        return albumsItemsDAO.saveFile( file, albumsItemsDTO);
+        var albumsItemsDTO = vkService.saveFileInVk(albumId, file, data);
+        return albumsItemsService.saveFile( file, albumsItemsDTO);
     }
 }

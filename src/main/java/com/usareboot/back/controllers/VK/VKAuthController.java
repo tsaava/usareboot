@@ -1,6 +1,6 @@
 package com.usareboot.back.controllers.VK;
 
-import com.usareboot.back.services.VkDAO;
+import com.usareboot.back.services.VkService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class VKAuthController {
 
-    private final VkDAO vkService;
+    private final VkService vkService;
 
     @GetMapping("/oauth/callback")
     public ResponseEntity<?> callback(@RequestParam("code") String code) {
