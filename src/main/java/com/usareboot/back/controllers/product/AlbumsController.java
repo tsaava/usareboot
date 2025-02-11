@@ -42,10 +42,9 @@ public class AlbumsController {
 
     @PostMapping("/add")
     public ResponseEntity<?> addAlbum(@RequestBody AlbumsEntity data) throws IOException {
+        albumsService.albumsAdd(data,null);
         Integer album = vkService.createAlbum(data);
-        System.out.println("в вк альбом создался, id = "+album);
         albumsService.albumsAdd(data,album);
-        System.out.println("в базу альбом добавился");
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

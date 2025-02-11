@@ -28,6 +28,7 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
@@ -79,7 +80,7 @@ public class VkService {
     private final UsersRepository usersRepository;
     private final ApiTokenRepository apiTokenRepository;
 
-    private final ThreadLocal<ThreadDescription> threadLocal;
+    private final ThreadLocal<String> threadLocal = new ThreadLocal<>();
 
     public Optional<String> getToken(String clientId) {
         return apiTokenRepository.findApiTokenEntityByVkClientId(Long.parseLong(clientId))
@@ -102,17 +103,16 @@ public class VkService {
         JsonObject json = JsonParser.parseString(response).getAsJsonObject();
         log.info("json: {}", json);
         String accessToken = json.get("access_token").getAsString();
-//        String refreshToken = json.get("refresh_token").getAsString();
         var expires_in = json.get("expires_in").getAsLong();
         var date = java.time.LocalDateTime.now();
         var dataTokenEnd = date.plusSeconds(expires_in);
         apiTokenRepository.findApiTokenEntityByVkClientId(Long.parseLong(clientId))
                 .ifPresentOrElse(s -> {
-                    s.setToken(accessToken);
-//                    s.setRefreshToken(refreshToken);
-                    s.setTokenStart(date);
-                    s.setTokenEnd(dataTokenEnd);
-                    apiTokenRepository.save(s);
+//                    s.setToken(accessToken);
+////                    s.setRefreshToken(refreshToken);
+//                    s.setTokenStart(date);
+//                    s.setTokenEnd(dataTokenEnd);
+//                    apiTokenRepository.save(s);
                 }, () -> {
                     var data = new ApiTokenEntity();
                     data.setVkClientId(Long.parseLong(clientId));
@@ -124,10 +124,11 @@ public class VkService {
 
     }
 
-
+    @Async
     public Integer createAlbum(AlbumsEntity albumsEntity) throws IOException {
+        var eventId = threadLocal.get();
+        log.info("[Сценарий createAlbum][Шаг: Начало][EventID: {}]", eventId);
         accessToken = getToken(clientId).orElse(null);
-        log.info(accessToken);
         final CloseableHttpClient httpclient = HttpClients.createDefault();
         final HttpPost httpPost = new HttpPost("https://api.vk.com/method/photos.createAlbum");
         final List<NameValuePair> params = new ArrayList<>();
@@ -145,22 +146,23 @@ public class VkService {
             HttpEntity entity2 = response2.getEntity();
             List<String> tempString = Collections.singletonList(EntityUtils.toString(entity2));
             ObjectMapper mapper = new ObjectMapper();
-            log.info("tempString: {}", tempString);
+            log.debug("tempString: {}", tempString);
             List<VkAlbumResponse> userDtoList = tempString.stream().map(x -> {
                 VkAlbumResponse userDto = null;
                 try {
                     userDto = mapper.readValue(x, VkAlbumResponse.class);
-                    log.info("userDto.getResponse().getId(): {}", userDto.getResponse().getId());
+                    log.debug("userDto.getResponse().getId(): {}", userDto.getResponse().getId());
 
                 } catch (JsonProcessingException e) {
-                    log.info("exception" + e);
+                    log.error("exception" + e);
                 }
-
                 return userDto;
             }).toList();
             Integer id = null;
             if (!userDtoList.isEmpty())
                 id = userDtoList.get(0).getResponse().getId();
+            log.debug("[Сценарий createAlbum][Шаг: Проверка serDtoList.size(): {} и id: {}][EventID: {}]", userDtoList.size(), id, eventId);
+            log.info("[Сценарий createAlbum][Шаг: Финиш][EventID: {}]", eventId);
             return id;
         }
     }

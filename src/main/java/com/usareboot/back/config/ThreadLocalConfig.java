@@ -8,5 +8,5 @@ import org.springframework.context.annotation.Configuration;
 public class ThreadLocalConfig {
 
     @Bean(name="threadLocal")
-    public ThreadLocal<ThreadDescription> getThreadLocal() {return new InheritableThreadLocal<>();}
+    public ThreadLocal<String> getThreadLocal() {return new InheritableThreadLocal<>();}
 }
