@@ -11,6 +11,7 @@ import com.usareboot.back.entities.auth.UsersEntity;
 import com.usareboot.back.models.AlbumRowRequestDTO;
 import com.usareboot.back.models.AlbumsItemsDTO;
 import com.usareboot.back.models.ParsedComment;
+import com.usareboot.back.models.ThreadDescription;
 import com.usareboot.back.models.vk.VkAlbumItemResponse;
 import com.usareboot.back.models.vk.VkAlbumResponse;
 import com.usareboot.back.parser.CommentParser;
@@ -80,6 +81,8 @@ public class VkDAO {
     private final OrdersRepository ordersRepository;
     private final UsersRepository usersRepository;
     private final ApiTokenRepository apiTokenRepository;
+
+    private final ThreadLocal <ThreadDescription> threadLocal;
 
     public Optional<String> getToken(String clientId) {
         return apiTokenRepository.findApiTokenEntityByVkClientId(Long.parseLong(clientId))

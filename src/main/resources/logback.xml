@@ -19,7 +19,7 @@
             <maxHistory>90</maxHistory>
 
             <!-- Максимальный размер файлов лога 10 гигабайт -->
-            <totalSizeCap>10GB</totalSizeCap>
+            <totalSizeCap>1GB</totalSizeCap>
 
         </rollingPolicy>
         <encoder>
