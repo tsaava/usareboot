@@ -79,7 +79,7 @@ public class VkService {
     private final UsersRepository usersRepository;
     private final ApiTokenRepository apiTokenRepository;
 
-    private final ThreadLocal <ThreadDescription> threadLocal;
+    private final ThreadLocal<ThreadDescription> threadLocal;
 
     public Optional<String> getToken(String clientId) {
         return apiTokenRepository.findApiTokenEntityByVkClientId(Long.parseLong(clientId))
@@ -97,10 +97,10 @@ public class VkService {
         String response = restTemplate.getForObject(tokenUrl, String.class);
         System.out.println(response);
         assert response != null;
-        log.info("response: {}",response);
+        log.info("response: {}", response);
 
         JsonObject json = JsonParser.parseString(response).getAsJsonObject();
-        log.info("json: {}",json);
+        log.info("json: {}", json);
         String accessToken = json.get("access_token").getAsString();
 //        String refreshToken = json.get("refresh_token").getAsString();
         var expires_in = json.get("expires_in").getAsLong();
@@ -145,24 +145,23 @@ public class VkService {
             HttpEntity entity2 = response2.getEntity();
             List<String> tempString = Collections.singletonList(EntityUtils.toString(entity2));
             ObjectMapper mapper = new ObjectMapper();
-            System.out.println(tempString);
+            log.info("tempString: {}", tempString);
             List<VkAlbumResponse> userDtoList = tempString.stream().map(x -> {
                 VkAlbumResponse userDto = null;
                 try {
                     userDto = mapper.readValue(x, VkAlbumResponse.class);
-                    System.out.print("userDto:");
-
-                    System.out.println(userDto.getResponse().getId());
+                    log.info("userDto.getResponse().getId(): {}", userDto.getResponse().getId());
 
                 } catch (JsonProcessingException e) {
-                    System.out.println("exception" + e);
+                    log.info("exception" + e);
                 }
 
                 return userDto;
-            }).collect(Collectors.toList());
-
-            return userDtoList.get(0).getResponse().getId();
-
+            }).toList();
+            Integer id = null;
+            if (!userDtoList.isEmpty())
+                id = userDtoList.get(0).getResponse().getId();
+            return id;
         }
     }
 
