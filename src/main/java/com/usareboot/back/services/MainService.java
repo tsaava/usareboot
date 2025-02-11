@@ -34,15 +34,12 @@ public class MainService {
     private final RepaymentsRepository repaymentsRepository;
     private final ApiTokenRepository apiTokenRepository;
 
-
-
-
     public ArrayList<ImportDTO> getListImport(String listAlbom) {
         ArrayList<ImportDTO> scienceDiplomsList = new ArrayList<>();
         if (!Objects.equals(listAlbom, "[]"))
             listAlbom = listAlbom.replace("[", "").replace("]", "");
         var bdFuncResponse = importListRepository.importListProcedure(listAlbom);
-        if (bdFuncResponse.size() > 0) {
+        if (!bdFuncResponse.isEmpty()) {
             bdFuncResponse.forEach(x -> scienceDiplomsList.add(new ImportDTO(
                     x.getclient(),
                     x.getclient_id(),
@@ -63,9 +60,8 @@ public class MainService {
 
     @Transactional
     public void getImportList(String data, String albomName) {
-//        System.out.println(albomName.replace("\"",""));
         var isHave = importListRepository.getImportItemListEntitiesByVikup(albomName);
-        System.out.println("isHave: " + isHave);
+        log.info("isHave: " + isHave);
         if (isHave.isEmpty()) {
             System.out.println("выполняется процедура импорта");
             StoredProcedureQuery spq = em.createNamedStoredProcedureQuery("vpImportDataInList");
@@ -79,7 +75,7 @@ public class MainService {
     public ArrayList<ItemListDTO> getItemListDao(int statusId) {
         ArrayList<ItemListDTO> scienceDiplomsList = new ArrayList<>();
         var bdFuncResponse = importListRepository.itemListProcedure(statusId);
-        if (bdFuncResponse.size() > 0) {
+        if (!bdFuncResponse.isEmpty()) {
             bdFuncResponse.forEach(x -> scienceDiplomsList.add(new ItemListDTO(
                     x.getitem_id(),
                     x.getclient_id(),
@@ -159,7 +155,7 @@ public class MainService {
     public ArrayList<ItemWeightListDTO> getItemWeightListDao() {
         ArrayList<ItemWeightListDTO> scienceDiplomsList = new ArrayList<>();
         var bdFuncResponse = importListRepository.weightItemListProcedure();
-        if (bdFuncResponse.size() > 0) {
+        if (!bdFuncResponse.isEmpty()) {
             bdFuncResponse.forEach(x -> scienceDiplomsList.add(new ItemWeightListDTO(
                     x.getitem_id(),
                     x.getclient_id(),
@@ -190,31 +186,21 @@ public class MainService {
         if (itemsRequestDTO.getDateDelivery() != null)
             ie.setDateDelivery(new java.sql.Date(itemsRequestDTO.getDateDelivery().getTime()));
         else ie.setDateDelivery(null);
-        System.out.println(ie);
+        log.info(String.valueOf(ie));
+
         itemsRepository.save(ie);
     }
 
     public ArrayList<DStatusesEntity> getStatusesItem(int type) {
-//        System.out.println(dStatusRepository.getDStatusesEntityByActiveAndStatusType(1,type));
-//        return dStatusRepository.getDStatusesEntityByActiveAndStatusTypeOrderByStatusName(1,type);
         return dStatusRepository.getDStatusesEntityByActiveAndStatusTypeOrderByStatusName(1, type);
     }
 
-
     @Transactional
     public void setItemDate() {
-//        java.util.Date date = new java.util.Date();
         long millis = System.currentTimeMillis();
         java.sql.Date date = new java.sql.Date(millis);
         System.out.println(date);
-//        System.out.println(date);
-//        itemsRepository.setDate(date);
         itemsRepository.item_set_date_all();
-//        itemsRepository.setDate(new java.sql.Date(date.getTime()));
-
-        System.out.println("обновление прошло успешно");
-
+        log.info("обновление прошло успешно");
     }
-
-
 }
