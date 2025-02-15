@@ -33,7 +33,7 @@ public class AlbumsItemsEntity {
     @Basic
     @Column(name = "item_url")
     private String itemUrl;
-    @Basic
+
     @Column(name = "item_color")
     private String itemColor;
     @Basic

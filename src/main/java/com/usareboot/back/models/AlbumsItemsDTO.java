@@ -20,6 +20,7 @@ public class AlbumsItemsDTO {
     private String photoPath;
     private String description;
     private String itemUrl;
+    private String photoUrl;
     private String descriptionShort;
     private BigInteger albumItemWeight;
     private String albumItemName;

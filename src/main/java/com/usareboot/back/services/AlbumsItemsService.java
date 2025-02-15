@@ -50,7 +50,7 @@ public class AlbumsItemsService {
     private String pathPhoto;
     private final ThreadLocal<String> threadLocal = new ThreadLocal<>();
 
-//    @Async
+    //    @Async
     public ArrayList<AlbumsItemsDTO> getAlbumsItems(long albumId) {
         var eventId = threadLocal.get();
         log.info("[Сценарий getAlbumsItems][Шаг: Начало][EventID: {}]", eventId);
@@ -66,6 +66,7 @@ public class AlbumsItemsService {
                     x.getPhotoPath(),
                     x.getDescription(),
                     x.getItemUrl(),
+                    null,
                     x.getDescriptionShort(),
                     x.getAlbumItemWeight(),
                     x.getAlbumItemName(),
@@ -78,7 +79,6 @@ public class AlbumsItemsService {
                     x.getVkPhotoPath()
             )));
         }
-        log.info("AlbumsItemsDTO list: {}", list);
         log.info("[Сценарий getAlbumsItems][Шаг: вывод AlbumsItemsDTO list: {}][EventID: {}]", list, eventId);
         return list;
     }
@@ -108,7 +108,7 @@ public class AlbumsItemsService {
         albumsItemsRepository.save(albumsItemsEntity);
     }
 
-    public ResponseEntity<Map<String, String>> saveFile( MultipartFile file,  AlbumsItemsDTO albumsItemsDTO) throws IOException {
+    public ResponseEntity<Map<String, String>> saveFile(MultipartFile file, AlbumsItemsDTO albumsItemsDTO) throws IOException {
         copyFile(file);
         log.info("Сохранение фото в БД");
         saveAlbumItem(albumsItemsDTO);
@@ -126,6 +126,7 @@ public class AlbumsItemsService {
         return ok().body(result);
 
     }
+
     public void copyFile(MultipartFile file) {
         try {
             // Создаем временный файл для сохранения загруженного файла

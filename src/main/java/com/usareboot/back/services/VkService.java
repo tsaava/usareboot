@@ -11,7 +11,6 @@ import com.usareboot.back.entities.auth.UsersEntity;
 import com.usareboot.back.models.AlbumRowRequestDTO;
 import com.usareboot.back.models.AlbumsItemsDTO;
 import com.usareboot.back.models.ParsedComment;
-import com.usareboot.back.models.ThreadDescription;
 import com.usareboot.back.models.vk.VkAlbumItemResponse;
 import com.usareboot.back.models.vk.VkAlbumResponse;
 import com.usareboot.back.parser.CommentParser;
@@ -27,7 +26,9 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -35,6 +36,8 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import java.nio.file.Path;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -43,7 +46,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
+import java.util.concurrent.CompletableFuture;
 
 
 @Service
@@ -287,8 +290,19 @@ public class VkService {
     }
 
     @Async
-    public AlbumsItemsDTO saveFileInVk(Long albumId, MultipartFile file, String data) throws IOException {
+    public AlbumsItemsDTO saveFileInVk(Long albumId, MultipartFile file, AlbumsItemsDTO albumsItemsDTO) throws IOException {
         accessToken = getToken(clientId).orElse(null);
+
+        log.info("Редактирование комментария в вк");
+//        Gson g = new Gson();
+//        var albumsItemsDTO = g.fromJson(data, AlbumsItemsDTO.class);
+        /*проверка данных: пришло фото или ссылка на фото*/
+        if (albumsItemsDTO.getPhotoUrl() == null) {
+            log.error("Ошибка загрузки: нет ссылки на фотографию");
+            throw new RuntimeException("Ошибка загрузки: нет ссылки на фотографию");
+        }
+        if (file == null)
+            file = getMultipartFile(albumsItemsDTO);
 
         var photoUploadVk = getUrlPhotoInAlbumVk(albumId);
         log.info("Upload photo in vk");
@@ -302,9 +316,6 @@ public class VkService {
                 vkPhotoList.getHash(),
                 accessToken);
 
-        log.info("Редактирование комментария в вк");
-        Gson g = new Gson();
-        var albumsItemsDTO = g.fromJson(data, AlbumsItemsDTO.class);
         var allDesc = albumsItemsDTO.getAlbumItemName() + "\n" +
                 albumsItemsDTO.getDescription() + "\n" +
                 "цена: " + albumsItemsDTO.getAlbumItemCost().toString() + ", курс: " +
@@ -320,6 +331,24 @@ public class VkService {
         log.info("Сохранение фото в БД");
         albumsItemsDTO.setPhotoPath(String.valueOf(filePath));
         return albumsItemsDTO;
+    }
+
+    public MultipartFile getMultipartFile(AlbumsItemsDTO albumsItemsDTO) throws IOException {
+        // Загружаем InputStream из URL
+        URL url = new URL(albumsItemsDTO.getPhotoUrl());
+        InputStream inputStream = url.openStream();
+
+        // Достаем имя файла из URL (например, "image.jpg")
+        String fileName = albumsItemsDTO.getPhotoUrl().substring(albumsItemsDTO.getPhotoUrl().lastIndexOf("/") + 1);
+        log.info("Фото по ссылке получено");
+
+        // Создаем MultipartFile из InputStream
+        return new MockMultipartFile(
+                fileName,         // Имя файла
+                fileName,         // Оригинальное имя файла
+                "image/jpeg",     // MIME тип (укажите нужный тип, например, "image/png")
+                inputStream       // Данные файла
+        );
     }
 
     //    public String getComments(String postId) {

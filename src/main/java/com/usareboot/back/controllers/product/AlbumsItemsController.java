@@ -51,10 +51,15 @@ public class AlbumsItemsController {
     public ResponseEntity<Map<String, String>> itemPhotoUpload(
             @PathVariable String token,
             @RequestParam(name = "album") long albumId,
-            @RequestPart(name = "file") MultipartFile file,
+            @RequestPart(name = "file", required = false) MultipartFile file,
             @RequestPart(name = "data") String data) throws IOException {
 
-        var albumsItemsDTO = vkService.saveFileInVk(albumId, file, data);
+        Gson g = new Gson();
+        var dto = g.fromJson(data, AlbumsItemsDTO.class);
+        if(file==null){
+            file = vkService.getMultipartFile(dto);
+        }
+        var albumsItemsDTO = vkService.saveFileInVk(albumId, file, dto);
         return albumsItemsService.saveFile( file, albumsItemsDTO);
     }
 }
