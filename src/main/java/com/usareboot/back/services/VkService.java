@@ -286,6 +286,7 @@ public class VkService {
         return json.getAsJsonObject("response").get("code").getAsString();
     }
 
+    @Async
     public AlbumsItemsDTO saveFileInVk(Long albumId, MultipartFile file, String data) throws IOException {
         accessToken = getToken(clientId).orElse(null);
 

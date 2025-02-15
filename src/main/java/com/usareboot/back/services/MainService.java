@@ -16,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Optional;
@@ -103,7 +104,7 @@ public class MainService {
                     x.getcomment(),
                     x.getalbom_item_cost(),
                     x.getalbom_item_rate(),
-                    (x.getalbom_item_cost().doubleValue()*x.getalbom_item_rate().doubleValue()),
+                    (x.getalbom_item_cost().doubleValue() * x.getalbom_item_rate().doubleValue()),
                     x.getrepayment_name()
             )));
         }
@@ -121,34 +122,39 @@ public class MainService {
                 var payStatusId = dStatusRepository.findDStatusesEntityByStatusName(itemListDTO.getPayStatus()).getStatusId();
                 itemList.setCostStatus(payStatusId);
             }
-            String repaymentName = itemListDTO.getRepaymentName();
-            itemList.setRepaymentName(repaymentName);
+//            String repaymentName = itemListDTO.getRepaymentName();
+            itemList.setRepaymentName(itemListDTO.getRepaymentName());
+            itemList.setItemCount(itemListDTO.getItemCount());
+            itemList.setItemColor(itemListDTO.getItemColor());
+            log.info("itemListDTO.getItemSize(): {}", itemListDTO.getItemSize());
+            if (itemListDTO.getItemSize() != null)
+                itemList.setItemSize(itemListDTO.getItemSize());
             itemsRepository.save(itemList);
-            Optional<RepaymentsEntity> repaymentsEntityByRepaymentName = repaymentsRepository.findFirstByRepaymentName(repaymentName);
+            log.info("Успешное сохранение данных в таблицу item");
+            /*if (!repaymentName.isEmpty()) {
+//                Optional<RepaymentsEntity> repaymentsEntityByRepaymentName = repaymentsRepository.findFirstByRepaymentName(repaymentName);
 
-            if (!repaymentName.isEmpty()) {
-                if (repaymentsEntityByRepaymentName.isEmpty()) {
+//                if (repaymentsEntityByRepaymentName.isEmpty()) {
                     RepaymentsEntity repayment = new RepaymentsEntity();
                     repayment.setRepaymentName(repaymentName);
                     repayment.setPercentageIncome(PERCENTAGE_INCOME_DEFAULT);
-                    System.out.println("repayment.getPercentageIncome(): " + repayment.getPercentageIncome());
+                    log.info("repayment.getPercentageIncome(): " + repayment.getPercentageIncome());
                     RepaymentsEntity save = repaymentsRepository.save(repayment);
                     itemList.setRepaymentId(save.getRepaymentId());
                     itemsRepository.save(itemList);
-                    log.info("Успешное создание строки с repaymentName в таблице repayments и запись repaymentId в таблицу item ");
+                    log.info("Успешное создание строки с repaymentName в таблице repayments и запись repaymentId в таблицу item");
                     itemList.setItemStatus(ITEM_STATUS_REPAYMENT);
                     itemsRepository.save(itemList);
-                }
-            }
-            else {
+//                }
+         *//*   } else {
                 if (repaymentsEntityByRepaymentName.isPresent()) {
                     itemList.setRepaymentId(null);
                     itemsRepository.save(itemList);
                     log.info("Успешное удаление трека и обнуление ссылки на repayments");
-                }
-            }
+                }*//*
+            }*/
         } catch (Exception e) {
-            log.error("В бд не записался данный трек: {}: {}",itemListDTO.getRepaymentName(), e.getMessage());
+            log.error("В бд не записался данный трек: {}: {}", itemListDTO.getRepaymentName(), e.getMessage());
         }
     }
 

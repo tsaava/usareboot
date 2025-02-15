@@ -10,6 +10,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -47,10 +48,12 @@ public class AlbumsItemsService {
     ModelMapper modelMapper;
     @Value("${vk.api.pathPhoto}")
     private String pathPhoto;
+    private final ThreadLocal<String> threadLocal = new ThreadLocal<>();
 
-
+//    @Async
     public ArrayList<AlbumsItemsDTO> getAlbumsItems(long albumId) {
-
+        var eventId = threadLocal.get();
+        log.info("[Сценарий getAlbumsItems][Шаг: Начало][EventID: {}]", eventId);
         ArrayList<AlbumsItemsDTO> list = new ArrayList<>();
         var bdFuncResponse = albumsItemsRepository.getAlbumsItemsEntitiesByAlbum_AlbumId(albumId);
         if (!bdFuncResponse.isEmpty()) {
@@ -75,7 +78,8 @@ public class AlbumsItemsService {
                     x.getVkPhotoPath()
             )));
         }
-        System.out.println(list);
+        log.info("AlbumsItemsDTO list: {}", list);
+        log.info("[Сценарий getAlbumsItems][Шаг: вывод AlbumsItemsDTO list: {}][EventID: {}]", list, eventId);
         return list;
     }
 

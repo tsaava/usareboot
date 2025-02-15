@@ -45,7 +45,6 @@ public class AlbumsItemsController {
             @PathVariable long albumId,
             @RequestBody AlbumsItemsDTO albumsItemsDTO,
             @RequestBody ByteArrayResource photo) {
-        System.out.println(albumsItemsDTO);
     }
 
     @PostMapping(value = "/photo/upload/{token}/param", consumes = MediaType.MULTIPART_FORM_DATA_VALUE/*, consumes=MediaType.APPLICATION_OCTET_STREAM_VALUE*/ /*MediaType.MULTIPART_FORM_DATA_VALUE*//* MediaType.IMAGE_JPEG_VALUE*//*.ALL_VALUE*//*MediaType.IMAGE_GIF_VALUE*/)
