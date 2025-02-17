@@ -74,9 +74,11 @@ public class AlbumsItemsService {
                     x.getAlbumItemName(),
                     x.getAlbumItemCost(),
                     x.getAlbumItemRate(),
+                    x.getItemColor(),
                     x.getStatuses().getStatusId(),
                     x.getStatuses().getStatusName(),
-                    x.getVkPhotoPath()
+                    x.getVkPhotoPath(),
+                    x.isNoSize()
             )));
         }
         log.info("[Сценарий getAlbumsItems][Шаг: вывод AlbumsItemsDTO list: {}][EventID: {}]", list, eventId);
@@ -89,6 +91,7 @@ public class AlbumsItemsService {
         albumsItemsEntity.setAlbumItemName(albumsItemsDTO.getAlbumItemName());
         albumsItemsEntity.setAlbumItemCost(albumsItemsDTO.getAlbumItemCost());
         albumsItemsEntity.setAlbumItemRate(albumsItemsDTO.getAlbumItemRate());
+        albumsItemsEntity.setItemColor(albumsItemsDTO.getAlbumItemColor());
         albumsItemsEntity.setCost(albumsItemsDTO.getAlbumItemRate() * albumsItemsDTO.getAlbumItemCost());
         albumsItemsEntity.setItemUrl(albumsItemsDTO.getItemUrl());
         albumsItemsEntity.setVkItemId(albumsItemsDTO.getVkItemId());
@@ -97,7 +100,7 @@ public class AlbumsItemsService {
         albumsItemsEntity.setDateCreate(Date.valueOf(localDate));
         albumsItemsEntity.setVkPhotoPath(albumsItemsDTO.getVkPhotoPath());
         albumsItemsEntity.setDescription(albumsItemsDTO.getDescription());
-
+        albumsItemsEntity.setNoSize(albumsItemsDTO.isNoSize());
         try {
             var photoUrl = vkService.getCommentPhotoVk(albumsItemsDTO.getVkItemId());
             albumsItemsEntity.setPhotoPath(photoUrl);

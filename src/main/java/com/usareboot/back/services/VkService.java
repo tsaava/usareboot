@@ -289,7 +289,7 @@ public class VkService {
         return json.getAsJsonObject("response").get("code").getAsString();
     }
 
-    @Async
+//    @Async
     public AlbumsItemsDTO saveFileInVk(Long albumId, MultipartFile file, AlbumsItemsDTO albumsItemsDTO) throws IOException {
         accessToken = getToken(clientId).orElse(null);
 
@@ -297,7 +297,7 @@ public class VkService {
 //        Gson g = new Gson();
 //        var albumsItemsDTO = g.fromJson(data, AlbumsItemsDTO.class);
         /*проверка данных: пришло фото или ссылка на фото*/
-        if (albumsItemsDTO.getPhotoUrl() == null) {
+        if (file == null && (albumsItemsDTO.getPhotoUrl() == null || albumsItemsDTO.getPhotoUrl().isEmpty())) {
             log.error("Ошибка загрузки: нет ссылки на фотографию");
             throw new RuntimeException("Ошибка загрузки: нет ссылки на фотографию");
         }

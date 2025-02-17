@@ -2,12 +2,14 @@ package com.usareboot.back.entities;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.math.BigInteger;
 import java.sql.Date;
 import java.util.Objects;
 
 @Getter
+@Setter
 @Entity
 @Table(name = "alboms_items", schema = "public", catalog = "usareboot")
 public class AlbumsItemsEntity {
@@ -70,6 +72,10 @@ public class AlbumsItemsEntity {
     @Basic
     @Column(name = "cost")
     private Double cost;
+
+    @Basic
+    @Column(name = "no_size")
+    private boolean isNoSize;
     public void setAlbumItemId(long albumItemId) {
         this.albumItemId = albumItemId;
     }
@@ -77,6 +83,8 @@ public class AlbumsItemsEntity {
     public void setAlbumId(AlbumsEntity album) {
         this.album = album;
     }
+
+
 
     public void setVkItemId(Long vkItemId) {
         this.vkItemId = vkItemId;
