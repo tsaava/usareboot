@@ -289,7 +289,7 @@ public class VkService {
         return json.getAsJsonObject("response").get("code").getAsString();
     }
 
-//    @Async
+    //    @Async
     public AlbumsItemsDTO saveFileInVk(Long albumId, MultipartFile file, AlbumsItemsDTO albumsItemsDTO) throws IOException {
         accessToken = getToken(clientId).orElse(null);
 
@@ -380,23 +380,15 @@ public class VkService {
 
     public void saveCommentUser(JsonObject object) {
         accessToken = getToken(clientId).orElse(null);
-
         try {
             log.info("Сохранение комментария");
-
             long photoId = object.get("photo_id").getAsLong();
             var albumsItems = albumsItemsRepository.findFirstByVkItemId(photoId);
-//            var albumId = listAlbumItem.stream()
-//                    .filter(s -> s.getStatuses().getStatusId() == ALBUM_STATUS_OPEN)
-//                    .findFirst()
-//                    .map(AlbumsItemsEntity::getAlbum)
-//                    .map(AlbumsEntity::getAlbumId)
-//                    .orElseThrow(() -> new RuntimeException("не найден альбом, где хранится фото с комментарием"));
-
-//            var album = albumsRepository.findAlbumsEntityByAlbumId(albumId);
-//            var albumsItems = albumsItemsRepository.findFirstByVkItemIdAndAlbum(photoId, album);
             log.info("Сохранение комментария в itemsEntity: {}", albumsItems);
-            saveInAlbumItem(albumsItems, object);
+            if (albumsItems != null)
+                saveInAlbumItem(albumsItems, object);
+            else
+                saveInAlbumItemNotAlbum(object);
 
         } catch (Exception e) {
             throw new RuntimeException("Не удалось записать комментарий в базу\n" + e);
@@ -480,6 +472,49 @@ public class VkService {
             else
                 itemsEntity.setItemColor(itemColor);
             itemsEntity.setItemStatus(24L);
+
+            if (parsedComment.getCount() != null)
+                itemsEntity.setItemCount(Integer.valueOf(parsedComment.getCount()));
+
+            itemsRepository.save(itemsEntity);
+            log.info("Сохранение комментария в itemsEntity прошло успешно");
+        } catch (Exception e) {
+            log.error("Ошибка при сохранения комментария: ", e);
+        }
+    }
+
+
+    private void saveInAlbumItemNotAlbum(JsonObject object) {
+        accessToken = getToken(clientId).orElse(null);
+
+        try {
+            var dateInSeconds = object.get("date").getAsLong();
+            var commentText = object.get("text").getAsString();
+
+            var photoId = object.get("photo_id").getAsLong();
+
+            LocalDateTime commentDate = LocalDateTime.ofInstant(Instant.ofEpochSecond(dateInSeconds), ZoneId.systemDefault());// Преобразование даты в LocalDateTime
+            CommentParser parser = new CommentParser();// Вызов парсера комментариев
+            ParsedComment parsedComment = parser.parse(commentText);
+
+            ItemsEntity itemsEntity = new ItemsEntity();
+            itemsEntity.setComment(commentText);
+            itemsEntity.setDateComment(commentDate);
+            itemsEntity.setVkUrl("https://vk.com/photo-" + groupId + "_" + photoId);
+
+           /* if (parsedComment.getSize() != null)
+                itemsEntity.setItemSize(parsedComment.getSize());
+            else
+                itemsEntity.setItemSize(itemSize);
+            if (parsedComment.getLink() != null)
+                itemsEntity.setItemUrl(parsedComment.getLink());
+            else
+                itemsEntity.setItemUrl(itemUrl);
+            if (parsedComment.getColor() != null)
+                itemsEntity.setItemColor(parsedComment.getColor());
+            else
+                itemsEntity.setItemColor(itemColor);
+            itemsEntity.setItemStatus(24L);*/
 
             if (parsedComment.getCount() != null)
                 itemsEntity.setItemCount(Integer.valueOf(parsedComment.getCount()));
