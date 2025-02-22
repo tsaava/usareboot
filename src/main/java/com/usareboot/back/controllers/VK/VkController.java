@@ -2,7 +2,7 @@ package com.usareboot.back.controllers.VK;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.usareboot.back.services.VkService;
+import com.usareboot.back.services.vk.VkService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;

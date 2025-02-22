@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 import com.usareboot.back.entities.AlbumsEntity;
 import com.usareboot.back.models.AlbumRowRequestDTO;
 import com.usareboot.back.services.AlbumsService;
-import com.usareboot.back.services.VkService;
+import com.usareboot.back.services.vk.VkService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

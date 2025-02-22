@@ -1,4 +1,4 @@
-package com.usareboot.back.services;
+package com.usareboot.back.services.vk;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -99,7 +99,6 @@ public class VkService {
                 .build().toUriString();
 
         String response = restTemplate.getForObject(tokenUrl, String.class);
-        System.out.println(response);
         assert response != null;
         log.info("response: {}", response);
 

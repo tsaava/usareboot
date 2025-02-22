@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 import com.usareboot.back.client.config.ConfigureFeignUrlController;
 import com.usareboot.back.models.AlbumsItemsDTO;
 import com.usareboot.back.services.AlbumsItemsService;
-import com.usareboot.back.services.VkService;
+import com.usareboot.back.services.vk.VkService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

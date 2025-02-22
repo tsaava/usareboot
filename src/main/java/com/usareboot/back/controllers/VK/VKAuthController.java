@@ -1,6 +1,6 @@
 package com.usareboot.back.controllers.VK;
 
-import com.usareboot.back.services.VkService;
+import com.usareboot.back.services.vk.VkService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

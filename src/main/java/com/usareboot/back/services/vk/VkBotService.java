@@ -1,0 +1,208 @@
+package com.usareboot.back.services.vk;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.usareboot.back.entities.AlbumsItemsEntity;
+import com.usareboot.back.entities.ItemsEntity;
+import com.usareboot.back.repositories.AlbumsItemsRepository;
+import com.vk.api.sdk.client.actors.GroupActor;
+import com.vk.api.sdk.exceptions.ApiException;
+import com.vk.api.sdk.exceptions.ClientException;
+import com.vk.api.sdk.httpclient.HttpTransportClient;
+import com.vk.api.sdk.objects.messages.*;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+import com.vk.api.sdk.client.VkApiClient;
+import java.util.*;
+
+@Slf4j
+@Service
+@RequiredArgsConstructor
+public class VkBotService {
+    private final Map<Integer, OrderState> userStates = new HashMap<>();
+    private final Map<Integer, AlbumsItemsEntity> userOrders = new HashMap<>();
+    private final VkApiClient vk;
+    private final GroupActor actor;
+    private final AlbumsItemsRepository albumsItemsRepository;
+    private static final Map<String, Integer> ALBUMS = Map.of(
+            "Одежда", 1,
+            "Обувь", 2,
+            "Аксессуары", 3
+    );
+
+    public void handleMessage(Message message) throws JsonProcessingException {
+        int userId = Math.toIntExact(message.getFromId());
+        String text = message.getText();
+
+        if (text.equals("Сделать заказ")) {
+            startOrder(userId);
+            return;
+        }
+
+        OrderState state = userStates.getOrDefault(userId, OrderState.NONE);
+        AlbumsItemsEntity order = new AlbumsItemsEntity();
+
+        switch (state) {
+            case WAITING_NAME:
+                order.setAlbumItemName(text);
+                askForLink(userId);
+                break;
+            case WAITING_LINK:
+                order.setItemUrl(text);
+                askForPhoto(userId);
+                break;
+            case WAITING_PHOTO:
+                if (!message.getAttachments().isEmpty()) {
+                    order.setVkPhotoPath(String.valueOf(message.getAttachments().get(0).getPhoto().getSizes().get(0).getUrl()));
+                    askForSize(userId);
+                }
+                break;
+            case WAITING_SIZE:
+                order.setItemSize(text);
+                askForQuantity(userId);
+                break;
+            case WAITING_QUANTITY:
+                order.setAlbumItemCount(Integer.parseInt(text));
+                showAlbumSelection(userId);
+                break;
+            case SELECTING_ALBUM:
+                finishOrder(userId, text);
+                break;
+        }
+    }
+
+    private void startOrder(int userId) {
+        userStates.put(userId, OrderState.WAITING_NAME);
+        userOrders.put(userId, new AlbumsItemsEntity());
+        sendMessage(userId, "Введите название товара:");
+    }
+
+    private void askForLink(int userId) {
+        userStates.put(userId, OrderState.WAITING_LINK);
+        sendMessage(userId, "Введите ссылку на товар:");
+    }
+
+    private void askForPhoto(int userId) {
+        userStates.put(userId, OrderState.WAITING_PHOTO);
+        sendMessage(userId, "Загрузите фото товара:");
+    }
+
+    private void askForSize(int userId) {
+        userStates.put(userId, OrderState.WAITING_SIZE);
+        sendMessage(userId, "Введите размер:");
+    }
+
+    private void askForQuantity(int userId) {
+        userStates.put(userId, OrderState.WAITING_QUANTITY);
+        sendMessage(userId, "Введите количество:");
+    }
+
+    private void showAlbumSelection(int userId) throws JsonProcessingException {
+        userStates.put(userId, OrderState.SELECTING_ALBUM);
+
+        Keyboard keyboard = new Keyboard();
+        List<List<KeyboardButton>> buttons = new ArrayList<>();
+        List<KeyboardButton> row = new ArrayList<>();
+        for (String albumName : ALBUMS.keySet()) {
+            // Создаем действие для кнопки
+            KeyboardButtonActionText action = new KeyboardButtonActionText()
+                    .setLabel(albumName) // Текст на кнопке
+                    .setType(KeyboardButtonActionTextType.TEXT)
+                    .setPayload("{\"button\": \"1\"}"); // Тип кнопки (текстовая)
+
+            ObjectMapper mapper = new ObjectMapper();
+            var jsonButton = mapper.writeValueAsString(action);
+            JsonObject jsonObject = JsonParser.parseString(jsonButton).getAsJsonObject();
+
+            // Создаем кнопку
+            KeyboardButton button = new KeyboardButton()
+                    .setAction(new KeyboardButtonPropertyAction(jsonObject)
+                            ) // Тип кнопки (текстовая)
+                    .setColor(KeyboardButtonColor.PRIMARY); // Цвет кнопки
+
+            // Добавляем кнопку в строку
+            List<KeyboardButton> rows = new ArrayList<>();
+            rows.add(button);
+
+            // Добавляем строку в список кнопок
+            buttons.add(row);
+           /* row.add(new KeyboardButton()
+                    .setAction(new KeyboardButtonAction()
+                            .setLabel(albumName)
+                            .setType(KeyboardButtonActionType.TEXT))
+                    .setColor(KeyboardButtonColor.PRIMARY));
+
+            if (row.size() == 2) {
+                buttons.add(row);
+                row = new ArrayList<>();
+            }*/
+        }
+
+        if (!row.isEmpty()) {
+            buttons.add(row);
+        }
+
+        keyboard.setButtons(buttons);
+        keyboard.setInline(true);
+
+        try {
+            vk.messages().sendUserIds(actor)
+                    .message("Выберите альбом:")
+                    .userId((long) userId)
+                    .keyboard(keyboard)
+                    .randomId(random.nextInt())
+                    .execute();
+        } catch (ApiException | ClientException e) {
+            log.error(e.toString());
+        }
+    }
+
+    private void finishOrder(int userId, String albumName) {
+        AlbumsItemsEntity order = userOrders.get(userId);
+//        order.setAlbumId(ALBUMS.get(albumName));
+
+        // Save order to database or process it
+
+        userStates.remove(userId);
+        userOrders.remove(userId);
+
+        sendMessage(userId, "Заказ успешно создан!");
+    }
+
+    private void sendMessage(int userId, String message) {
+        try {
+            vk.messages().sendUserIds(actor)
+                    .message(message)
+                    .userId((long) userId)
+                    .randomId(random.nextInt())
+                    .execute();
+        } catch (ApiException | ClientException e) {
+            log.error(e.toString());
+        }
+    }
+
+    private Random random = new Random();
+
+    private enum OrderState {
+        NONE,
+        WAITING_NAME,
+        WAITING_LINK,
+        WAITING_PHOTO,
+        WAITING_SIZE,
+        WAITING_QUANTITY,
+        SELECTING_ALBUM
+    }
+
+    /*@Data
+    private static class Order {
+        private String itemName;
+        private String itemLink;
+        private String photoUrl;
+        private String size;
+        private int quantity;
+        private int albumId;
+    }*/
+}
