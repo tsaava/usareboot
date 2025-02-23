@@ -19,7 +19,7 @@ import java.util.Optional;
 public class VkBotConfig {
 
     @Value("${vk.api.groupId}") // ID группы из application.properties
-    private Long groupId;
+    private Integer groupId;
     @Value("${vk.client.id}")
     private String clientId;
 
@@ -33,7 +33,7 @@ public class VkBotConfig {
     @Bean
     public VkApiClient vkApiClient() {
         // Создаем клиент для работы с VK API
-        return new VkApiClient(HttpTransportClient.getInstance());
+        return new VkApiClient(new HttpTransportClient());
     }
 
     @Bean

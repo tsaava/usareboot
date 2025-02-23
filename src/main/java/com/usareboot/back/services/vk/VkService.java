@@ -15,6 +15,7 @@ import com.usareboot.back.models.vk.VkAlbumItemResponse;
 import com.usareboot.back.models.vk.VkAlbumResponse;
 import com.usareboot.back.parser.CommentParser;
 import com.usareboot.back.repositories.*;
+import com.vk.api.sdk.objects.messages.Keyboard;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpEntity;
@@ -42,10 +43,7 @@ import java.nio.file.Path;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
 
@@ -82,6 +80,10 @@ public class VkService {
     private final OrdersRepository ordersRepository;
     private final UsersRepository usersRepository;
     private final ApiTokenRepository apiTokenRepository;
+    private final KeyboardService keyboardService;
+    private final StateService stateService;
+    private final OrderService orderService;
+    private final VkBotService vkBotService;
 
     private final ThreadLocal<String> threadLocal = new ThreadLocal<>();
 
@@ -549,6 +551,46 @@ public class VkService {
             return response.getResponse().get(0).getSizes().get(3).getUrl();
         }
     }
+
+    public String  startMakeOrder(String json) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        var request = mapper.readValue(json, Map.class);
+        log.info("startMakeOrder start");
+        // Извлекаем объект сообщения
+        Map<String, Object> object = (Map<String, Object>) request.get("object");
+        Map<String, Object> message = (Map<String, Object>) object.get("message");
+        log.info("object: {}, message: {}", object, message);
+
+        // Извлекаем from_id и text
+        int userId = (int) message.get("from_id");
+        String text = (String) message.get("text");
+        log.info("userId: {}, text: {}", userId, text);
+        String userState = Optional.ofNullable(stateService.getUserState(userId)).orElse("start");
+        switch (userState) {
+            case "start":
+//                if ("начать".equalsIgnoreCase(text)) {
+                    log.info("startMakeOrder start начать");
+                    stateService.setUserState(userId, "make_order");
+                    log.info("startMakeOrder setUserState");
+                // Отправляем сообщение с клавиатурой
+                Keyboard keyboard = keyboardService.getStartKeyboard();
+                vkBotService.sendMessageWithKeyboard(userId, "Выберите действие:", keyboard);
+//                    return keyboardService.getStartKeyboard();
+//                }
+//                break;
+            case "make_order","enter_product_name":
+//                return orderService.handleOrderStep(userId, text);
+                Keyboard keyboard2 = keyboardService.getStartKeyboard();
+                vkBotService.sendMessageWithKeyboard(userId, "Выберите действие:", keyboard2);
+            default:
+                break;
+        }
+        log.info("startMakeOrder end");
+
+        return userState;
+    }
+
+
 }
 
 

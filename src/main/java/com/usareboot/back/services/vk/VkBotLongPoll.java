@@ -28,12 +28,12 @@ public class VkBotLongPoll {
 
     @PostConstruct
     public void init() {
-        try {
+        /*try {
             vk.groups().getLongPollServer(actor).execute();
             startPolling();
         } catch (ApiException | ClientException e) {
             log.error(e.toString());
-        }
+        }*/
     }
 
     private void startPolling() {

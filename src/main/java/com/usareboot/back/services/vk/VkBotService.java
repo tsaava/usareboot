@@ -106,7 +106,7 @@ public class VkBotService {
         Keyboard keyboard = new Keyboard();
         List<List<KeyboardButton>> buttons = new ArrayList<>();
         List<KeyboardButton> row = new ArrayList<>();
-        for (String albumName : ALBUMS.keySet()) {
+        /*for (String albumName : ALBUMS.keySet()) {
             // Создаем действие для кнопки
             KeyboardButtonActionText action = new KeyboardButtonActionText()
                     .setLabel(albumName) // Текст на кнопке
@@ -129,7 +129,7 @@ public class VkBotService {
 
             // Добавляем строку в список кнопок
             buttons.add(row);
-           /* row.add(new KeyboardButton()
+           *//* row.add(new KeyboardButton()
                     .setAction(new KeyboardButtonAction()
                             .setLabel(albumName)
                             .setType(KeyboardButtonActionType.TEXT))
@@ -138,8 +138,8 @@ public class VkBotService {
             if (row.size() == 2) {
                 buttons.add(row);
                 row = new ArrayList<>();
-            }*/
-        }
+            }*//*
+        }*/
 
         if (!row.isEmpty()) {
             buttons.add(row);
@@ -149,9 +149,9 @@ public class VkBotService {
         keyboard.setInline(true);
 
         try {
-            vk.messages().sendUserIds(actor)
+            vk.messages().send(actor)
                     .message("Выберите альбом:")
-                    .userId((long) userId)
+                    .userId(userId)
                     .keyboard(keyboard)
                     .randomId(random.nextInt())
                     .execute();
@@ -174,9 +174,9 @@ public class VkBotService {
 
     private void sendMessage(int userId, String message) {
         try {
-            vk.messages().sendUserIds(actor)
+            vk.messages().send(actor)
                     .message(message)
-                    .userId((long) userId)
+                    .userId( userId)
                     .randomId(random.nextInt())
                     .execute();
         } catch (ApiException | ClientException e) {
@@ -205,4 +205,19 @@ public class VkBotService {
         private int quantity;
         private int albumId;
     }*/
+
+    public void sendMessageWithKeyboard(int userId, String text, Keyboard keyboard) {
+        try {
+            log.info("sendMessageWithKeyboard: {}",keyboard);
+            vk.messages()
+                    .send(actor)
+                    .userId(userId)
+                    .message(text)
+                    .keyboard(keyboard)
+                    .randomId(new Random().nextInt(10000))
+                    .execute();
+        } catch (ApiException | ClientException e) {
+            log.error(e.toString());
+        }
+    }
 }
