@@ -19,5 +19,6 @@ public class VkPhotoSaveDTO {
     String user_id;
     String web_view_token;
     String has_tags;
+    String access_key;
     Object orig_photo;
 }

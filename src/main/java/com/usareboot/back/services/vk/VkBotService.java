@@ -6,6 +6,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.usareboot.back.entities.AlbumsItemsEntity;
 import com.usareboot.back.entities.ItemsEntity;
+import com.usareboot.back.models.vk.VkPhotoGetListDTO;
 import com.usareboot.back.repositories.AlbumsItemsRepository;
 import com.vk.api.sdk.client.actors.GroupActor;
 import com.vk.api.sdk.exceptions.ApiException;
@@ -16,6 +17,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import com.vk.api.sdk.client.VkApiClient;
+
+import java.io.IOException;
 import java.util.*;
 
 @Slf4j
@@ -176,7 +179,7 @@ public class VkBotService {
         try {
             vk.messages().send(actor)
                     .message(message)
-                    .userId( userId)
+                    .userId(userId)
                     .randomId(random.nextInt())
                     .execute();
         } catch (ApiException | ClientException e) {
@@ -208,7 +211,7 @@ public class VkBotService {
 
     public void sendMessageWithKeyboard(int userId, String text, Keyboard keyboard) {
         try {
-            log.info("sendMessageWithKeyboard: {}",keyboard);
+            log.info("sendMessageWithKeyboard: {}", keyboard);
             vk.messages()
                     .send(actor)
                     .userId(userId)
@@ -219,5 +222,32 @@ public class VkBotService {
         } catch (ApiException | ClientException e) {
             log.error(e.toString());
         }
+    }
+
+    public String saveInRedisClientPhoto(String json) throws IOException {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            var request = mapper.readValue(json, Map.class);
+//        mapper.readValue(json, VkPhotoGetListDTO.class);
+            log.info("saveInRedisClientPhoto start");
+            log.info("request: {}", request);
+            // Извлекаем объект сообщения
+            Map<String, Object> object = (Map<String, Object>) request.get("object");
+            Map<String, Object> message = (Map<String, Object>) object.get("message");
+            Map<String, Object> attachment = (Map<String, Object>) message.get("attachments");
+            if (attachment != null) {
+                Map<String, Object> photo = (Map<String, Object>) attachment.get("photo");
+                Map<String, Object> orig_photo = (Map<String, Object>) photo.get("orig_photo");
+                log.info("object: {}, message: {}, attachment: {}, photo: {}, orig_photo: {}",
+                        object, message, attachment, photo, orig_photo);
+                if (orig_photo != null) {
+
+                }
+            }
+            log.info("saveInRedisClientPhoto end");
+        }catch (Exception e){
+            log.error(e.toString());
+        }
+        return "userState";
     }
 }
