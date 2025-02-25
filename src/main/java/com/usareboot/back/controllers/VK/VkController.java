@@ -57,18 +57,13 @@ public class VkController {
                                    @RequestParam("cost") String cost,
                                    @RequestParam("vk_event") String vk_event) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
-//        requestBody.
-//        String decodedItemName = URLDecoder.decode(requestBody, StandardCharsets.UTF_8);
-//        log.info("decodedItemName: {}", decodedItemName);
         JsonObject json = JsonParser.parseString(vk_event).getAsJsonObject();
         log.info("json: {}", json);
 
         VkEvent vkPhotoObject = mapper.readValue(json.toString(), VkEvent.class);
-        log.info("itemName: {}, itemUrl: {}, vkPhotoObject: {}", itemName, itemUrl, vkPhotoObject);
+        log.info("itemName: {}, itemUrl: {}, itemPhotoPath: {}, itemSize: {}, itemCount: {}, clientId: {}, cost: {}, vkPhotoObject: {}",
+                itemName, itemUrl, itemPhotoPath, itemSize, itemCount, clientId, cost, vkPhotoObject);
 
-
-//        String object = json.get("type").getAsString();
-//        log.info("object: {}", object);
 
         return ResponseEntity.ok("ok");
     }
