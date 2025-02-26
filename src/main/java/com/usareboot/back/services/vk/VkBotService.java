@@ -5,21 +5,23 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.usareboot.back.entities.AlbumsItemsEntity;
-import com.usareboot.back.entities.ItemsEntity;
-import com.usareboot.back.models.vk.VkPhotoGetListDTO;
-import com.usareboot.back.repositories.AlbumsItemsRepository;
+import com.usareboot.back.models.vk.VkBotResponseDTO;
+import com.usareboot.back.models.vk.VkEvent;
+import com.vk.api.sdk.client.VkApiClient;
 import com.vk.api.sdk.client.actors.GroupActor;
 import com.vk.api.sdk.exceptions.ApiException;
 import com.vk.api.sdk.exceptions.ClientException;
-import com.vk.api.sdk.httpclient.HttpTransportClient;
-import com.vk.api.sdk.objects.messages.*;
+import com.vk.api.sdk.objects.messages.Keyboard;
+import com.vk.api.sdk.objects.messages.KeyboardButton;
+import com.vk.api.sdk.objects.messages.Message;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import com.vk.api.sdk.client.VkApiClient;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 
 @Slf4j
 @Service
@@ -29,7 +31,7 @@ public class VkBotService {
     private final Map<Integer, AlbumsItemsEntity> userOrders = new HashMap<>();
     private final VkApiClient vk;
     private final GroupActor actor;
-    private final AlbumsItemsRepository albumsItemsRepository;
+    private final ThreadLocal<Integer> threadLocal = ThreadLocal.withInitial(() -> ThreadLocalRandom.current().nextInt(10000, 100000));
     private static final Map<String, Integer> ALBUMS = Map.of(
             "Одежда", 1,
             "Обувь", 2,
@@ -224,30 +226,40 @@ public class VkBotService {
         }
     }
 
-    public String saveInRedisClientPhoto(String json) throws IOException {
+    @Async
+    public void saveClientItem(String itemName, String itemUrl, String itemPhotoPath, String itemSize, String itemCount, String clientId, String cost, String vk_event) throws IOException {
         try {
-            ObjectMapper mapper = new ObjectMapper();
-            var request = mapper.readValue(json, Map.class);
-//        mapper.readValue(json, VkPhotoGetListDTO.class);
-            log.info("saveInRedisClientPhoto start");
-            log.info("request: {}", request);
-            // Извлекаем объект сообщения
-            Map<String, Object> object = (Map<String, Object>) request.get("object");
-            Map<String, Object> message = (Map<String, Object>) object.get("message");
-            Map<String, Object> attachment = (Map<String, Object>) message.get("attachments");
-            if (attachment != null) {
-                Map<String, Object> photo = (Map<String, Object>) attachment.get("photo");
-                Map<String, Object> orig_photo = (Map<String, Object>) photo.get("orig_photo");
-                log.info("object: {}, message: {}, attachment: {}, photo: {}, orig_photo: {}",
-                        object, message, attachment, photo, orig_photo);
-                if (orig_photo != null) {
+            log.info("itemName: {}, itemUrl: {}, itemPhotoPath: {}, itemSize: {}, itemCount: {}, clientId: {}, cost: {}, vk_event: {}",
+                    itemName, itemUrl, itemPhotoPath, itemSize, itemCount, clientId, cost, vk_event);
 
-                }
+            var eventId = threadLocal.get();
+            log.info("[Сценарий saveClientItem][Шаг: Начало][EventID: {}]", eventId);
+
+            log.info("[Сценарий saveClientItem][Шаг: конвертирование данных][EventID: {}]", eventId);
+            ObjectMapper mapper = new ObjectMapper();
+            JsonObject json = JsonParser.parseString(vk_event).getAsJsonObject();
+            VkBotResponseDTO data;
+
+            log.info("[Сценарий saveClientItem][Шаг: прверка наличия значения clientId][EventID: {}]", eventId);
+            if (!clientId.isEmpty()) {
+                data = VkBotResponseDTO.builder()
+                        .itemName(itemName)
+                        .itemUrl(itemUrl)
+                        .itemPhotoPath(itemPhotoPath)
+                        .itemSize(itemSize)
+                        .itemCount(Integer.valueOf(Optional.ofNullable(itemCount).orElse("1")))
+                        .clientId(Integer.valueOf(clientId))
+                        .cost(Float.valueOf(Optional.ofNullable(cost).orElse("0")))
+                        .build();
+            } else {
+                log.error("clientId был равен 0");
+                throw new RuntimeException("Ошибка при сохранении заказа клиента: id клиента не был передан");
             }
-            log.info("saveInRedisClientPhoto end");
-        }catch (Exception e){
+            VkEvent vkPhotoObject = mapper.readValue(json.toString(), VkEvent.class);
+            data.setVk_event(vkPhotoObject);
+            log.info("[Сценарий saveClientItem][Шаг: вывод полученных данных: {}][EventID: {}]", data, eventId);
+        } catch (Exception e) {
             log.error(e.toString());
         }
-        return "userState";
     }
 }
