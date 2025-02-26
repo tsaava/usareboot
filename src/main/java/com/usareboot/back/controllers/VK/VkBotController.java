@@ -11,7 +11,7 @@ import java.io.IOException;
 @RestController
 @RequiredArgsConstructor
 @CrossOrigin(origins = "*")
-@RequestMapping("/api/usareboot/vk/bot")
+@RequestMapping("/bot/vk")
 public class VkBotController {
     private final VkBotService vkBotService;
 

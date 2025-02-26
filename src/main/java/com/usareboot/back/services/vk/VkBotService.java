@@ -233,30 +233,34 @@ public class VkBotService {
                     itemName, itemUrl, itemPhotoPath, itemSize, itemCount, clientId, cost, vk_event);
 
             var eventId = threadLocal.get();
+            VkBotResponseDTO data;
+            VkEvent vkPhotoObject;
             log.info("[Сценарий saveClientItem][Шаг: Начало][EventID: {}]", eventId);
 
             log.info("[Сценарий saveClientItem][Шаг: конвертирование данных][EventID: {}]", eventId);
             ObjectMapper mapper = new ObjectMapper();
-            JsonObject json = JsonParser.parseString(vk_event).getAsJsonObject();
-            VkBotResponseDTO data;
 
-            log.info("[Сценарий saveClientItem][Шаг: прверка наличия значения clientId][EventID: {}]", eventId);
+
+            log.info("[Сценарий saveClientItem][Шаг: проверка наличия значения clientId][EventID: {}]", eventId);
             if (!clientId.isEmpty()) {
                 data = VkBotResponseDTO.builder()
                         .itemName(itemName)
                         .itemUrl(itemUrl)
                         .itemPhotoPath(itemPhotoPath)
                         .itemSize(itemSize)
-                        .itemCount(Integer.valueOf(Optional.ofNullable(itemCount).orElse("1")))
-                        .clientId(Integer.valueOf(clientId))
-                        .cost(Float.valueOf(Optional.ofNullable(cost).orElse("0")))
+                        .itemCount(Integer.valueOf(Optional.of(itemCount.trim()).orElse("1")))
+                        .clientId(Integer.valueOf(clientId.trim()))
+                        .cost(Float.valueOf(Optional.of(cost.trim()).orElse("0")))
                         .build();
             } else {
                 log.error("clientId был равен 0");
                 throw new RuntimeException("Ошибка при сохранении заказа клиента: id клиента не был передан");
             }
-            VkEvent vkPhotoObject = mapper.readValue(json.toString(), VkEvent.class);
-            data.setVk_event(vkPhotoObject);
+            if (vk_event != null) {
+                JsonObject json = JsonParser.parseString(vk_event).getAsJsonObject();
+                vkPhotoObject = mapper.readValue(json.toString(), VkEvent.class);
+                data.setVk_event(vkPhotoObject);
+            }
             log.info("[Сценарий saveClientItem][Шаг: вывод полученных данных: {}][EventID: {}]", data, eventId);
         } catch (Exception e) {
             log.error(e.toString());

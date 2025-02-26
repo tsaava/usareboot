@@ -47,7 +47,7 @@ public class WebSecurityConfiguration {
 
 //        String[] str  = Roles.getAllRoles();//new String[]{"COUNCIL", "COUNCIL_SUPER"};
         httpSecurity.authorizeHttpRequests((authz) -> authz
-                                .requestMatchers("/api/auth/**", "/home/**").permitAll()
+                                .requestMatchers("/api/auth/**", "/home/**", "/bot/**").permitAll()
 //                                .requestMatchers("/swagger-ui/index.html#/").permitAll()
                                 //.requestMatchers("/api/university/**").hasAnyAuthority("COUNCIL", "COUNCIL_SUPER")
                                 .requestMatchers("/api/usareboot/**").hasAuthority("admin")
