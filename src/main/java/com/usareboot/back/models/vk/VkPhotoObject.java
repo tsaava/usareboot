@@ -15,7 +15,7 @@ import java.util.List;
 public class VkPhotoObject {
     private Integer date;
     private Integer from_id;
-    private Integer id;
+    private Long id;
     private Integer version;
     private Integer out;
     private List<String> fwd_messages;

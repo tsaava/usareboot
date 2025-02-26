@@ -17,7 +17,8 @@ public class VkBotResponseDTO {
     private String itemPhotoPath;
     private String itemSize;
     private Integer itemCount;
+    private String itemColor;
     private Integer clientId;
-    private Float cost;
-    private Object vk_event;
+    private Double cost;
+    private VkEvent vk_event;
 }

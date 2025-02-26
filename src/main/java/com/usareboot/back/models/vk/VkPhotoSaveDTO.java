@@ -28,5 +28,5 @@ public class VkPhotoSaveDTO {
     String lat;
     @JsonProperty("long")
     String longPhoto;
-    Object orig_photo;
+    VkPhotoSizeResponse orig_photo;
 }

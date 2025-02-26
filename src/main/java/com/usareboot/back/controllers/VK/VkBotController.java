@@ -23,8 +23,9 @@ public class VkBotController {
                                    @RequestParam(name = "itemCount", required = false) String itemCount,
                                    @RequestParam(name = "clientId", required = false) String clientId,
                                    @RequestParam(name = "cost", required = false) String cost,
+                                   @RequestParam(name = "itemColor", required = false) String itemColor,
                                    @RequestParam(name = "vk_event", required = false) String vk_event) throws IOException {
-        vkBotService.saveClientItem(itemName, itemUrl, itemPhotoPath, itemSize, itemCount, clientId, cost, vk_event);
+        vkBotService.saveClientItem(itemName, itemUrl, itemPhotoPath, itemSize, itemCount, clientId, cost, itemColor, vk_event);
         return ResponseEntity.ok("ok");
     }
 }

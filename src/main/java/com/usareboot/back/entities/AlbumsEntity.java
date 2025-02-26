@@ -85,6 +85,9 @@ public class AlbumsEntity {
     @JoinColumn(name = "card_id")
     private CardsEntity cards;
 
+    @Basic
+    @Column(name = "album_mapping_dictionary_id")
+    private Long albumMappingDictionaryId;
 
     public void setStatuses(DStatusesEntity statuses) {
         this.statuses = statuses;
@@ -161,6 +164,9 @@ public class AlbumsEntity {
 
     public void setAlbumVkId(long albumVkId) {
         this.albumVkId = albumVkId;
+    }
+    public void setAlbumMappingDictionaryId(long albumMappingDictionaryId) {
+        this.albumMappingDictionaryId = albumMappingDictionaryId;
     }
 
 

@@ -5,8 +5,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.usareboot.back.entities.AlbumsItemsEntity;
+import com.usareboot.back.models.AlbumsItemsDTO;
 import com.usareboot.back.models.vk.VkBotResponseDTO;
 import com.usareboot.back.models.vk.VkEvent;
+import com.usareboot.back.operators.BotVkOperator;
+import com.usareboot.back.services.AlbumsItemsService;
 import com.vk.api.sdk.client.VkApiClient;
 import com.vk.api.sdk.client.actors.GroupActor;
 import com.vk.api.sdk.exceptions.ApiException;
@@ -32,6 +35,8 @@ public class VkBotService {
     private final VkApiClient vk;
     private final GroupActor actor;
     private final ThreadLocal<Integer> threadLocal = ThreadLocal.withInitial(() -> ThreadLocalRandom.current().nextInt(10000, 100000));
+    private final AlbumsItemsService albumsItemsService;
+    private final BotVkOperator botVkOperator;
     private static final Map<String, Integer> ALBUMS = Map.of(
             "Одежда", 1,
             "Обувь", 2,
@@ -227,11 +232,8 @@ public class VkBotService {
     }
 
     @Async
-    public void saveClientItem(String itemName, String itemUrl, String itemPhotoPath, String itemSize, String itemCount, String clientId, String cost, String vk_event) throws IOException {
+    public void saveClientItem(String itemName, String itemUrl, String itemPhotoPath, String itemSize, String itemCount, String clientId, String cost, String itemColor, String vk_event) throws IOException {
         try {
-            log.info("itemName: {}, itemUrl: {}, itemPhotoPath: {}, itemSize: {}, itemCount: {}, clientId: {}, cost: {}, vk_event: {}",
-                    itemName, itemUrl, itemPhotoPath, itemSize, itemCount, clientId, cost, vk_event);
-
             var eventId = threadLocal.get();
             VkBotResponseDTO data;
             VkEvent vkPhotoObject;
@@ -239,7 +241,6 @@ public class VkBotService {
 
             log.info("[Сценарий saveClientItem][Шаг: конвертирование данных][EventID: {}]", eventId);
             ObjectMapper mapper = new ObjectMapper();
-
 
             log.info("[Сценарий saveClientItem][Шаг: проверка наличия значения clientId][EventID: {}]", eventId);
             if (!clientId.isEmpty()) {
@@ -250,7 +251,8 @@ public class VkBotService {
                         .itemSize(itemSize)
                         .itemCount(Integer.valueOf(Optional.of(itemCount.trim()).orElse("1")))
                         .clientId(Integer.valueOf(clientId.trim()))
-                        .cost(Float.valueOf(Optional.of(cost.trim()).orElse("0")))
+                        .cost(Double.valueOf(Optional.of(cost.trim()).orElse("0")))
+                        .itemColor(itemColor)
                         .build();
             } else {
                 log.error("clientId был равен 0");
@@ -262,6 +264,15 @@ public class VkBotService {
                 data.setVk_event(vkPhotoObject);
             }
             log.info("[Сценарий saveClientItem][Шаг: вывод полученных данных: {}][EventID: {}]", data, eventId);
+
+            if(itemUrl == null || vk_event == null)
+                throw new RuntimeException("Ссылка на товар или фотография не была введена! Ошибка сохранения заказа");
+
+            log.info("[Сценарий saveClientItem][Шаг: преобразование данных в AlbumItem][EventID: {}]", eventId);
+            AlbumsItemsDTO albumItem = botVkOperator.getAlbumItem(data);
+
+            log.info("[Сценарий saveClientItem][Шаг: сохранение данных товара в таблицу AlbumItem][EventID: {}]", eventId);
+            albumsItemsService.saveAlbumItem(albumItem);
         } catch (Exception e) {
             log.error(e.toString());
         }
