@@ -1,6 +1,8 @@
 package com.usareboot.back.models.vk;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,6 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class VkPhotoSaveDTO {
     String album_id;
     String date;
@@ -23,5 +26,7 @@ public class VkPhotoSaveDTO {
     String has_tags;
     String access_key;
     String lat;
+    @JsonProperty("long")
+    String longPhoto;
     Object orig_photo;
 }
