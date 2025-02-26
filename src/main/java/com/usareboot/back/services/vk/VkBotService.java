@@ -8,7 +8,9 @@ import com.usareboot.back.entities.AlbumsItemsEntity;
 import com.usareboot.back.models.AlbumsItemsDTO;
 import com.usareboot.back.models.vk.VkBotResponseDTO;
 import com.usareboot.back.models.vk.VkEvent;
+import com.usareboot.back.operators.AlbumItemOperator;
 import com.usareboot.back.operators.BotVkOperator;
+import com.usareboot.back.operators.ItemOperator;
 import com.usareboot.back.services.AlbumsItemsService;
 import com.vk.api.sdk.client.VkApiClient;
 import com.vk.api.sdk.client.actors.GroupActor;
@@ -37,6 +39,8 @@ public class VkBotService {
     private final ThreadLocal<Integer> threadLocal = ThreadLocal.withInitial(() -> ThreadLocalRandom.current().nextInt(10000, 100000));
     private final AlbumsItemsService albumsItemsService;
     private final BotVkOperator botVkOperator;
+    private final AlbumItemOperator albumItemOperator;
+//    private final ItemOperator itemOperator;
     private static final Map<String, Integer> ALBUMS = Map.of(
             "Одежда", 1,
             "Обувь", 2,
@@ -232,7 +236,7 @@ public class VkBotService {
     }
 
     @Async
-    public void saveClientItem(String itemName, String itemUrl, String itemPhotoPath, String itemSize, String itemCount, String clientId, String cost, String itemColor, String vk_event) throws IOException {
+    public void saveClientItem(String itemName, String itemUrl, String itemPhotoPath, String itemSize, String itemCount, String clientId, String cost, String itemColor, Integer timestamp, String vk_event) throws IOException {
         try {
             var eventId = threadLocal.get();
             VkBotResponseDTO data;
@@ -253,6 +257,7 @@ public class VkBotService {
                         .clientId(Integer.valueOf(clientId.trim()))
                         .cost(Double.valueOf(Optional.of(cost.trim()).orElse("0")))
                         .itemColor(itemColor)
+                        .timestamp(timestamp)
                         .build();
             } else {
                 log.error("clientId был равен 0");
@@ -272,7 +277,11 @@ public class VkBotService {
             AlbumsItemsDTO albumItem = botVkOperator.getAlbumItem(data);
 
             log.info("[Сценарий saveClientItem][Шаг: сохранение данных товара в таблицу AlbumItem][EventID: {}]", eventId);
-            albumsItemsService.saveAlbumItem(albumItem);
+            albumItemOperator.saveAlbumItem(albumItem);
+
+            log.info("[Сценарий saveClientItem][Шаг: сохранение данных товара в таблицу item][EventID: {}]", eventId);
+            botVkOperator.saveItem(albumItem, data);
+
         } catch (Exception e) {
             log.error(e.toString());
         }

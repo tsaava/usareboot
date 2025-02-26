@@ -2,10 +2,13 @@ package com.usareboot.back.services;
 
 import com.usareboot.back.entities.AlbumsItemsEntity;
 import com.usareboot.back.models.AlbumsItemsDTO;
+import com.usareboot.back.operators.AlbumItemOperator;
+import com.usareboot.back.operators.BotVkOperator;
 import com.usareboot.back.repositories.AlbumsItemsRepository;
 import com.usareboot.back.repositories.AlbumsRepository;
 import com.usareboot.back.repositories.DStatusRepository;
 import com.usareboot.back.services.vk.VkService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,22 +33,14 @@ import static org.springframework.http.ResponseEntity.ok;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class AlbumsItemsService {
 
-    @Autowired
-    private AlbumsItemsRepository albumsItemsRepository;
+    private final AlbumsItemsRepository albumsItemsRepository;
+    final ModelMapper modelMapper;
+    private final AlbumItemOperator albumItemOperator;
 
-    @Autowired
-    private DStatusRepository dStatusRepository;
 
-    @Autowired
-    private AlbumsRepository albumsRepository;
-
-    @Autowired
-    private VkService vkService;
-
-    @Autowired
-    ModelMapper modelMapper;
     @Value("${vk.api.pathPhoto}")
     private String pathPhoto;
     private final ThreadLocal<String> threadLocal = new ThreadLocal<>();
@@ -86,30 +81,10 @@ public class AlbumsItemsService {
     }
 
     public void saveAlbumItem(AlbumsItemsDTO albumsItemsDTO) throws IOException {
-        AlbumsItemsEntity albumsItemsEntity = new AlbumsItemsEntity();
-        albumsItemsEntity.setAlbumItemStatus(dStatusRepository.findDStatusesEntityByStatusId(albumsItemsDTO.getAlbumItemStatus()));
-        albumsItemsEntity.setAlbumItemName(albumsItemsDTO.getAlbumItemName());
-        albumsItemsEntity.setAlbumItemCost(albumsItemsDTO.getAlbumItemCost());
-        albumsItemsEntity.setAlbumItemRate(albumsItemsDTO.getAlbumItemRate());
-        albumsItemsEntity.setItemColor(albumsItemsDTO.getAlbumItemColor());
-        albumsItemsEntity.setCost(albumsItemsDTO.getAlbumItemRate() * albumsItemsDTO.getAlbumItemCost());
-        albumsItemsEntity.setItemUrl(albumsItemsDTO.getItemUrl());
-        albumsItemsEntity.setVkItemId(albumsItemsDTO.getVkItemId());
-        albumsItemsEntity.setAlbumId(albumsRepository.findAlbumsEntityByAlbumId(albumsItemsDTO.getAlbumId()));
-        LocalDate localDate = LocalDate.now();
-        albumsItemsEntity.setDateCreate(Date.valueOf(localDate));
-        albumsItemsEntity.setVkPhotoPath(albumsItemsDTO.getVkPhotoPath());
-        albumsItemsEntity.setDescription(albumsItemsDTO.getDescription());
-        albumsItemsEntity.setNoSize(albumsItemsDTO.isNoSize());
-        try {
-            var photoUrl = vkService.getCommentPhotoVk(albumsItemsDTO.getVkItemId());
-            albumsItemsEntity.setPhotoPath(photoUrl);
-        } catch (Exception e) {
-            log.error("Не удалось получить ссылку на фото в Вк", e);
-        }
-
-        albumsItemsRepository.save(albumsItemsEntity);
+        albumItemOperator.saveAlbumItem(albumsItemsDTO);
     }
+
+
 
     public ResponseEntity<Map<String, String>> saveFile(MultipartFile file, AlbumsItemsDTO albumsItemsDTO) throws IOException {
         copyFile(file);

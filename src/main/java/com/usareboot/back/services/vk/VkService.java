@@ -2,7 +2,6 @@ package com.usareboot.back.services.vk;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.usareboot.back.client.config.ConfigureFeignUrlController;
@@ -10,12 +9,12 @@ import com.usareboot.back.entities.*;
 import com.usareboot.back.entities.auth.UsersEntity;
 import com.usareboot.back.models.AlbumRowRequestDTO;
 import com.usareboot.back.models.AlbumsItemsDTO;
-import com.usareboot.back.models.ParsedComment;
 import com.usareboot.back.models.vk.VkAlbumItemResponse;
 import com.usareboot.back.models.vk.VkAlbumResponse;
-import com.usareboot.back.parser.CommentParser;
+import com.usareboot.back.operators.CommonOperator;
+import com.usareboot.back.operators.ItemOperator;
+import com.usareboot.back.operators.OrderOperator;
 import com.usareboot.back.repositories.*;
-import com.vk.api.sdk.objects.messages.Keyboard;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpEntity;
@@ -27,7 +26,6 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.scheduling.annotation.Async;
@@ -40,11 +38,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Path;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
 
 
 @Service
@@ -83,14 +77,13 @@ public class VkService {
     private final KeyboardService keyboardService;
     private final StateService stateService;
     private final OrderService orderService;
-//    private final VkBotService vkBotService;
+    private final ItemOperator itemOperator;
+    private final CommonOperator commonOperator;
+    private final OrderOperator orderOperator;
 
     private final ThreadLocal<String> threadLocal = new ThreadLocal<>();
 
-    public Optional<String> getToken(String clientId) {
-        return apiTokenRepository.findApiTokenEntityByVkClientId(Long.parseLong(clientId))
-                .map(ApiTokenEntity::getToken);
-    }
+
 
     public void saveAccessToken(String code) {
         String tokenUrl = UriComponentsBuilder.fromHttpUrl("https://oauth.vk.com/access_token")
@@ -132,7 +125,7 @@ public class VkService {
     public Integer createAlbum(AlbumsEntity albumsEntity) throws IOException {
         var eventId = threadLocal.get();
         log.info("[Сценарий createAlbum][Шаг: Начало][EventID: {}]", eventId);
-        accessToken = getToken(clientId).orElse(null);
+        accessToken = commonOperator.getToken(clientId).orElse(null);
         final CloseableHttpClient httpclient = HttpClients.createDefault();
         final HttpPost httpPost = new HttpPost("https://api.vk.com/method/photos.createAlbum");
         final List<NameValuePair> params = new ArrayList<>();
@@ -172,7 +165,7 @@ public class VkService {
     }
 
     public String updAlbum(String vkId, String token, AlbumRowRequestDTO albumsEntity) throws IOException {
-        accessToken = getToken(clientId).orElse(null);
+        accessToken = commonOperator.getToken(clientId).orElse(null);
 
         final CloseableHttpClient httpclient = HttpClients.createDefault();
         final HttpPost httpPost = new HttpPost("https://api.vk.com/method/photos.editAlbum");
@@ -196,7 +189,7 @@ public class VkService {
     }
 
     public String getUrlPhotoInAlbumVk(long albumId) throws IOException {
-        accessToken = getToken(clientId).orElse(null);
+        accessToken = commonOperator.getToken(clientId).orElse(null);
 
         final CloseableHttpClient httpclient = HttpClients.createDefault();
         final HttpPost httpPost = new HttpPost("https://api.vk.com/method/photos.getUploadServer");
@@ -226,7 +219,7 @@ public class VkService {
                                 String server,
                                 String hash,
                                 String access_token) throws IOException {
-        accessToken = getToken(clientId).orElse(null);
+        accessToken = commonOperator.getToken(clientId).orElse(null);
 
         final CloseableHttpClient httpclient = HttpClients.createDefault();
         final HttpPost httpPost = new HttpPost("https://api.vk.com/method/photos.save");
@@ -258,7 +251,7 @@ public class VkService {
 
 //                                        String access_token,
                                 String caption) throws IOException {
-        accessToken = getToken(clientId).orElse(null);
+        accessToken = commonOperator.getToken(clientId).orElse(null);
 
         final CloseableHttpClient httpclient = HttpClients.createDefault();
         final HttpPost httpPost = new HttpPost("https://api.vk.com/method/photos.edit");
@@ -292,7 +285,7 @@ public class VkService {
 
     //    @Async
     public AlbumsItemsDTO saveFileInVk(Long albumId, MultipartFile file, AlbumsItemsDTO albumsItemsDTO) throws IOException {
-        accessToken = getToken(clientId).orElse(null);
+        accessToken = commonOperator.getToken(clientId).orElse(null);
 
         log.info("Редактирование комментария в вк");
 //        Gson g = new Gson();
@@ -363,172 +356,38 @@ public class VkService {
 //        return restTemplate.getForObject(url, String.class);
 //    }
 //
-    public JsonObject getUserName(int userId) {
-        accessToken = getToken(clientId).orElse(null);
-
-        String url = UriComponentsBuilder.fromHttpUrl("https://api.vk.com/method/users.get")
-                .queryParam("user_ids", userId)
-                .queryParam("access_token", accessToken)
-                .queryParam("v", apiVersion)
-                .build().toUriString();
-
-        String response = restTemplate.getForObject(url, String.class);
-        JsonObject json = JsonParser.parseString(response).getAsJsonObject();
-        JsonObject user = json.getAsJsonArray("response").get(0).getAsJsonObject();
-        return user;/*user.get("first_name").getAsString() + " " + user.get("last_name").getAsString();*/
-    }
 
 
     public void saveCommentUser(JsonObject object) {
-        accessToken = getToken(clientId).orElse(null);
+        accessToken = commonOperator.getToken(clientId).orElse(null);
         try {
             log.info("Сохранение комментария");
             long photoId = object.get("photo_id").getAsLong();
             var albumsItems = albumsItemsRepository.findFirstByVkItemId(photoId);
             log.info("Сохранение комментария в itemsEntity: {}", albumsItems);
-            if (albumsItems != null)
-                saveInAlbumItem(albumsItems, object);
-            else
-                saveInAlbumItemNotAlbum(object);
+            accessToken = commonOperator.getToken(clientId).orElse(null);
+
+            try {
+                var dateInSeconds = object.get("date").getAsLong();
+                var commentText = object.get("text").getAsString();
+                var albumId = albumsItems.getAlbum().getAlbumId();
+                var fromId = object.get("from_id").getAsLong();
+                var orderId = orderOperator.getOrderId(fromId, albumId);
+
+                itemOperator.saveItem(albumsItems, dateInSeconds, commentText, orderId, null);
+            } catch (Exception e) {
+                log.error("Ошибка при сохранения комментария: ", e);
+            }
 
         } catch (Exception e) {
             throw new RuntimeException("Не удалось записать комментарий в базу\n" + e);
         }
     }
 
-    private long getOrderId(JsonObject object, Long albumId) {
-        accessToken = getToken(clientId).orElse(null);
 
-        var fromId = object.get("from_id").getAsLong();
-        //проверка на существующего пользователя в базе
-        var user = usersRepository.getUsersEntityByVkId(fromId);
-        if (user == null) {
-            JsonObject userName = getUserName((int) fromId);
-            user = new UsersEntity();
-            user.setVkId(fromId);
-            user.setiName(userName.get("first_name").getAsString());
-            user.setfName(userName.get("last_name").getAsString());
-            usersRepository.save(user);
-            log.info("Новый пользователь успешно создан: {}", fromId);
-        }
-        OrdersEntity orders = ordersRepository.getOrdersEntityByClientIdAndAlbumId(user.getUserId(), albumId);
-        long ordersId;
-        if (orders == null) {
-            orders = new OrdersEntity();
-            orders.setClientId(user.getUserId());
-            orders.setAlbumId(albumId);
-//            orders.setOrderCost(1);
-            orders.setStatusId(24L);
-            log.info(String.valueOf(orders));
-//            ordersRepository.save(orders);
-//            ordersId = 0;
-            ordersId = ordersRepository.save(orders).getOrderId();
-        } else
-            ordersId = orders.getOrderId();
-
-        log.info("Сохранение комментария в orders прошло успешно");
-        return ordersId;
-    }
-
-    private void saveInAlbumItem(AlbumsItemsEntity albumsItems, JsonObject object) {
-        accessToken = getToken(clientId).orElse(null);
-
-        try {
-            var dateInSeconds = object.get("date").getAsLong();
-            var commentText = object.get("text").getAsString();
-            var itemName = albumsItems.getAlbumItemName();
-            var itemUrl = albumsItems.getItemUrl();
-            var itemColor = albumsItems.getItemColor();
-            var itemSize = albumsItems.getItemSize();
-            var photoId = object.get("photo_id").getAsLong();
-            var photoUrl = albumsItems.getItemUrl();
-//            var photoUrl = getCommentPhotoVk(photoId);
-
-            var albumId = albumsItems.getAlbum().getAlbumId();
-            var albumItemId = albumsItems.getAlbumItemId();
-            var orderId = getOrderId(object, albumId);
-
-            LocalDateTime commentDate = LocalDateTime.ofInstant(Instant.ofEpochSecond(dateInSeconds), ZoneId.systemDefault());// Преобразование даты в LocalDateTime
-            CommentParser parser = new CommentParser();// Вызов парсера комментариев
-            ParsedComment parsedComment = parser.parse(commentText);
-
-            ItemsEntity itemsEntity = new ItemsEntity();
-            itemsEntity.setAlbomItemId(albumItemId);
-            itemsEntity.setComment(commentText);
-            itemsEntity.setDateComment(commentDate);
-            itemsEntity.setOrderId(orderId);
-            itemsEntity.setItemName(itemName);
-            itemsEntity.setVkUrl(photoUrl);
-//        itemsEntity.setVkUrl("https://vk.com/photo-" + groupId + "_" + photoId);
-            if (parsedComment.getSize() != null)
-                itemsEntity.setItemSize(parsedComment.getSize());
-            else
-                itemsEntity.setItemSize(itemSize);
-            if (parsedComment.getLink() != null)
-                itemsEntity.setItemUrl(parsedComment.getLink());
-            else
-                itemsEntity.setItemUrl(itemUrl);
-            if (parsedComment.getColor() != null)
-                itemsEntity.setItemColor(parsedComment.getColor());
-            else
-                itemsEntity.setItemColor(itemColor);
-            itemsEntity.setItemStatus(24L);
-
-            if (parsedComment.getCount() != null)
-                itemsEntity.setItemCount(Integer.valueOf(parsedComment.getCount()));
-
-            itemsRepository.save(itemsEntity);
-            log.info("Сохранение комментария в itemsEntity прошло успешно");
-        } catch (Exception e) {
-            log.error("Ошибка при сохранения комментария: ", e);
-        }
-    }
-
-
-    private void saveInAlbumItemNotAlbum(JsonObject object) {
-        accessToken = getToken(clientId).orElse(null);
-
-        try {
-            var dateInSeconds = object.get("date").getAsLong();
-            var commentText = object.get("text").getAsString();
-
-            var photoId = object.get("photo_id").getAsLong();
-
-            LocalDateTime commentDate = LocalDateTime.ofInstant(Instant.ofEpochSecond(dateInSeconds), ZoneId.systemDefault());// Преобразование даты в LocalDateTime
-            CommentParser parser = new CommentParser();// Вызов парсера комментариев
-            ParsedComment parsedComment = parser.parse(commentText);
-
-            ItemsEntity itemsEntity = new ItemsEntity();
-            itemsEntity.setComment(commentText);
-            itemsEntity.setDateComment(commentDate);
-            itemsEntity.setVkUrl("https://vk.com/photo-" + groupId + "_" + photoId);
-
-           /* if (parsedComment.getSize() != null)
-                itemsEntity.setItemSize(parsedComment.getSize());
-            else
-                itemsEntity.setItemSize(itemSize);
-            if (parsedComment.getLink() != null)
-                itemsEntity.setItemUrl(parsedComment.getLink());
-            else
-                itemsEntity.setItemUrl(itemUrl);
-            if (parsedComment.getColor() != null)
-                itemsEntity.setItemColor(parsedComment.getColor());
-            else
-                itemsEntity.setItemColor(itemColor);
-            itemsEntity.setItemStatus(24L);*/
-
-            if (parsedComment.getCount() != null)
-                itemsEntity.setItemCount(Integer.valueOf(parsedComment.getCount()));
-
-            itemsRepository.save(itemsEntity);
-            log.info("Сохранение комментария в itemsEntity прошло успешно");
-        } catch (Exception e) {
-            log.error("Ошибка при сохранения комментария: ", e);
-        }
-    }
 
     public String getCommentPhotoVk(long photo_id) throws IOException {
-        accessToken = getToken(clientId).orElse(null);
+        accessToken = commonOperator.getToken(clientId).orElse(null);
 
         final CloseableHttpClient httpclient = HttpClients.createDefault();
         final HttpPost httpPost = new HttpPost("https://api.vk.com/method/photos.getById");

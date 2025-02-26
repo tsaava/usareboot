@@ -19,6 +19,7 @@ public class VkBotResponseDTO {
     private Integer itemCount;
     private String itemColor;
     private Integer clientId;
+    private Integer timestamp;
     private Double cost;
     private VkEvent vk_event;
 }
