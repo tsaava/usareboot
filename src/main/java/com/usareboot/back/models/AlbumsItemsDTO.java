@@ -29,7 +29,7 @@ public class AlbumsItemsDTO {
     private Double albumItemCost;
     private Double albumItemRate;
     private String albumItemColor;
-    private long albumItemStatus;
+    private Long albumItemStatus;
     private String albumItemStatusName;
     private String vkPhotoPath;
     private boolean noSize;

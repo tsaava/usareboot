@@ -24,7 +24,7 @@ public class ItemOperator {
         LocalDateTime commentDate = LocalDateTime.ofInstant(Instant.ofEpochSecond(dateInSeconds), ZoneId.systemDefault());// Преобразование даты в LocalDateTime
 
         ItemsEntity itemsEntity = new ItemsEntity();
-        itemsEntity.setAlbomItemId(albumsItems.getAlbum().getAlbumId());
+        itemsEntity.setAlbomItemId(albumsItems.getAlbumItemId());
         itemsEntity.setComment(commentText);
         itemsEntity.setDateComment(commentDate);
         itemsEntity.setOrderId(orderId);

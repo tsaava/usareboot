@@ -30,15 +30,19 @@ public class BotDbMapper {
                 ).findFirst().orElse("");
 
         var rate = Arrays.stream(albumsEntity.getCourseAlbum().split("/")).toList();
+        double itemRate = 1;
+        if(!rate.isEmpty()){
+            itemRate = Double.parseDouble(rate.get(0));}
         return AlbumsItemsDTO.builder()
                 .albumId(albumsEntity.getAlbumId())
                 .vkItemId(photoId)
                 .photoPath(photoPatch)
                 .albumItemName(vkBotResponseDTO.getItemName())
                 .albumItemCount(vkBotResponseDTO.getItemCount())
-                .albumItemRate(Double.valueOf(rate.get(0)))/*Поправить!!! стоит заглушка на курс выкупа*/
+                .albumItemRate(itemRate)/*Поправить!!! стоит заглушка на курс выкупа*/
                 .vkPhotoPath("https://vk.com/photo-" + albumsEntity.getAlbumId() + "-" + photoId)
                 .itemUrl(vkBotResponseDTO.getItemUrl())
+                .albumItemCost(vkBotResponseDTO.getCost())
                 .albumItemColor(vkBotResponseDTO.getItemColor())
                 .build();
     }

@@ -248,6 +248,7 @@ public class VkBotService {
 
             log.info("[Сценарий saveClientItem][Шаг: проверка наличия значения clientId][EventID: {}]", eventId);
             if (!clientId.isEmpty()) {
+                Double cost1 = Double.valueOf(Optional.of(cost.trim()).orElse("0"));
                 data = VkBotResponseDTO.builder()
                         .itemName(itemName)
                         .itemUrl(itemUrl)
@@ -255,9 +256,10 @@ public class VkBotService {
                         .itemSize(itemSize)
                         .itemCount(Integer.valueOf(Optional.of(itemCount.trim()).orElse("1")))
                         .clientId(Integer.valueOf(clientId.trim()))
-                        .cost(Double.valueOf(Optional.of(cost.trim()).orElse("0")))
+                        .cost(cost1)
                         .itemColor(itemColor)
                         .timestamp(timestamp)
+                        .cost(cost.isEmpty() ? Double.parseDouble(cost) : 0)
                         .build();
             } else {
                 log.error("clientId был равен 0");
@@ -277,8 +279,8 @@ public class VkBotService {
             AlbumsItemsDTO albumItem = botVkOperator.getAlbumItem(data);
 
             log.info("[Сценарий saveClientItem][Шаг: сохранение данных товара в таблицу AlbumItem][EventID: {}]", eventId);
-            albumItemOperator.saveAlbumItem(albumItem);
-
+            AlbumsItemsEntity albumsItemsEntity = albumItemOperator.saveAlbumItem(albumItem);
+            albumItem.setAlbumItemId(albumsItemsEntity.getAlbumItemId());
             log.info("[Сценарий saveClientItem][Шаг: сохранение данных товара в таблицу item][EventID: {}]", eventId);
             botVkOperator.saveItem(albumItem, data);
 

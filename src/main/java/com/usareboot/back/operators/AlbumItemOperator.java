@@ -1,6 +1,7 @@
 package com.usareboot.back.operators;
 
 import com.usareboot.back.entities.AlbumsItemsEntity;
+import com.usareboot.back.entities.DStatusesEntity;
 import com.usareboot.back.models.AlbumsItemsDTO;
 import com.usareboot.back.repositories.AlbumsItemsRepository;
 import com.usareboot.back.repositories.AlbumsRepository;
@@ -21,9 +22,11 @@ public class AlbumItemOperator {
     private final VkService vkService;
     private final AlbumsItemsRepository albumsItemsRepository;
 
-    public void saveAlbumItem(AlbumsItemsDTO albumsItemsDTO) {
+    public AlbumsItemsEntity saveAlbumItem(AlbumsItemsDTO albumsItemsDTO) {
         AlbumsItemsEntity albumsItemsEntity = new AlbumsItemsEntity();
-        albumsItemsEntity.setAlbumItemStatus(dStatusRepository.findDStatusesEntityByStatusId(albumsItemsDTO.getAlbumItemStatus()));
+        Long albumItemStatus = albumsItemsDTO.getAlbumItemStatus()!=null? albumsItemsDTO.getAlbumItemStatus() : 22;
+        DStatusesEntity status = dStatusRepository.findDStatusesEntityByStatusId(albumItemStatus);
+        albumsItemsEntity.setAlbumItemStatus(status);
         albumsItemsEntity.setAlbumItemName(albumsItemsDTO.getAlbumItemName());
         albumsItemsEntity.setAlbumItemCost(albumsItemsDTO.getAlbumItemCost());
         albumsItemsEntity.setAlbumItemRate(albumsItemsDTO.getAlbumItemRate());
@@ -41,9 +44,9 @@ public class AlbumItemOperator {
             var photoUrl = vkService.getCommentPhotoVk(albumsItemsDTO.getVkItemId());
             albumsItemsEntity.setPhotoPath(photoUrl);
         } catch (Exception e) {
-            log.error("Не удалось получить ссылку на фото в Вк", e);
+            log.error("Не удалось получить ссылку на фото в Вк: {}", e.getMessage());
+            albumsItemsEntity.setPhotoPath(albumsItemsDTO.getPhotoPath());
         }
-
-        albumsItemsRepository.save(albumsItemsEntity);
+        return albumsItemsRepository.save(albumsItemsEntity);
     }
 }
