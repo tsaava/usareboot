@@ -425,8 +425,8 @@ public class VkService {
         if (textStart.equalsIgnoreCase("Начать")) {
             log.info("[Сценарий sendKeyboard][Шаг: Получение стартовой клавиатуры][EventID: {}]", eventId);
             Keyboard startKeyboard = keyboardOperator.getStartKeyboard();
-
             var text = "Нажмите на кнопку для получения меню бота";
+
             log.info("[Сценарий sendKeyboard][Шаг: Отправка сообщения в ВК][EventID: {}]", eventId);
             botVkOperator.sendMessageWithKeyboard(userId, startKeyboard, text);
         }
