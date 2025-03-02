@@ -4,13 +4,15 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.usareboot.back.entities.AlbumMappingDictionaryEntity;
+import com.usareboot.back.entities.AlbumsEntity;
 import com.usareboot.back.entities.AlbumsItemsEntity;
 import com.usareboot.back.models.AlbumsItemsDTO;
 import com.usareboot.back.models.vk.VkBotResponseDTO;
 import com.usareboot.back.models.vk.VkEvent;
 import com.usareboot.back.operators.AlbumItemOperator;
 import com.usareboot.back.operators.BotVkOperator;
-import com.usareboot.back.operators.ItemOperator;
+import com.usareboot.back.operators.KeyboardOperator;
 import com.usareboot.back.services.AlbumsItemsService;
 import com.vk.api.sdk.client.VkApiClient;
 import com.vk.api.sdk.client.actors.GroupActor;
@@ -19,6 +21,7 @@ import com.vk.api.sdk.exceptions.ClientException;
 import com.vk.api.sdk.objects.messages.Keyboard;
 import com.vk.api.sdk.objects.messages.KeyboardButton;
 import com.vk.api.sdk.objects.messages.Message;
+import jakarta.persistence.criteria.CriteriaBuilder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
@@ -40,7 +43,8 @@ public class VkBotService {
     private final AlbumsItemsService albumsItemsService;
     private final BotVkOperator botVkOperator;
     private final AlbumItemOperator albumItemOperator;
-//    private final ItemOperator itemOperator;
+    private final KeyboardOperator keyboardOperator;
+    //    private final ItemOperator itemOperator;
     private static final Map<String, Integer> ALBUMS = Map.of(
             "Одежда", 1,
             "Обувь", 2,
@@ -210,30 +214,6 @@ public class VkBotService {
         SELECTING_ALBUM
     }
 
-    /*@Data
-    private static class Order {
-        private String itemName;
-        private String itemLink;
-        private String photoUrl;
-        private String size;
-        private int quantity;
-        private int albumId;
-    }*/
-
-    public void sendMessageWithKeyboard(int userId, String text, Keyboard keyboard) {
-        try {
-            log.info("sendMessageWithKeyboard: {}", keyboard);
-            vk.messages()
-                    .send(actor)
-                    .userId(userId)
-                    .message(text)
-                    .keyboard(keyboard)
-                    .randomId(new Random().nextInt(10000))
-                    .execute();
-        } catch (ApiException | ClientException e) {
-            log.error(e.toString());
-        }
-    }
 
     @Async
     public void saveClientItem(String itemName, String itemUrl, String itemPhotoPath, String itemSize, String itemCount, String clientId, String cost, String itemColor, Integer timestamp, String vk_event) throws IOException {
@@ -272,7 +252,7 @@ public class VkBotService {
             }
             log.info("[Сценарий saveClientItem][Шаг: вывод полученных данных: {}][EventID: {}]", data, eventId);
 
-            if(itemUrl == null || vk_event == null)
+            if (itemUrl == null || vk_event == null)
                 throw new RuntimeException("Ссылка на товар или фотография не была введена! Ошибка сохранения заказа");
 
             log.info("[Сценарий saveClientItem][Шаг: преобразование данных в AlbumItem][EventID: {}]", eventId);
@@ -287,5 +267,27 @@ public class VkBotService {
         } catch (Exception e) {
             log.error(e.toString());
         }
+    }
+
+    public void getRates(String itemUrl, Integer userId) throws JsonProcessingException {
+        var eventId = threadLocal.get();
+        var text = "Выберите подходящий курс";
+        log.info("[Сценарий getRates][Шаг: Начало][EventID: {}]", eventId);
+
+        log.info("[Сценарий getRates][Шаг: Получаем хост][EventID: {}]", eventId);
+        String host = botVkOperator.getHost(itemUrl);
+
+        log.info("[Сценарий getRates][Шаг: Поиск открытого альбома по ссылке: {}][ClientId: {}][EventID: {}]", itemUrl, userId, eventId);
+        AlbumsEntity albumsEntity = botVkOperator.getAlbumsEntity(host);
+
+        var courseAlbum = Arrays.stream(albumsEntity.getCourseAlbum().split("/")).toList();
+
+        log.info("[Сценарий getRates][Шаг: Формирование клавиатуры с курсами][EventID: {}]", eventId);
+        Keyboard rateKeyboard = keyboardOperator.getKeyboardForRates(courseAlbum);
+
+        log.info("[Сценарий getRates][Шаг: Отправка клавиатуры с курсами][EventID: {}]", eventId);
+        botVkOperator.sendMessageWithKeyboard(userId, rateKeyboard, text);
+
+        log.info("[Сценарий getRates][Шаг: Финиш][EventID: {}]", eventId);
     }
 }

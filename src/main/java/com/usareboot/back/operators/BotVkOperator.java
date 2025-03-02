@@ -9,9 +9,17 @@ import com.usareboot.back.models.vk.VkBotResponseDTO;
 import com.usareboot.back.repositories.AlbumMappingDictionaryRepository;
 import com.usareboot.back.repositories.AlbumsItemsRepository;
 import com.usareboot.back.repositories.AlbumsRepository;
+import com.vk.api.sdk.client.VkApiClient;
+import com.vk.api.sdk.client.actors.GroupActor;
+import com.vk.api.sdk.exceptions.ApiException;
+import com.vk.api.sdk.exceptions.ClientException;
+import com.vk.api.sdk.objects.messages.Keyboard;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
+
+import java.util.Random;
 
 @Slf4j
 @Service
@@ -23,11 +31,18 @@ public class BotVkOperator {
     private final AlbumsItemsRepository albumsItemsRepository;
     private final ItemOperator itemOperator;
     private final OrderOperator orderOperator;
-
+    private final VkApiClient vk;
+    private final GroupActor actor;
     public AlbumsItemsDTO getAlbumItem(VkBotResponseDTO vkBotResponseDTO) {
         log.info("vkBotResponseDTO.getItemUrl(): {}", vkBotResponseDTO.getItemUrl());
-        String host = getHost(vkBotResponseDTO);
+        String host = getHost(vkBotResponseDTO.getItemUrl());
 
+        AlbumsEntity album = getAlbumsEntity(host);
+
+        return botDbMapper.mapBotVkToAlbumItem(vkBotResponseDTO, album);
+    }
+
+    public AlbumsEntity getAlbumsEntity(String host) {
         AlbumMappingDictionaryEntity albumMapping = albumMappingDictionaryRepository.getAlbumMappingDictionaryEntityByLinkContains(host);
         log.info("albumMapping: {}", albumMapping.getAlbumMappingDictionaryId());
 
@@ -35,8 +50,7 @@ public class BotVkOperator {
         dStatusesEntity.setStatusId(17);
         AlbumsEntity album= albumsRepository.getAlbumsEntityByAlbumMappingDictionaryIdAndStatuses(albumMapping.getAlbumMappingDictionaryId(), dStatusesEntity);
         log.info("album: {}", album.getAlbumId());
-
-        return botDbMapper.mapBotVkToAlbumItem(vkBotResponseDTO, album);
+        return album;
     }
 
     public void saveItem(AlbumsItemsDTO albumsItemsDTO, VkBotResponseDTO data){
@@ -53,15 +67,31 @@ public class BotVkOperator {
         itemOperator.saveItem(albumsItems, data.getTimestamp(), textOrder, orderId, data);
     }
 
-    private static String getHost(VkBotResponseDTO vkBotResponseDTO) {
+    public String getHost(String itemUrl) {
         // Регулярное выражение для извлечения хоста
         String regex = "^(https?://)?([^:/\\s]+)(.*)$";
         java.util.regex.Pattern pattern = java.util.regex.Pattern.compile(regex);
-        java.util.regex.Matcher matcher = pattern.matcher(vkBotResponseDTO.getItemUrl());
+        java.util.regex.Matcher matcher = pattern.matcher(itemUrl);
         String host ="";
         if (matcher.find()) {
             host = matcher.group(2); // Возвращаем хост
         }
+        log.info("host: {}", host);
         return host;
+    }
+
+    public void sendMessageWithKeyboard(int userId, Keyboard keyboard, String text) {
+        try {
+            log.info("sendMessageWithKeyboard: {}", keyboard);
+            vk.messages()
+                    .send(actor)
+                    .userId(userId)
+                    .message(text)
+                    .keyboard(keyboard)
+                    .randomId(new Random().nextInt(10000))
+                    .execute();
+        } catch (ApiException | ClientException e) {
+            log.error(e.toString());
+        }
     }
 }

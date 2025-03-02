@@ -6,7 +6,7 @@ import java.util.Map;
 @Service
 public class OrderService {
 
-    private final KeyboardService keyboardService;
+   /* private final KeyboardService keyboardService;
     private final StateService stateService;
 
     public OrderService(KeyboardService keyboardService, StateService stateService) {
@@ -43,5 +43,5 @@ public class OrderService {
             default:
                 return "Неизвестная команда.";
         }
-    }
+    }*/
 }

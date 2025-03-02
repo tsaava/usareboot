@@ -42,10 +42,11 @@ public class VkController {
         if (type.equals("photo_comment_new")) {
             vkService.saveCommentUser(json.getAsJsonObject("object"));
         }
-        /*if (type.equals("message_new")) {
-            var o = vkBotService.saveInRedisClientPhoto(requestBody);
-            log.info("vkService.saveInRedisClientPhoto(requestBody):{}", o);
-        }*/
+        if (type.equals("message_new")) {
+            vkService.sendKeyboard(requestBody);
+            /*var o = vkBotService.sendMessageWithKeyboard(requestBody);
+            log.info("vkService.saveInRedisClientPhoto(requestBody):{}", o);*/
+        }
         return "ok";
     }
 }

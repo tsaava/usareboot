@@ -3,61 +3,37 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.usareboot.back.models.vk.VkMessageNew;
+import com.usareboot.back.models.vk.VkPhotoObject;
+import com.usareboot.back.models.vk.VkTypeObject;
+import com.usareboot.back.operators.BotVkOperator;
+import com.usareboot.back.operators.KeyboardOperator;
 import com.vk.api.sdk.objects.messages.*;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 
 import com.vk.api.sdk.objects.messages.Keyboard;
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class KeyboardService {
+    private final BotVkOperator botVkOperator;
+    private final KeyboardOperator keyboardOperator;
+
+ /*   public void sendKeyboard(Integer userId) throws JsonProcessingException {
+            Keyboard rateKeyboard = getKeyboardForRates();
+
+    }
 
     public Keyboard getStartKeyboard() throws JsonProcessingException {
-        Keyboard keyboard = new Keyboard();
-        keyboard.setOneTime(true); // Клавиатура исчезнет после нажатия
-
-        /*KeyboardButtonActionText buttonAction = new KeyboardButtonActionText();
-        buttonAction.setLabel("Сделать заказ");
-        buttonAction.setType(KeyboardButtonActionTextType.TEXT);
-
-        ObjectMapper mapper = new ObjectMapper();
-        var jsonButton = mapper.writeValueAsString(buttonAction);
-        JsonObject jsonObject = JsonParser.parseString(jsonButton).getAsJsonObject();
-
-        // Создаем кнопку
-        KeyboardButton button = new KeyboardButton()
-                .setAction(new KeyboardButtonPropertyAction(jsonObject)
-                ) // Тип кнопки (текстовая)
-                .setColor(KeyboardButtonColor.PRIMARY); // Цвет кнопки*/
-
-        KeyboardButtonAction buttonAction = new KeyboardButtonAction();
-        buttonAction.setLabel("Сделать заказ");
-        buttonAction.setType(TemplateActionTypeNames.TEXT);
-
-        KeyboardButton button = new KeyboardButton();
-        button.setAction(buttonAction);
-        button.setColor(KeyboardButtonColor.PRIMARY); // Цвет кнопки
-
-        List<List<KeyboardButton>> buttons = new ArrayList<>();
-        buttons.add(Collections.singletonList(button));
-
-        keyboard.setButtons(buttons);
-        return keyboard;
+        return keyboardOperator.getStartKeyboard();
     }
 
-    public String getAlbumKeyboard(int userId, Map<String, String> albums) {
-        Map<String, Object> keyboard = new HashMap<>();
-        keyboard.put("one_time", true);
-        Map<String, Object>[] buttons = new Map[albums.size()];
-        int i = 0;
-        for (String album : albums.keySet()) {
-            buttons[i] = Map.of("action", Map.of("type", "text", "label", album), "color", "secondary");
-            i++;
-        }
-        keyboard.put("buttons", buttons);
-
-        return "Выберите альбом:";
-    }
+    public Keyboard getKeyboardForRates() throws JsonProcessingException {
+        return keyboardOperator.getKeyboardForRates();
+    }*/
 }

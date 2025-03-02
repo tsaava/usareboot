@@ -9,12 +9,11 @@ import com.usareboot.back.entities.*;
 import com.usareboot.back.entities.auth.UsersEntity;
 import com.usareboot.back.models.AlbumRowRequestDTO;
 import com.usareboot.back.models.AlbumsItemsDTO;
-import com.usareboot.back.models.vk.VkAlbumItemResponse;
-import com.usareboot.back.models.vk.VkAlbumResponse;
-import com.usareboot.back.operators.CommonOperator;
-import com.usareboot.back.operators.ItemOperator;
-import com.usareboot.back.operators.OrderOperator;
+import com.usareboot.back.models.vk.*;
+import com.usareboot.back.operators.*;
 import com.usareboot.back.repositories.*;
+import com.vk.api.sdk.objects.messages.Keyboard;
+import jakarta.persistence.criteria.CriteriaBuilder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpEntity;
@@ -39,6 +38,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 
 
 @Service
@@ -74,16 +74,19 @@ public class VkService {
     private final OrdersRepository ordersRepository;
     private final UsersRepository usersRepository;
     private final ApiTokenRepository apiTokenRepository;
-    private final KeyboardService keyboardService;
+    //    private final KeyboardService keyboardService;
+    private final KeyboardOperator keyboardOperator;
+    private final BotVkOperator botVkOperator;
+    //    private final VkBotService vkBotService;
     private final StateService stateService;
     private final OrderService orderService;
     private final ItemOperator itemOperator;
+    private final VkOperator vkOperator;
     private final CommonOperator commonOperator;
     private final OrderOperator orderOperator;
+    private final ObjectMapper mapper;
 
-    private final ThreadLocal<String> threadLocal = new ThreadLocal<>();
-
-
+    private final ThreadLocal<Integer> threadLocal = ThreadLocal.withInitial(() -> ThreadLocalRandom.current().nextInt(10000, 100000));
 
     public void saveAccessToken(String code) {
         String tokenUrl = UriComponentsBuilder.fromHttpUrl("https://oauth.vk.com/access_token")
@@ -384,12 +387,10 @@ public class VkService {
         }
     }
 
-
-
-    public String getCommentPhotoVk(long photo_id) throws IOException {
-        accessToken = commonOperator.getToken(clientId).orElse(null);
-
-        final CloseableHttpClient httpclient = HttpClients.createDefault();
+   /* public String getCommentPhotoVk(long photo_id) throws IOException {
+//        accessToken = commonOperator.getToken(clientId).orElse(null);
+//        return  vkOperator.getCommentPhotoVk(Long.parseLong(clientId), accessToken);
+        *//*final CloseableHttpClient httpclient = HttpClients.createDefault();
         final HttpPost httpPost = new HttpPost("https://api.vk.com/method/photos.getById");
         final List<NameValuePair> params = new ArrayList<>();
         params.add(new BasicNameValuePair("access_token", accessToken));
@@ -408,9 +409,28 @@ public class VkService {
             VkAlbumItemResponse response = mapper.readValue(tempString, VkAlbumItemResponse.class);
             System.out.println("response: " + response);
             return response.getResponse().get(0).getSizes().get(3).getUrl();
+        }*//*
+    }*/
+
+    @Async
+    public void sendKeyboard(String object) throws JsonProcessingException {
+        var eventId = threadLocal.get();
+        log.info("[Сценарий sendKeyboard][Шаг: Начало][EventID: {}]", eventId);
+        var message = mapper.readValue(object, VkMessageNew.class);
+        log.info("message: {}", message);
+        log.info("message.getObject(): {}", message.getObject());
+        String textStart = Optional.ofNullable(message.getObject()).map(VkTypeObject::getMessage).map(VkPhotoObject::getText).orElse("");
+        Integer userId = Optional.ofNullable(message.getObject()).map(VkTypeObject::getMessage).map(VkPhotoObject::getFrom_id).orElse(null);
+        log.info("[Сценарий sendKeyboard][Шаг: Проверка входного сообщения. Сообщение: {}][EventID: {}]", textStart, eventId);
+        if (textStart.equalsIgnoreCase("Начать")) {
+            log.info("[Сценарий sendKeyboard][Шаг: Получение стартовой клавиатуры][EventID: {}]", eventId);
+            Keyboard startKeyboard = keyboardOperator.getStartKeyboard();
+
+            var text = "Нажмите на кнопку для получения меню бота";
+            log.info("[Сценарий sendKeyboard][Шаг: Отправка сообщения в ВК][EventID: {}]", eventId);
+            botVkOperator.sendMessageWithKeyboard(userId, startKeyboard, text);
         }
     }
-
 }
 
 
