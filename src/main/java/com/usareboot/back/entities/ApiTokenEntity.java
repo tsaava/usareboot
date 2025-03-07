@@ -32,7 +32,9 @@ public class ApiTokenEntity {
     @Column(name = "token_end")
     private LocalDateTime tokenEnd;
 
-
+    @Basic
+    @Column(name = "group_id")
+    private Long groupId;
 
     @Override
     public boolean equals(Object o) {

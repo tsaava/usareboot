@@ -39,7 +39,7 @@ public class VkOperator {
     private final CommonOperator commonOperator;
     private final VkApiClient vkApiClient;
     public String getCommentPhotoVk(long photo_id) throws IOException {
-        var accessToken = commonOperator.getToken(clientId).orElse(null);
+        var accessToken = commonOperator.getTokenGroup(groupId).orElse(null);
         final CloseableHttpClient httpclient = HttpClients.createDefault();
         final HttpPost httpPost = new HttpPost("https://api.vk.com/method/photos.getById");
         final List<NameValuePair> params = new ArrayList<>();
@@ -63,7 +63,7 @@ public class VkOperator {
     }
 
     public String delAlbumInVk(long albumId) {
-        var accessToken = commonOperator.getToken(clientId).orElse(null);
+        var accessToken = commonOperator.getTokenClient(clientId).orElse(null);
         return vkApiClient.deleteAlbum((int) albumId, Integer.parseInt(groupId),accessToken, apiVersion);
     }
 }

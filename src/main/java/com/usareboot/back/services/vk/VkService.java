@@ -24,7 +24,6 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -107,11 +106,11 @@ public class VkService {
         var dataTokenEnd = date.plusSeconds(expires_in);
         apiTokenRepository.findApiTokenEntityByVkClientId(Long.parseLong(clientId))
                 .ifPresentOrElse(s -> {
-//                    s.setToken(accessToken);
-////                    s.setRefreshToken(refreshToken);
-//                    s.setTokenStart(date);
-//                    s.setTokenEnd(dataTokenEnd);
-//                    apiTokenRepository.save(s);
+                    s.setToken(accessToken);
+//                    s.setRefreshToken(refreshToken);
+                    s.setTokenStart(date);
+                    s.setTokenEnd(dataTokenEnd);
+                    apiTokenRepository.save(s);
                 }, () -> {
                     var data = new ApiTokenEntity();
                     data.setVkClientId(Long.parseLong(clientId));
@@ -127,7 +126,7 @@ public class VkService {
     public Integer createAlbum(AlbumsEntity albumsEntity) throws IOException {
         var eventId = threadLocal.get();
         log.info("[Сценарий createAlbum][Шаг: Начало][EventID: {}]", eventId);
-        accessToken = commonOperator.getToken(clientId).orElse(null);
+        accessToken = commonOperator.getTokenClient(clientId).orElse(null);
         final CloseableHttpClient httpclient = HttpClients.createDefault();
         final HttpPost httpPost = new HttpPost("https://api.vk.com/method/photos.createAlbum");
         final List<NameValuePair> params = new ArrayList<>();
@@ -167,7 +166,7 @@ public class VkService {
     }
 
     public String updAlbum(String vkId, String token, AlbumRowRequestDTO albumsEntity) throws IOException {
-        accessToken = commonOperator.getToken(clientId).orElse(null);
+        accessToken = commonOperator.getTokenClient(clientId).orElse(null);
 
         final CloseableHttpClient httpclient = HttpClients.createDefault();
         final HttpPost httpPost = new HttpPost("https://api.vk.com/method/photos.editAlbum");
@@ -191,7 +190,7 @@ public class VkService {
     }
 
     public String getUrlPhotoInAlbumVk(long albumId) throws IOException {
-        accessToken = commonOperator.getToken(clientId).orElse(null);
+        accessToken = commonOperator.getTokenClient(clientId).orElse(null);
 
         final CloseableHttpClient httpclient = HttpClients.createDefault();
         final HttpPost httpPost = new HttpPost("https://api.vk.com/method/photos.getUploadServer");
@@ -221,7 +220,7 @@ public class VkService {
                                 String server,
                                 String hash,
                                 String access_token) throws IOException {
-        accessToken = commonOperator.getToken(clientId).orElse(null);
+        accessToken = commonOperator.getTokenClient(clientId).orElse(null);
 
         final CloseableHttpClient httpclient = HttpClients.createDefault();
         final HttpPost httpPost = new HttpPost("https://api.vk.com/method/photos.save");
@@ -253,7 +252,7 @@ public class VkService {
 
 //                                        String access_token,
                                 String caption) throws IOException {
-        accessToken = commonOperator.getToken(clientId).orElse(null);
+        accessToken = commonOperator.getTokenClient(clientId).orElse(null);
 
         final CloseableHttpClient httpclient = HttpClients.createDefault();
         final HttpPost httpPost = new HttpPost("https://api.vk.com/method/photos.edit");
@@ -287,7 +286,7 @@ public class VkService {
 
     //    @Async
     public AlbumsItemsDTO saveFileInVk(Long albumId, MultipartFile file, AlbumsItemsDTO albumsItemsDTO) throws IOException {
-        accessToken = commonOperator.getToken(clientId).orElse(null);
+        accessToken = commonOperator.getTokenClient(clientId).orElse(null);
 
         log.info("Редактирование комментария в вк");
 //        Gson g = new Gson();
@@ -361,13 +360,13 @@ public class VkService {
 
 
     public void saveCommentUser(JsonObject object) {
-        accessToken = commonOperator.getToken(clientId).orElse(null);
+        accessToken = commonOperator.getTokenGroup(groupId).orElse(null);
         try {
             log.info("Сохранение комментария");
             long photoId = object.get("photo_id").getAsLong();
             var albumsItems = albumsItemsRepository.findFirstByVkItemId(photoId);
             log.info("Сохранение комментария в itemsEntity: {}", albumsItems);
-            accessToken = commonOperator.getToken(clientId).orElse(null);
+            accessToken = commonOperator.getTokenClient(clientId).orElse(null);
 
             try {
                 var dateInSeconds = object.get("date").getAsLong();

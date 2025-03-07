@@ -9,4 +9,5 @@ import java.util.Optional;
 public interface ApiTokenRepository extends JpaRepository<ApiTokenEntity, Long> {
 
     Optional<ApiTokenEntity> findApiTokenEntityByVkClientId(long vkClientId);
+    Optional<ApiTokenEntity> findApiTokenEntityByGroupId(long vkGroupId);
 }
