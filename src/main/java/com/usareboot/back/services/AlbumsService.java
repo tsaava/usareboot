@@ -5,6 +5,7 @@ import com.usareboot.back.models.AlbumsDTO;
 import com.usareboot.back.models.CardsDTO;
 import com.usareboot.back.entities.AlbumsEntity;
 import com.usareboot.back.entities.DStatusesEntity;
+import com.usareboot.back.operators.AlbumOperator;
 import com.usareboot.back.operators.CommonOperator;
 import com.usareboot.back.operators.VkOperator;
 import com.usareboot.back.repositories.AlbumsRepository;
@@ -40,6 +41,7 @@ public class AlbumsService {
 
     private final CommonOperator commonOperator;
     private final VkOperator vkOperator;
+    private final AlbumOperator albumOperator;
 
 
     /**
@@ -102,9 +104,13 @@ public class AlbumsService {
     public void delAlbum(long albumId) {
         var eventId = threadLocal.get();
 
-        log.info("[Сценарий deleteAlbum][Шаг: Удаления альбома][EventID: {}]", eventId);
+        log.info("[Сценарий deleteAlbum][Шаг: Удаления альбома в ВК][EventID: {}]", eventId);
         String res = vkOperator.delAlbumInVk(albumId);
-        log.info("[Сценарий deleteAlbum][Шаг: результат удаления: {}][EventID: {}]", res, eventId);
+        log.info("[Сценарий deleteAlbum][Шаг: результат удаления альбома в ВК: {}][EventID: {}]", res, eventId);
+
+        log.info("[Сценарий deleteAlbum][Шаг: Удаления альбома в БД][EventID: {}]", eventId);
+        albumOperator.delAlbum(albumId);
+        log.info("[Сценарий deleteAlbum][Шаг: Альбом успешно удалился в БД: {}][EventID: {}]", res, eventId);
 
         log.info("[Сценарий createAlbum][Шаг: Финиш][EventID: {}]", eventId);
     }
