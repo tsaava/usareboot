@@ -19,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
 import java.util.Random;
 
 @Slf4j
@@ -33,17 +34,23 @@ public class BotVkOperator {
     private final OrderOperator orderOperator;
     private final VkApiClient vk;
     private final GroupActor actor;
+    private final String DEFAULT_ALBUM_URL = "https://default";
+
     public AlbumsItemsDTO getAlbumItem(VkBotResponseDTO vkBotResponseDTO) {
         log.info("vkBotResponseDTO.getItemUrl(): {}", vkBotResponseDTO.getItemUrl());
         String host = getHost(vkBotResponseDTO.getItemUrl());
 
         AlbumsEntity album = getAlbumsEntity(host);
-
         return botDbMapper.mapBotVkToAlbumItem(vkBotResponseDTO, album);
     }
 
     public AlbumsEntity getAlbumsEntity(String host) {
-        AlbumMappingDictionaryEntity albumMapping = albumMappingDictionaryRepository.getAlbumMappingDictionaryEntityByLinkContains(host);
+        AlbumMappingDictionaryEntity albumMapping = albumMappingDictionaryRepository.getAlbumMappingDictionaryEntityByLinkContains(host).orElse(null);
+
+        if(albumMapping == null) {
+            albumMapping = albumMappingDictionaryRepository.getAlbumMappingDictionaryEntityByLinkContains(DEFAULT_ALBUM_URL).orElse(null);
+        }
+        assert albumMapping != null;
         log.info("albumMapping: {}", albumMapping.getAlbumMappingDictionaryId());
 
         DStatusesEntity dStatusesEntity = new DStatusesEntity();

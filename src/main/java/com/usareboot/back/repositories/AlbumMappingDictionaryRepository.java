@@ -5,7 +5,8 @@ import com.usareboot.back.entities.AlbumsItemsEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.ArrayList;
+import java.util.Optional;
 
 public interface AlbumMappingDictionaryRepository extends JpaRepository<AlbumMappingDictionaryEntity, Long> {
-    AlbumMappingDictionaryEntity getAlbumMappingDictionaryEntityByLinkContains(String itemUrl);
+    Optional<AlbumMappingDictionaryEntity> getAlbumMappingDictionaryEntityByLinkContains(String itemUrl);
 }

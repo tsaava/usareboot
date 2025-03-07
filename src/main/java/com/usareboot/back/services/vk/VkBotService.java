@@ -269,6 +269,7 @@ public class VkBotService {
         }
     }
 
+    @Async
     public void getRates(String itemUrl, Integer userId) throws JsonProcessingException {
         var eventId = threadLocal.get();
         var text = "Выберите подходящий курс";
@@ -279,8 +280,12 @@ public class VkBotService {
 
         log.info("[Сценарий getRates][Шаг: Поиск открытого альбома по ссылке: {}][ClientId: {}][EventID: {}]", itemUrl, userId, eventId);
         AlbumsEntity albumsEntity = botVkOperator.getAlbumsEntity(host);
-
-        var courseAlbum = Arrays.stream(albumsEntity.getCourseAlbum().split("/")).toList();
+        List<String> courseAlbum = new ArrayList<>();
+//        if (albumsEntity != null)
+            courseAlbum = Arrays.stream(albumsEntity.getCourseAlbum().split("/")).toList();
+//        else {
+//            courseAlbum.add("Курс альбома не сопоставлен");
+//        }
 
         log.info("[Сценарий getRates][Шаг: Формирование клавиатуры с курсами][EventID: {}]", eventId);
         Keyboard rateKeyboard = keyboardOperator.getKeyboardForRates(courseAlbum);
