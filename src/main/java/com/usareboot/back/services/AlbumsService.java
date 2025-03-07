@@ -104,8 +104,10 @@ public class AlbumsService {
     public void delAlbum(long albumId) {
         var eventId = threadLocal.get();
 
+        long albumVkId = albumOperator.getAlbumVkId(albumId);
+
         log.info("[Сценарий deleteAlbum][Шаг: Удаления альбома в ВК][EventID: {}]", eventId);
-        String res = vkOperator.delAlbumInVk(albumId);
+        String res = vkOperator.delAlbumInVk(albumVkId);
         log.info("[Сценарий deleteAlbum][Шаг: результат удаления альбома в ВК: {}][EventID: {}]", res, eventId);
 
         log.info("[Сценарий deleteAlbum][Шаг: Удаления альбома в БД][EventID: {}]", eventId);

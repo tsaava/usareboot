@@ -1,5 +1,6 @@
 package com.usareboot.back.operators;
 
+import com.usareboot.back.entities.AlbumsEntity;
 import com.usareboot.back.entities.AlbumsItemsEntity;
 import com.usareboot.back.entities.DStatusesEntity;
 import com.usareboot.back.models.AlbumsItemsDTO;
@@ -18,6 +19,11 @@ import java.time.LocalDate;
 @RequiredArgsConstructor
 public class AlbumOperator {
     private final AlbumsRepository albumsRepository;
+
+    public long getAlbumVkId(long albumId) {
+        AlbumsEntity albumsEntityByAlbum = albumsRepository.findAlbumsEntityByAlbumId(albumId);
+        return albumsEntityByAlbum.getAlbumVkId();
+    }
 
     public void delAlbum(long albumId) {
         albumsRepository.deleteById(albumId);
