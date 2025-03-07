@@ -48,6 +48,13 @@ public class AlbumsController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @DeleteMapping("/delete/{albumId}")
+    public ResponseEntity<?> delAlbum(@PathVariable String albumId) throws IOException {
+//        vkService.deleteAlbum(albumId);
+//        albumsService.albumsAdd(data,album);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
     @PatchMapping("/update/{token}")
     public ResponseEntity<?> patchAlbum(
                                         @PathVariable String token,

@@ -1,7 +1,8 @@
-package com.usareboot.back.client.config;
+package com.usareboot.back.controllers.VK;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.usareboot.back.client.VkClient;
+import com.usareboot.back.client.config.vk.DynamicUrlInterceptor;
 import com.usareboot.back.models.vk.VkPhotoGetListDTO;
 import com.usareboot.back.models.vk.VkPhotoSaveDTO;
 import feign.Feign;
@@ -57,17 +58,5 @@ public class ConfigureFeignUrlController {
                 .decoder(new SpringDecoder(messageConverters, customizers))
                 .target(Target.EmptyTarget.create(VkClient.class));
         return client;
-    }
-
-//    @PostMapping()
-    public VkPhotoSaveDTO savePhotoInVk(String photo,
-                                        String album_id,
-                                        String server,
-                                        String hash,
-                                        String access_token
-    ) {
-
-        VkClient client = getVkClient("https://api.vk.com/method/photos.save");
-        return client.savePhotoInVk(photo, album_id, server, hash, access_token, apiVersion, groupId);
     }
 }

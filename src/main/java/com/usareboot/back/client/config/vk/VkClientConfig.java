@@ -1,4 +1,4 @@
-package com.usareboot.back.client.config;
+package com.usareboot.back.client.config.vk;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;

@@ -1,7 +1,7 @@
 package com.usareboot.back.controllers.product;
 
 import com.google.gson.Gson;
-import com.usareboot.back.client.config.ConfigureFeignUrlController;
+import com.usareboot.back.controllers.VK.ConfigureFeignUrlController;
 import com.usareboot.back.models.AlbumsItemsDTO;
 import com.usareboot.back.services.AlbumsItemsService;
 import com.usareboot.back.services.vk.VkService;
