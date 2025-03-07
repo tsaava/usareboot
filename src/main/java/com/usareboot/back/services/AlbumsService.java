@@ -5,6 +5,8 @@ import com.usareboot.back.models.AlbumsDTO;
 import com.usareboot.back.models.CardsDTO;
 import com.usareboot.back.entities.AlbumsEntity;
 import com.usareboot.back.entities.DStatusesEntity;
+import com.usareboot.back.operators.CommonOperator;
+import com.usareboot.back.operators.VkOperator;
 import com.usareboot.back.repositories.AlbumsRepository;
 import com.usareboot.back.repositories.CardsRepository;
 import com.usareboot.back.repositories.DStatusRepository;
@@ -17,8 +19,10 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.concurrent.ThreadLocalRandom;
 
 @Service
 @Slf4j
@@ -27,12 +31,15 @@ public class AlbumsService {
     private final AlbumsRepository albumsRepository;
     private final CardsRepository cardsRepository;
     private final DStatusRepository statusRepository;
-    private final ThreadLocal<String> threadLocal = new ThreadLocal<>();
+    private final ThreadLocal<Integer> threadLocal = ThreadLocal.withInitial(() -> ThreadLocalRandom.current().nextInt(10000, 100000));
 
     @Value("${vk.api.groupId}")
     private String groupId;
     @PersistenceContext
     private EntityManager entityManager;
+
+    private final CommonOperator commonOperator;
+    private final VkOperator vkOperator;
 
 
     /**
@@ -89,6 +96,17 @@ public class AlbumsService {
             albumsEntity.setAlbumVkId(id);
         }
         this.entityManager.persist(albumsEntity);
+    }
+
+    @Async
+    public void delAlbum(long albumId) {
+        var eventId = threadLocal.get();
+
+        log.info("[Сценарий deleteAlbum][Шаг: Удаления альбома][EventID: {}]", eventId);
+        String res = vkOperator.delAlbumInVk(albumId);
+        log.info("[Сценарий deleteAlbum][Шаг: результат удаления: {}][EventID: {}]", res, eventId);
+
+        log.info("[Сценарий createAlbum][Шаг: Финиш][EventID: {}]", eventId);
     }
 
     @Transactional

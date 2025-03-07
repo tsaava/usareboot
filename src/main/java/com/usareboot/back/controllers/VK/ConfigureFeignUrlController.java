@@ -1,10 +1,9 @@
 package com.usareboot.back.controllers.VK;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.usareboot.back.client.VkClient;
+import com.usareboot.back.client.VkPhotoClient;
 import com.usareboot.back.client.config.vk.DynamicUrlInterceptor;
 import com.usareboot.back.models.vk.VkPhotoGetListDTO;
-import com.usareboot.back.models.vk.VkPhotoSaveDTO;
 import feign.Feign;
 import feign.Target;
 import org.springframework.beans.factory.ObjectFactory;
@@ -41,7 +40,7 @@ public class ConfigureFeignUrlController {
 
     @PostMapping(/*value = "/dynamicAlbums/{id}"*/)
     public VkPhotoGetListDTO uploadPhotoInVk(String vkPath, MultipartFile photo) throws IOException {
-        VkClient client = getVkClient(vkPath);
+        VkPhotoClient client = getVkClient(vkPath);
         String tempString = client.uploadPhotoInVk(photo);
         System.out.println("tempString: " + tempString);
         ObjectMapper mapper = new ObjectMapper();
@@ -50,13 +49,13 @@ public class ConfigureFeignUrlController {
         return userDtoList;
     }
 
-    private VkClient getVkClient(String vkPath) {
-        VkClient client = Feign.builder()
+    private VkPhotoClient getVkClient(String vkPath) {
+        VkPhotoClient client = Feign.builder()
                 .requestInterceptor(new DynamicUrlInterceptor(() -> vkPath))
                 .contract(new SpringMvcContract())
                 .encoder(new SpringEncoder(messageConverters))
                 .decoder(new SpringDecoder(messageConverters, customizers))
-                .target(Target.EmptyTarget.create(VkClient.class));
+                .target(Target.EmptyTarget.create(VkPhotoClient.class));
         return client;
     }
 }

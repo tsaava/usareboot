@@ -1,6 +1,7 @@
 package com.usareboot.back.operators;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.usareboot.back.client.VkApiClient;
 import com.usareboot.back.models.vk.VkAlbumItemResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,6 +37,7 @@ public class VkOperator {
     private String clientId;
 
     private final CommonOperator commonOperator;
+    private final VkApiClient vkApiClient;
     public String getCommentPhotoVk(long photo_id) throws IOException {
         var accessToken = commonOperator.getToken(clientId).orElse(null);
         final CloseableHttpClient httpclient = HttpClients.createDefault();
@@ -58,5 +60,10 @@ public class VkOperator {
             System.out.println("response: " + response);
             return response.getResponse().get(0).getSizes().get(3).getUrl();
         }
+    }
+
+    public String delAlbumInVk(long albumId) {
+        var accessToken = commonOperator.getToken(clientId).orElse(null);
+        return vkApiClient.deleteAlbum((int) albumId, Integer.parseInt(groupId),accessToken, apiVersion);
     }
 }

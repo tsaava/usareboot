@@ -31,36 +31,36 @@ public class AlbumsController {
 
     @GetMapping("/list")
     public ResponseEntity<?> albumsList(/*@RequestParam(name="date")
-                                            @DateTimeFormat(pattern = "dd.MM.yyyy") Date albumDate*/){
+                                            @DateTimeFormat(pattern = "dd.MM.yyyy") Date albumDate*/) {
         return new ResponseEntity<>(new Gson().toJson(albumsService.getListAlbums()), HttpStatus.OK);
     }
 
     @GetMapping("/card")
-    public ResponseEntity<?> cardList(){
+    public ResponseEntity<?> cardList() {
         return new ResponseEntity<>(new Gson().toJson(albumsService.getAlbumCards()), HttpStatus.OK);
     }
 
     @PostMapping("/add")
     public ResponseEntity<?> addAlbum(@RequestBody AlbumsEntity data) throws IOException {
-        albumsService.albumsAdd(data,null);
+        albumsService.albumsAdd(data, null);
         Integer album = vkService.createAlbum(data);
-        albumsService.albumsAdd(data,album);
+        albumsService.albumsAdd(data, album);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @DeleteMapping("/delete/{albumId}")
-    public ResponseEntity<?> delAlbum(@PathVariable String albumId) throws IOException {
-//        vkService.deleteAlbum(albumId);
-//        albumsService.albumsAdd(data,album);
+    public ResponseEntity<?> delAlbum(@PathVariable Long albumId) throws IOException {
+        if (albumId != null)
+            albumsService.delAlbum(albumId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PatchMapping("/update/{token}")
     public ResponseEntity<?> patchAlbum(
-                                        @PathVariable String token,
-                                        @RequestBody AlbumRowRequestDTO data) throws IOException{
+            @PathVariable String token,
+            @RequestBody AlbumRowRequestDTO data) throws IOException {
         System.out.println(data);
-        var vk= vkService.updAlbum(String.valueOf(data.getAlbumVkId()),token, data);
+        var vk = vkService.updAlbum(String.valueOf(data.getAlbumVkId()), token, data);
         System.out.println(vk);
         System.out.println("в вк альбом обновился, id = " + data.getAlbumVkId());
         albumsService.albumsUpd(data, data.getAlbumId());
