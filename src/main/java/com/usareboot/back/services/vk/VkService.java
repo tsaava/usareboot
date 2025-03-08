@@ -360,13 +360,13 @@ public class VkService {
 
 
     public void saveCommentUser(JsonObject object) {
-        accessToken = commonOperator.getTokenGroup(groupId).orElse(null);
+//        accessToken = commonOperator.getTokenGroup(groupId).orElse(null);
         try {
             log.info("Сохранение комментария");
             long photoId = object.get("photo_id").getAsLong();
             var albumsItems = albumsItemsRepository.findFirstByVkItemId(photoId);
             log.info("Сохранение комментария в itemsEntity: {}", albumsItems);
-            accessToken = commonOperator.getTokenClient(clientId).orElse(null);
+//            accessToken = commonOperator.getTokenClient(clientId).orElse(null);
 
             try {
                 var dateInSeconds = object.get("date").getAsLong();

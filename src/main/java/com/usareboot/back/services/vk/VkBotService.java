@@ -270,29 +270,33 @@ public class VkBotService {
     }
 
     @Async
-    public void getRates(String itemUrl, Integer userId) throws JsonProcessingException {
-        var eventId = threadLocal.get();
-        var text = "Выберите подходящий курс";
-        log.info("[Сценарий getRates][Шаг: Начало][EventID: {}]", eventId);
+    public void getRates(String itemUrl, Integer userId) {
+        try {
+            var eventId = threadLocal.get();
+            var text = "Выберите подходящий курс";
+            log.info("[Сценарий getRates][Шаг: Начало][EventID: {}]", eventId);
 
-        log.info("[Сценарий getRates][Шаг: Получаем хост][EventID: {}]", eventId);
-        String host = botVkOperator.getHost(itemUrl);
+            log.info("[Сценарий getRates][Шаг: Получаем хост][EventID: {}]", eventId);
+            String host = botVkOperator.getHost(itemUrl);
 
-        log.info("[Сценарий getRates][Шаг: Поиск открытого альбома по ссылке: {}][ClientId: {}][EventID: {}]", itemUrl, userId, eventId);
-        AlbumsEntity albumsEntity = botVkOperator.getAlbumsEntity(host);
-        List<String> courseAlbum = new ArrayList<>();
+            log.info("[Сценарий getRates][Шаг: Поиск открытого альбома по ссылке: {}][ClientId: {}][EventID: {}]", itemUrl, userId, eventId);
+            AlbumsEntity albumsEntity = botVkOperator.getAlbumsEntity(host);
+            List<String> courseAlbum = new ArrayList<>();
 //        if (albumsEntity != null)
             courseAlbum = Arrays.stream(albumsEntity.getCourseAlbum().split("/")).toList();
 //        else {
 //            courseAlbum.add("Курс альбома не сопоставлен");
 //        }
 
-        log.info("[Сценарий getRates][Шаг: Формирование клавиатуры с курсами][EventID: {}]", eventId);
-        Keyboard rateKeyboard = keyboardOperator.getKeyboardForRates(courseAlbum);
+            log.info("[Сценарий getRates][Шаг: Формирование клавиатуры с курсами][EventID: {}]", eventId);
+            Keyboard rateKeyboard = keyboardOperator.getKeyboardForRates(courseAlbum);
 
-        log.info("[Сценарий getRates][Шаг: Отправка клавиатуры с курсами][EventID: {}]", eventId);
-        botVkOperator.sendMessageWithKeyboard(userId, rateKeyboard, text);
+            log.info("[Сценарий getRates][Шаг: Отправка клавиатуры с курсами][EventID: {}]", eventId);
+            botVkOperator.sendMessageWithKeyboard(userId, rateKeyboard, text);
 
-        log.info("[Сценарий getRates][Шаг: Финиш][EventID: {}]", eventId);
+            log.info("[Сценарий getRates][Шаг: Финиш][EventID: {}]", eventId);
+        }catch (Exception e){
+            log.error("Ошибка при попытке получить курс альбома в сервисе vkBotService: {}", e.getMessage());
+        }
     }
 }

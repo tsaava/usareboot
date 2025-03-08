@@ -48,9 +48,9 @@ public class JwtUtils {
                     .verify(token);
         } catch (Exception e) {
             StringWriter stringWriter = new StringWriter();
-            log.error("Exception {}", e.getMessage());
+//            log.error("Exception {}", e.getMessage());
             e.printStackTrace(new PrintWriter(stringWriter));
-            log.error("Exception {}", stringWriter);
+//            log.error("Exception {}", stringWriter);
             return false;
         }
         return true;

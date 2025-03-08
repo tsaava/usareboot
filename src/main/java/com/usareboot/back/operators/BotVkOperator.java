@@ -39,7 +39,6 @@ public class BotVkOperator {
     public AlbumsItemsDTO getAlbumItem(VkBotResponseDTO vkBotResponseDTO) {
         log.info("vkBotResponseDTO.getItemUrl(): {}", vkBotResponseDTO.getItemUrl());
         String host = getHost(vkBotResponseDTO.getItemUrl());
-
         AlbumsEntity album = getAlbumsEntity(host);
         return botDbMapper.mapBotVkToAlbumItem(vkBotResponseDTO, album);
     }
@@ -47,7 +46,7 @@ public class BotVkOperator {
     public AlbumsEntity getAlbumsEntity(String host) {
         AlbumMappingDictionaryEntity albumMapping = albumMappingDictionaryRepository.getAlbumMappingDictionaryEntityByLinkContains(host).orElse(null);
 
-        if(albumMapping == null) {
+        if (albumMapping == null) {
             albumMapping = albumMappingDictionaryRepository.getAlbumMappingDictionaryEntityByLinkContains(DEFAULT_ALBUM_URL).orElse(null);
         }
         assert albumMapping != null;
@@ -55,36 +54,41 @@ public class BotVkOperator {
 
         DStatusesEntity dStatusesEntity = new DStatusesEntity();
         dStatusesEntity.setStatusId(17);
-        AlbumsEntity album= albumsRepository.getAlbumsEntityByAlbumMappingDictionaryIdAndStatuses(albumMapping.getAlbumMappingDictionaryId(), dStatusesEntity);
+        AlbumsEntity album = albumsRepository.getAlbumsEntityByAlbumMappingDictionaryIdAndStatuses(albumMapping.getAlbumMappingDictionaryId(), dStatusesEntity);
         log.info("album: {}", album.getAlbumId());
         return album;
     }
 
-    public void saveItem(AlbumsItemsDTO albumsItemsDTO, VkBotResponseDTO data){
+    public void saveItem(AlbumsItemsDTO albumsItemsDTO, VkBotResponseDTO data) {
         var albumsItems = albumsItemsRepository.findFirstByVkItemId(albumsItemsDTO.getVkItemId());
         var albumId = albumsItems.getAlbum().getAlbumId();
         var orderId = orderOperator.getOrderId(data.getClientId(), albumId);
-        var textOrder = "#Заказ сделан с помощью чат-бота в ВК\n"+
-                data.getItemName()+" "+
-                data.getItemUrl()+" "+
-                data.getItemSize()+" "+
-                data.getItemColor()+" "+
-                data.getCost()+" "+
+        var textOrder = "#Заказ сделан с помощью чат-бота в ВК\n" +
+                data.getItemName() + " " +
+                data.getItemUrl() + " " +
+                data.getItemSize() + " " +
+                data.getItemColor() + " " +
+                data.getCost() + " " +
                 data.getItemCount();
         itemOperator.saveItem(albumsItems, data.getTimestamp(), textOrder, orderId, data);
     }
 
     public String getHost(String itemUrl) {
-        // Регулярное выражение для извлечения хоста
-        String regex = "^(https?://)?([^:/\\s]+)(.*)$";
-        java.util.regex.Pattern pattern = java.util.regex.Pattern.compile(regex);
-        java.util.regex.Matcher matcher = pattern.matcher(itemUrl);
-        String host ="";
-        if (matcher.find()) {
-            host = matcher.group(2); // Возвращаем хост
+        try {
+            // Регулярное выражение для извлечения хоста
+            String regex = "^(https?://)?([^:/\\s]+)(.*)$";
+            java.util.regex.Pattern pattern = java.util.regex.Pattern.compile(regex);
+            java.util.regex.Matcher matcher = pattern.matcher(itemUrl);
+            String host = "";
+            if (matcher.find()) {
+                host = matcher.group(2); // Возвращаем хост
+            }
+            log.info("host: {}", host);
+            return host;
+        } catch (Exception e) {
+            log.error("Не удалось распарсить хост: {}", e.getMessage());
+            return DEFAULT_ALBUM_URL;
         }
-        log.info("host: {}", host);
-        return host;
     }
 
     public void sendMessageWithKeyboard(int userId, Keyboard keyboard, String text) {
