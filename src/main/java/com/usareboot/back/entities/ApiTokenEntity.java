@@ -18,7 +18,7 @@ public class ApiTokenEntity {
     private long apiTokenId;
     @Basic
     @Column(name = "vk_client_id")
-    private long vkClientId;
+    private Long vkClientId;
     @Basic
     @Column(name = "token")
     private String token;

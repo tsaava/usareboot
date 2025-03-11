@@ -166,7 +166,7 @@ public class VkService {
     }
 
     public String updAlbum(String vkId, String token, AlbumRowRequestDTO albumsEntity) throws IOException {
-        accessToken = commonOperator.getTokenClient(clientId).orElse(null);
+        accessToken = commonOperator.getTokenGroup(clientId).orElse(null);
 
         final CloseableHttpClient httpclient = HttpClients.createDefault();
         final HttpPost httpPost = new HttpPost("https://api.vk.com/method/photos.editAlbum");
@@ -190,7 +190,7 @@ public class VkService {
     }
 
     public String getUrlPhotoInAlbumVk(long albumId) throws IOException {
-        accessToken = commonOperator.getTokenClient(clientId).orElse(null);
+        accessToken = commonOperator.getTokenGroup(clientId).orElse(null);
 
         final CloseableHttpClient httpclient = HttpClients.createDefault();
         final HttpPost httpPost = new HttpPost("https://api.vk.com/method/photos.getUploadServer");
@@ -220,7 +220,7 @@ public class VkService {
                                 String server,
                                 String hash,
                                 String access_token) throws IOException {
-        accessToken = commonOperator.getTokenClient(clientId).orElse(null);
+        accessToken = commonOperator.getTokenGroup(clientId).orElse(null);
 
         final CloseableHttpClient httpclient = HttpClients.createDefault();
         final HttpPost httpPost = new HttpPost("https://api.vk.com/method/photos.save");
@@ -252,7 +252,7 @@ public class VkService {
 
 //                                        String access_token,
                                 String caption) throws IOException {
-        accessToken = commonOperator.getTokenClient(clientId).orElse(null);
+        accessToken = commonOperator.getTokenGroup(clientId).orElse(null);
 
         final CloseableHttpClient httpclient = HttpClients.createDefault();
         final HttpPost httpPost = new HttpPost("https://api.vk.com/method/photos.edit");
@@ -286,7 +286,7 @@ public class VkService {
 
     //    @Async
     public AlbumsItemsDTO saveFileInVk(Long albumId, MultipartFile file, AlbumsItemsDTO albumsItemsDTO) throws IOException {
-        accessToken = commonOperator.getTokenClient(clientId).orElse(null);
+        accessToken = commonOperator.getTokenGroup(clientId).orElse(null);
 
         log.info("Редактирование комментария в вк");
 //        Gson g = new Gson();

@@ -25,8 +25,9 @@ public class VkBotConfig {
 
     private final ApiTokenRepository apiTokenRepository;
 
-    public Optional<String> getToken(String clientId) {
-        return apiTokenRepository.findApiTokenEntityByVkClientId(Long.parseLong(clientId))
+    public Optional<String> getToken() {
+//        return apiTokenRepository.findApiTokenEntityByVkClientId(Long.parseLong(clientId))
+        return apiTokenRepository.findApiTokenEntityByGroupId(Long.valueOf(groupId))
                 .map(ApiTokenEntity::getToken);
     }
 
@@ -39,7 +40,7 @@ public class VkBotConfig {
     @Bean
     public GroupActor groupActor() {
         // Получаем токен из базы данных
-        String accessToken = getToken(String.valueOf(clientId)).orElse("");
+        String accessToken = getToken().orElse("");
         // Создаем актора для группы
         return new GroupActor(groupId, accessToken);
     }

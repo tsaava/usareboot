@@ -47,7 +47,7 @@ public class KeyboardOperator {
         return keyboard;
     }
 
-    public Keyboard getKeyboardForRates(List<String> rates) throws JsonProcessingException {
+    public Keyboard getKeyboardForRates(List<String> rates) {
         Keyboard keyboard = new Keyboard();
         List<List<KeyboardButton>> keyboardButtons = new ArrayList<>();
 
@@ -65,8 +65,8 @@ public class KeyboardOperator {
         }
 
         keyboard.setButtons(keyboardButtons);
-        keyboard.setOneTime(true); // Клавиатура исчезнет после нажатия на кнопку
-        keyboard.setInline(false); // Клавиатура будет отображаться внизу экрана
+//        keyboard.setOneTime(true); // Клавиатура исчезнет после нажатия на кнопку
+        keyboard.setInline(true); // Клавиатура будет отображаться внизу экрана
         return keyboard;
     }
 }

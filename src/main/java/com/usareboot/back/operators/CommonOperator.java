@@ -25,18 +25,19 @@ public class CommonOperator {
     @Value("${vk.api.version}")
     private String apiVersion;
 
+    public Optional<String> getTokenGroup(String groupId) {
+        return apiTokenRepository.findApiTokenEntityByGroupId(Long.valueOf(groupId))
+//        return apiTokenRepository.findApiTokenEntityByVkClientId(Long.parseLong(clientId))
+                .map(ApiTokenEntity::getToken);
+    }
+
     public Optional<String> getTokenClient(String clientId) {
         return apiTokenRepository.findApiTokenEntityByVkClientId(Long.parseLong(clientId))
                 .map(ApiTokenEntity::getToken);
     }
 
-    public Optional<String> getTokenGroup(String groupId) {
-        return apiTokenRepository.findApiTokenEntityByGroupId(Long.parseLong(groupId))
-                .map(ApiTokenEntity::getToken);
-    }
-
     public JsonObject getUserName(int userId) {
-        var accessToken = getTokenClient(clientId).orElse(null);
+        var accessToken = getTokenGroup(clientId).orElse(null);
 
         String url = UriComponentsBuilder.fromHttpUrl("https://api.vk.com/method/users.get")
                 .queryParam("user_ids", userId)

@@ -135,6 +135,7 @@ vk:
     client:
         id: '51727454'
         secret: 'Lp8in0hLVi4I7SR7VMKz'
+        standaloneId: '53220192'
     config:
         file:
             path: 'src/main/resources/application.yaml'
