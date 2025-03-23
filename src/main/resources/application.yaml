@@ -67,10 +67,14 @@ vk:
         version: '5.139'
         redirectUri: 'https://localhost:80/vkAuth'
         pathPhoto: '/vk_img/'
+        redirectStandaloneUri: 'https://usareboot.ru/vkAuth'
 #    token: 'YOUR_ACCESS_TOKEN'
     client:
         id: '51727454'
         secret: 'Lp8in0hLVi4I7SR7VMKz'
+#        standaloneId: '53220192'
+        standaloneId: '53265929'
+        secretStandalone: 'nTITx5lir3dNSjKk6jAj'
     config:
         file:
             path: 'src/main/resources/application.yaml'
@@ -131,11 +135,15 @@ vk:
         version: '5.139'
         redirectUri: 'https://usareboot.ru/vkAuth'
         pathPhoto: '/usr/vk_img/'
+        redirectStandaloneUri: 'https://usareboot.ru/vkAuth'
     token: 'YOUR_ACCESS_TOKEN'
     client:
         id: '51727454'
         secret: 'Lp8in0hLVi4I7SR7VMKz'
-        standaloneId: '53220192'
+#        standaloneId: '53220192'
+        standaloneId: '53265929'
+        secretStandalone: 'nTITx5lir3dNSjKk6jAj'
+
     config:
         file:
             path: 'src/main/resources/application.yaml'

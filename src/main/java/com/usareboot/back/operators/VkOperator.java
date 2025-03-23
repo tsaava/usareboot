@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -36,8 +37,12 @@ public class VkOperator {
     @Value("${vk.client.id}")
     private String clientId;
 
+    @Value("${vk.client.standaloneId}")
+    private String standaloneId;
+
     private final CommonOperator commonOperator;
     private final VkApiClient vkApiClient;
+
     public String getCommentPhotoVk(long photo_id) throws IOException {
         var accessToken = commonOperator.getTokenGroup(clientId).orElse(null);
         final CloseableHttpClient httpclient = HttpClients.createDefault();
@@ -63,7 +68,13 @@ public class VkOperator {
     }
 
     public String delAlbumInVk(long albumId) {
-        var accessToken = commonOperator.getTokenClient(clientId).orElse(null);
-        return vkApiClient.deleteAlbum((int) albumId, Integer.parseInt(groupId),accessToken, apiVersion);
+        var accessToken = commonOperator.getTokenClient(standaloneId).orElse(null);
+        return vkApiClient.deleteAlbum((int) albumId, Integer.parseInt(groupId), accessToken, apiVersion);
+    }
+
+    public String postInVk(String message) {
+        var accessToken = commonOperator.getTokenClient(standaloneId).orElse(null);
+        var ownerId = "-"+groupId;
+        return vkApiClient.createPost(accessToken, ownerId, message, "1", apiVersion);
     }
 }

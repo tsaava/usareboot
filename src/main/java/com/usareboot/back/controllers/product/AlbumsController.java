@@ -55,6 +55,12 @@ public class AlbumsController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @PostMapping("/wall")
+    public ResponseEntity<?> createPost(@RequestParam(name="message") String message) {
+        albumsService.createPost(message);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
     @PatchMapping("/update/{token}")
     public ResponseEntity<?> patchAlbum(
             @PathVariable String token,

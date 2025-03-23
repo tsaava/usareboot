@@ -18,4 +18,13 @@ public interface VkApiClient {
             @RequestParam("access_token") String accessToken,
             @RequestParam("v") String version
     );
+
+    @PostMapping("/wall.post")
+    String createPost(
+            @RequestParam("access_token") String accessToken,
+            @RequestParam("owner_id") String ownerId,
+            @RequestParam("message") String message,
+            @RequestParam("from_group") String fromGroup,
+            @RequestParam("v") String version
+    );
 }

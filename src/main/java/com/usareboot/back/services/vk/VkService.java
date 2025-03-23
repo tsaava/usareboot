@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.usareboot.back.client.VkIdClient;
 import com.usareboot.back.controllers.VK.ConfigureFeignUrlController;
 import com.usareboot.back.entities.*;
 import com.usareboot.back.models.AlbumRowRequestDTO;
@@ -27,12 +28,15 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.util.*;
@@ -53,11 +57,20 @@ public class VkService {
     @Value("${vk.api.redirectUri}")
     private String redirectUri;
 
+    @Value("${vk.api.redirectStandaloneUri}")
+    private String redirectStandaloneUri;
+
     @Value("${vk.client.id}")
     private String clientId;
 
+    @Value("${vk.client.standaloneId}")
+    private String standaloneId;
+
     @Value("${vk.client.secret}")
     private String clientSecret;
+
+    @Value("${vk.client.secretStandalone}")
+    private String clientStandaloneSecret;
 
     //    @Value("${vk.api.token}")
     private String accessToken;
@@ -83,28 +96,31 @@ public class VkService {
     private final CommonOperator commonOperator;
     private final OrderOperator orderOperator;
     private final ObjectMapper mapper;
+    private final VkIdClient vkIdClient;
 
     private final ThreadLocal<Integer> threadLocal = ThreadLocal.withInitial(() -> ThreadLocalRandom.current().nextInt(10000, 100000));
-
-    public void saveAccessToken(String code) {
-        String tokenUrl = UriComponentsBuilder.fromHttpUrl("https://oauth.vk.com/access_token")
-                .queryParam("client_id", clientId)
-                .queryParam("client_secret", clientSecret)
-                .queryParam("redirect_uri", redirectUri)
+    public void saveAccessToken(VkOauth2Response response) {
+        /*String tokenUrl = UriComponentsBuilder.fromHttpUrl("https://oauth.vk.com/access_token")
+                .queryParam("client_id", standaloneId)
+//                .queryParam("client_id", clientId)
+                .queryParam("client_secret", clientStandaloneSecret)
+//                .queryParam("client_secret", clientSecret)
+                .queryParam("redirect_uri", redirectStandaloneUri)
+//                .queryParam("redirect_uri", redirectUri)
                 .queryParam("code", code)
                 .build().toUriString();
 
         String response = restTemplate.getForObject(tokenUrl, String.class);
         assert response != null;
-        log.info("response: {}", response);
+        log.info("response: {}", response);*/
 
-        JsonObject json = JsonParser.parseString(response).getAsJsonObject();
-        log.info("json: {}", json);
-        String accessToken = json.get("access_token").getAsString();
-        var expires_in = json.get("expires_in").getAsLong();
-        var date = java.time.LocalDateTime.now();
-        var dataTokenEnd = date.plusSeconds(expires_in);
-        apiTokenRepository.findApiTokenEntityByVkClientId(Long.parseLong(clientId))
+//        JsonObject json = JsonParser.parseString(response).getAsJsonObject();
+//        log.info("json: {}", json);
+        String accessToken = response.getAccess_token();// json.get("access_token").getAsString();
+        var expires_in = response.getExpires_in();// json.get("expires_in").getAsLong();
+        var date =  java.time.LocalDateTime.now();
+        var dataTokenEnd =date.plusSeconds(expires_in);
+        apiTokenRepository.findApiTokenEntityByVkClientId(Long.parseLong(standaloneId/*clientId*/))
                 .ifPresentOrElse(s -> {
                     s.setToken(accessToken);
 //                    s.setRefreshToken(refreshToken);
@@ -113,13 +129,95 @@ public class VkService {
                     apiTokenRepository.save(s);
                 }, () -> {
                     var data = new ApiTokenEntity();
-                    data.setVkClientId(Long.parseLong(clientId));
+                    data.setVkClientId(Long.parseLong(standaloneId/*clientId*/));
                     data.setToken(accessToken);
                     data.setTokenStart(date);
                     data.setTokenEnd(dataTokenEnd);
                     apiTokenRepository.save(data);
                 });
 
+    }
+
+    public String exchangeCodeForTokens(TokenRequest request) throws IOException {
+        log.info("exchangeCodeForTokens: {}", request);
+        VkOauth2 authorizationCode = VkOauth2.builder()
+                .grant_type("authorization_code")
+                .code(request.getCode())
+                .code_verifier(request.getCode_verifier())
+                .device_id(request.getDevice_id())
+                .client_id(standaloneId)
+                .client_secret(clientStandaloneSecret)
+                .state(request.getState())
+                .redirect_uri(redirectStandaloneUri)
+                .build();
+
+        /*MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+        body.add("grant_type", "authorization_code");
+        body.add("code", authorizationCode.getCode());
+        body.add("code_verifier", authorizationCode.getCode_verifier());
+        body.add("client_id", authorizationCode.getClient_id());
+        body.add("device_id",  authorizationCode.getDevice_id());
+        body.add("client_secret", authorizationCode.getClient_secret());
+        body.add("redirect_uri", redirectStandaloneUri);
+        body.add("state", authorizationCode.getState());*/
+
+
+       /* String response = vkIdClient.exchangeCodeForTokens(
+                authorizationCode.getGrant_type(), // grant_type
+                authorizationCode.getCode(), // code
+                authorizationCode.getCode_verifier(), // code_verifier
+                authorizationCode.getDevice_id(), // code_verifier
+                authorizationCode.getClient_id(), // client_id
+                authorizationCode.getClient_secret(), // client_secret
+                authorizationCode.getRedirect_uri(), // redirect_uri
+                authorizationCode.getState() // redirect_uri
+        );
+        log.info("response: {}", response);
+
+        VkOauth2Response vkOauth2Response = mapper.readValue(response, VkOauth2Response.class);
+        log.info("vkOauth2Response: {}",vkOauth2Response);
+        return vkOauth2Response.getAccess_token();*/
+
+        final CloseableHttpClient httpclient = HttpClients.createDefault();
+        final HttpPost httpPost = new HttpPost("https://id.vk.com/oauth2/auth");
+
+        // Формируем параметры запроса
+        final List<NameValuePair> params = new ArrayList<>();
+        params.add(new BasicNameValuePair("grant_type", "authorization_code"));
+        params.add(new BasicNameValuePair("code", request.getCode()));
+        params.add(new BasicNameValuePair("code_verifier", request.getCode_verifier()));
+        params.add(new BasicNameValuePair("device_id", request.getDevice_id()));
+        params.add(new BasicNameValuePair("client_id", standaloneId));
+        params.add(new BasicNameValuePair("state", request.getState()));
+        params.add(new BasicNameValuePair("redirect_uri", redirectStandaloneUri));
+        params.add(new BasicNameValuePair("client_secret", clientStandaloneSecret));
+
+        // Устанавливаем параметры в тело запроса
+        httpPost.setEntity(new UrlEncodedFormEntity(params));
+
+        // Выполняем запрос
+        try (CloseableHttpResponse response2 = httpclient.execute(httpPost)) {
+            final HttpEntity entity2 = response2.getEntity();
+            String tempString = EntityUtils.toString(entity2);
+            log.info("tempString: {}",tempString);
+
+            VkOauth2Response vkOauth2Response = mapper.readValue(tempString, VkOauth2Response.class);
+            log.info("vkOauth2Response: {}",vkOauth2Response);
+            saveAccessToken(vkOauth2Response);
+            return vkOauth2Response.getAccess_token();
+//            return EntityUtils.toString(entity2);
+        }
+       /* return vkIdClient.exchangeCodeForTokens(authorizationCode.getGrant_type(),
+                authorizationCode.getCode(),
+                authorizationCode.getCode_verifier(),
+                authorizationCode.getDevice_id(),
+                authorizationCode.getClient_id(),
+                authorizationCode.getClient_secret(),
+                authorizationCode.getRedirect_uri(),
+                authorizationCode.getState());*/
+        /*// Отправляем запрос к VK ID
+        RestTemplate restTemplate = new RestTemplate();
+        return restTemplate.postForObject(url, body, String.class);*/
     }
 
     @Async

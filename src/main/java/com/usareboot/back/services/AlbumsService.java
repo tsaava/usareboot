@@ -117,6 +117,17 @@ public class AlbumsService {
         log.info("[Сценарий createAlbum][Шаг: Финиш][EventID: {}]", eventId);
     }
 
+    @Async
+    public void createPost(String message) {
+        var eventId = threadLocal.get();
+
+        log.info("[Сценарий createPost][Шаг: Добавление поста на стену группы в ВК][EventID: {}]", eventId);
+//        String message = "message";
+        String res = vkOperator.postInVk(message);
+log.info("res: {}", res);
+        log.info("[Сценарий createAlbum][Шаг: Финиш][EventID: {}]", eventId);
+    }
+
     @Transactional
     public void albumsUpd(AlbumRowRequestDTO albumRowRequestDTO, long id) {
 //        AlbumsEntity album = modelMapper.map(albumRowRequestDTO, AlbumsEntity.class);
