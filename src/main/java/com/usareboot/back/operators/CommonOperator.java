@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Slf4j
@@ -20,8 +21,8 @@ public class CommonOperator {
     private final RestTemplate restTemplate;
     private final ApiTokenRepository apiTokenRepository;
 
-    @Value("${vk.client.id}")
-    private String clientId;
+    @Value("${vk.api.groupId}")
+    private String groupId;
     @Value("${vk.api.version}")
     private String apiVersion;
 
@@ -32,12 +33,23 @@ public class CommonOperator {
     }
 
     public Optional<String> getTokenClient(String clientId) {
+        //        if(LocalDateTime.now().isAfter(token.getTokenEnd()))
         return apiTokenRepository.findApiTokenEntityByVkClientId(Long.parseLong(clientId))
                 .map(ApiTokenEntity::getToken);
     }
 
+    public boolean isExpiredToken(String clientId) {
+        ApiTokenEntity apiTokenEntity = apiTokenRepository.findApiTokenEntityByVkClientId(Long.parseLong(clientId)).orElse(null);
+        return apiTokenEntity != null && LocalDateTime.now().isAfter(apiTokenEntity.getTokenEnd());
+    }
+
+    public Optional<String> getRefreshToken(String clientId) {
+        return apiTokenRepository.findApiTokenEntityByVkClientId(Long.parseLong(clientId))
+                .map(ApiTokenEntity::getRefreshToken);
+    }
+
     public JsonObject getUserName(int userId) {
-        var accessToken = getTokenGroup(clientId).orElse(null);
+        var accessToken = getTokenGroup(groupId).orElse(null);
 
         String url = UriComponentsBuilder.fromHttpUrl("https://api.vk.com/method/users.get")
                 .queryParam("user_ids", userId)

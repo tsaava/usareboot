@@ -35,4 +35,10 @@ public class VKAuthController {
         log.info("s: {}",s);
         return new ResponseEntity<>(s, HttpStatus.OK);
     }
+
+    @PostMapping("/oauth2/refreshToken")
+    public ResponseEntity<?> exchangeRefreshTokens(@RequestBody TokenRequest request) throws IOException {
+        vkService.exchangeRefreshTokens(request);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }

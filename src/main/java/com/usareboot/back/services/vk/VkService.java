@@ -100,42 +100,27 @@ public class VkService {
 
     private final ThreadLocal<Integer> threadLocal = ThreadLocal.withInitial(() -> ThreadLocalRandom.current().nextInt(10000, 100000));
     public void saveAccessToken(VkOauth2Response response) {
-        /*String tokenUrl = UriComponentsBuilder.fromHttpUrl("https://oauth.vk.com/access_token")
-                .queryParam("client_id", standaloneId)
-//                .queryParam("client_id", clientId)
-                .queryParam("client_secret", clientStandaloneSecret)
-//                .queryParam("client_secret", clientSecret)
-                .queryParam("redirect_uri", redirectStandaloneUri)
-//                .queryParam("redirect_uri", redirectUri)
-                .queryParam("code", code)
-                .build().toUriString();
-
-        String response = restTemplate.getForObject(tokenUrl, String.class);
-        assert response != null;
-        log.info("response: {}", response);*/
-
-//        JsonObject json = JsonParser.parseString(response).getAsJsonObject();
-//        log.info("json: {}", json);
-        String accessToken = response.getAccess_token();// json.get("access_token").getAsString();
-        var expires_in = response.getExpires_in();// json.get("expires_in").getAsLong();
+        String accessToken = response.getAccess_token();
+        var expires_in = response.getExpires_in();
+        var refreshToken = response.getRefresh_token();
         var date =  java.time.LocalDateTime.now();
         var dataTokenEnd =date.plusSeconds(expires_in);
-        apiTokenRepository.findApiTokenEntityByVkClientId(Long.parseLong(standaloneId/*clientId*/))
+        apiTokenRepository.findApiTokenEntityByVkClientId(Long.parseLong(standaloneId))
                 .ifPresentOrElse(s -> {
                     s.setToken(accessToken);
-//                    s.setRefreshToken(refreshToken);
+                    s.setRefreshToken(refreshToken);
                     s.setTokenStart(date);
                     s.setTokenEnd(dataTokenEnd);
                     apiTokenRepository.save(s);
                 }, () -> {
                     var data = new ApiTokenEntity();
-                    data.setVkClientId(Long.parseLong(standaloneId/*clientId*/));
+                    data.setVkClientId(Long.parseLong(standaloneId));
                     data.setToken(accessToken);
                     data.setTokenStart(date);
+                    data.setRefreshToken(refreshToken);
                     data.setTokenEnd(dataTokenEnd);
                     apiTokenRepository.save(data);
                 });
-
     }
 
     public String exchangeCodeForTokens(TokenRequest request) throws IOException {
@@ -150,33 +135,6 @@ public class VkService {
                 .state(request.getState())
                 .redirect_uri(redirectStandaloneUri)
                 .build();
-
-        /*MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
-        body.add("grant_type", "authorization_code");
-        body.add("code", authorizationCode.getCode());
-        body.add("code_verifier", authorizationCode.getCode_verifier());
-        body.add("client_id", authorizationCode.getClient_id());
-        body.add("device_id",  authorizationCode.getDevice_id());
-        body.add("client_secret", authorizationCode.getClient_secret());
-        body.add("redirect_uri", redirectStandaloneUri);
-        body.add("state", authorizationCode.getState());*/
-
-
-       /* String response = vkIdClient.exchangeCodeForTokens(
-                authorizationCode.getGrant_type(), // grant_type
-                authorizationCode.getCode(), // code
-                authorizationCode.getCode_verifier(), // code_verifier
-                authorizationCode.getDevice_id(), // code_verifier
-                authorizationCode.getClient_id(), // client_id
-                authorizationCode.getClient_secret(), // client_secret
-                authorizationCode.getRedirect_uri(), // redirect_uri
-                authorizationCode.getState() // redirect_uri
-        );
-        log.info("response: {}", response);
-
-        VkOauth2Response vkOauth2Response = mapper.readValue(response, VkOauth2Response.class);
-        log.info("vkOauth2Response: {}",vkOauth2Response);
-        return vkOauth2Response.getAccess_token();*/
 
         final CloseableHttpClient httpclient = HttpClients.createDefault();
         final HttpPost httpPost = new HttpPost("https://id.vk.com/oauth2/auth");
@@ -205,19 +163,39 @@ public class VkService {
             log.info("vkOauth2Response: {}",vkOauth2Response);
             saveAccessToken(vkOauth2Response);
             return vkOauth2Response.getAccess_token();
-//            return EntityUtils.toString(entity2);
         }
-       /* return vkIdClient.exchangeCodeForTokens(authorizationCode.getGrant_type(),
-                authorizationCode.getCode(),
-                authorizationCode.getCode_verifier(),
-                authorizationCode.getDevice_id(),
-                authorizationCode.getClient_id(),
-                authorizationCode.getClient_secret(),
-                authorizationCode.getRedirect_uri(),
-                authorizationCode.getState());*/
-        /*// Отправляем запрос к VK ID
-        RestTemplate restTemplate = new RestTemplate();
-        return restTemplate.postForObject(url, body, String.class);*/
+    }
+
+    public void exchangeRefreshTokens(TokenRequest request) throws IOException {
+        log.info("exchangeCodeForTokens: {}", request);
+
+        boolean expiredToken = commonOperator.isExpiredToken(standaloneId);
+        if(expiredToken) {
+            String refreshToken = commonOperator.getRefreshToken(standaloneId).orElse(null);
+            final CloseableHttpClient httpclient = HttpClients.createDefault();
+            final HttpPost httpPost = new HttpPost("https://id.vk.com/oauth2/auth");
+
+            // Формируем параметры запроса
+            final List<NameValuePair> params = new ArrayList<>();
+            params.add(new BasicNameValuePair("grant_type", "refresh_token"));
+            params.add(new BasicNameValuePair("refresh_token", refreshToken));
+            params.add(new BasicNameValuePair("device_id", request.getDevice_id()));
+            params.add(new BasicNameValuePair("client_id", standaloneId));
+            params.add(new BasicNameValuePair("state", request.getState()));
+
+            // Устанавливаем параметры в тело запроса
+            httpPost.setEntity(new UrlEncodedFormEntity(params));
+
+            // Выполняем запрос
+            try (CloseableHttpResponse response2 = httpclient.execute(httpPost)) {
+                final HttpEntity entity2 = response2.getEntity();
+                String tempString = EntityUtils.toString(entity2);
+                log.info("tempString: {}", tempString);
+
+                VkOauth2Response vkOauth2Response = mapper.readValue(tempString, VkOauth2Response.class);
+                saveAccessToken(vkOauth2Response);
+            }
+        }
     }
 
     @Async
