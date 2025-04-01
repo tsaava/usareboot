@@ -24,6 +24,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.scheduling.annotation.Async;
@@ -99,12 +100,13 @@ public class VkService {
     private final VkIdClient vkIdClient;
 
     private final ThreadLocal<Integer> threadLocal = ThreadLocal.withInitial(() -> ThreadLocalRandom.current().nextInt(10000, 100000));
+
     public void saveAccessToken(VkOauth2Response response) {
         String accessToken = response.getAccess_token();
         var expires_in = response.getExpires_in();
         var refreshToken = response.getRefresh_token();
-        var date =  java.time.LocalDateTime.now();
-        var dataTokenEnd =date.plusSeconds(expires_in);
+        var date = java.time.LocalDateTime.now();
+        var dataTokenEnd = date.plusSeconds(expires_in);
         apiTokenRepository.findApiTokenEntityByVkClientId(Long.parseLong(standaloneId))
                 .ifPresentOrElse(s -> {
                     s.setToken(accessToken);
@@ -157,10 +159,10 @@ public class VkService {
         try (CloseableHttpResponse response2 = httpclient.execute(httpPost)) {
             final HttpEntity entity2 = response2.getEntity();
             String tempString = EntityUtils.toString(entity2);
-            log.info("tempString: {}",tempString);
+            log.info("tempString: {}", tempString);
 
             VkOauth2Response vkOauth2Response = mapper.readValue(tempString, VkOauth2Response.class);
-            log.info("vkOauth2Response: {}",vkOauth2Response);
+            log.info("vkOauth2Response: {}", vkOauth2Response);
             saveAccessToken(vkOauth2Response);
             return vkOauth2Response.getAccess_token();
         }
@@ -170,7 +172,7 @@ public class VkService {
         log.info("exchangeCodeForTokens: {}", request);
 
         boolean expiredToken = commonOperator.isExpiredToken(standaloneId);
-        if(expiredToken) {
+        if (expiredToken) {
             String refreshToken = commonOperator.getRefreshToken(standaloneId).orElse(null);
             final CloseableHttpClient httpclient = HttpClients.createDefault();
             final HttpPost httpPost = new HttpPost("https://id.vk.com/oauth2/auth");
@@ -265,7 +267,7 @@ public class VkService {
 
     }
 
-    public String getUrlPhotoInAlbumVk(long albumId) throws IOException {
+   /* public String getUrlPhotoInAlbumVk(long albumId) throws IOException {
         accessToken = commonOperator.getTokenClient(standaloneId).orElse(null);
 
         final CloseableHttpClient httpclient = HttpClients.createDefault();
@@ -289,7 +291,7 @@ public class VkService {
             VkAlbumResponse userDtoList = mapper.readValue(tempString, VkAlbumResponse.class);
             return userDtoList.getResponse().getUpload_url();
         }
-    }
+    }*/
 
     public String savePhotoInVk(String photos_list,
                                 String album_id,
@@ -361,38 +363,23 @@ public class VkService {
     }
 
     //    @Async
-    public AlbumsItemsDTO saveFileInVk(Long albumId, MultipartFile file, AlbumsItemsDTO albumsItemsDTO) throws IOException {
-//        accessToken = commonOperator.getTokenGroup(clientId).orElse(null);
+    /*public AlbumsItemsDTO saveFileInVk(Long albumId, MultipartFile file, MultipartFile adFile1, MultipartFile adFile2, MultipartFile adFile3, AlbumsItemsDTO albumsItemsDTO) throws IOException {
         accessToken = commonOperator.getTokenClient(standaloneId).orElse(null);
 
         log.info("Редактирование комментария в вк");
-//        Gson g = new Gson();
-//        var albumsItemsDTO = g.fromJson(data, AlbumsItemsDTO.class);
-        /*проверка данных: пришло фото или ссылка на фото*/
         if (file == null && (albumsItemsDTO.getPhotoUrl() == null || albumsItemsDTO.getPhotoUrl().isEmpty())) {
             log.error("Ошибка загрузки: нет ссылки на фотографию");
             throw new RuntimeException("Ошибка загрузки: нет ссылки на фотографию");
         }
-        if (file == null)
-            file = getMultipartFile(albumsItemsDTO);
 
         var photoUploadVk = getUrlPhotoInAlbumVk(albumId);
         log.info("Upload photo in vk");
-        var vkPhotoList = configureFeignUrlController.uploadPhotoInVk(photoUploadVk, file);
+        var vkPhotoList = configureFeignUrlController.uploadPhotoInVk(photoUploadVk, file, adFile1, adFile2, adFile3);
 
         log.info("Save photo in vk");
-        var photo = savePhotoInVk(
-                vkPhotoList.getPhotos_list(),
-                String.valueOf(albumId),
-                String.valueOf(vkPhotoList.getServer()),
-                vkPhotoList.getHash(),
-                accessToken);
+        var photo = savePhotoInVk(vkPhotoList.getPhotos_list(), String.valueOf(albumId), String.valueOf(vkPhotoList.getServer()), vkPhotoList.getHash(), accessToken);
 
-        var allDesc = albumsItemsDTO.getAlbumItemName() + "\n" +
-                albumsItemsDTO.getDescription() + "\n" +
-                "цена: " + albumsItemsDTO.getAlbumItemCost().toString() + ", курс: " +
-                albumsItemsDTO.getAlbumItemRate().toString() + "\n" +
-                albumsItemsDTO.getItemUrl();
+        var allDesc = vkOperator.getAllDesc(albumsItemsDTO);
         albumsItemsDTO.setDescription(allDesc);
         editPhotoInVk(photo, allDesc);
         log.info("В ВК фотография успешно загружена и добавлено описание");
@@ -403,17 +390,42 @@ public class VkService {
         log.info("Сохранение фото в БД");
         albumsItemsDTO.setPhotoPath(String.valueOf(filePath));
         return albumsItemsDTO;
-    }
+    }*/
 
-    public MultipartFile getMultipartFile(AlbumsItemsDTO albumsItemsDTO) throws IOException {
-        // Загружаем InputStream из URL
-        URL url = new URL(albumsItemsDTO.getPhotoUrl());
-        InputStream inputStream = url.openStream();
 
-        // Достаем имя файла из URL (например, "image.jpg")
-        String fileName = albumsItemsDTO.getPhotoUrl().substring(albumsItemsDTO.getPhotoUrl().lastIndexOf("/") + 1);
-        log.info("Фото по ссылке получено");
+    public MultipartFile getMultipartFile(AlbumsItemsDTO albumsItemsDTO, String type) throws IOException {
+        InputStream inputStream = null;
+        String fileName = "";
+        if (type.equals("file")) {
+            // Загружаем InputStream из URL
+            URL url = new URL(albumsItemsDTO.getPhotoUrl());
+            inputStream = url.openStream();
 
+            // Достаем имя файла из URL (например, "image.jpg")
+            fileName = albumsItemsDTO.getPhotoUrl().substring(albumsItemsDTO.getPhotoUrl().lastIndexOf("/") + 1);
+            log.info("Фото по ссылке получено");
+        }
+        if (type.equals("adFile1")) {
+            URL url = new URL(albumsItemsDTO.getAdItemUrl1());
+            inputStream = url.openStream();
+
+            fileName = albumsItemsDTO.getAdItemUrl1().substring(albumsItemsDTO.getAdItemUrl1().lastIndexOf("/") + 1);
+            log.info("Фото по ссылке получено");
+        }
+        if (type.equals("adFile2")) {
+            URL url = new URL(albumsItemsDTO.getAdItemUrl2());
+            inputStream = url.openStream();
+
+            fileName = albumsItemsDTO.getAdItemUrl2().substring(albumsItemsDTO.getAdItemUrl2().lastIndexOf("/") + 1);
+            log.info("Фото по ссылке получено");
+        }
+        if (type.equals("adFile3")) {
+            URL url = new URL(albumsItemsDTO.getAdItemUrl3());
+            inputStream = url.openStream();
+
+            fileName = albumsItemsDTO.getAdItemUrl3().substring(albumsItemsDTO.getAdItemUrl3().lastIndexOf("/") + 1);
+            log.info("Фото по ссылке получено");
+        }
         // Создаем MultipartFile из InputStream
         return new MockMultipartFile(
                 fileName,         // Имя файла

@@ -39,9 +39,9 @@ public class ConfigureFeignUrlController {
     }
 
     @PostMapping(/*value = "/dynamicAlbums/{id}"*/)
-    public VkPhotoGetListDTO uploadPhotoInVk(String vkPath, MultipartFile photo) throws IOException {
+    public VkPhotoGetListDTO uploadPhotoInVk(String vkPath, MultipartFile photo, MultipartFile photo2, MultipartFile photo3, MultipartFile photo4) throws IOException {
         VkPhotoClient client = getVkClient(vkPath);
-        String tempString = client.uploadPhotoInVk(photo);
+        String tempString = client.uploadPhotoInVk(photo, photo2, photo3, photo4);
         System.out.println("tempString: " + tempString);
         ObjectMapper mapper = new ObjectMapper();
         System.out.println(tempString);

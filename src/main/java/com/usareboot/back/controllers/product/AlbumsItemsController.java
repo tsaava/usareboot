@@ -47,19 +47,29 @@ public class AlbumsItemsController {
             @RequestBody ByteArrayResource photo) {
     }
 
-    @PostMapping(value = "/photo/upload/{token}/param", consumes = MediaType.MULTIPART_FORM_DATA_VALUE/*, consumes=MediaType.APPLICATION_OCTET_STREAM_VALUE*/ /*MediaType.MULTIPART_FORM_DATA_VALUE*//* MediaType.IMAGE_JPEG_VALUE*//*.ALL_VALUE*//*MediaType.IMAGE_GIF_VALUE*/)
+    @PostMapping(value = "/photo/upload/param", consumes = MediaType.MULTIPART_FORM_DATA_VALUE/*, consumes=MediaType.APPLICATION_OCTET_STREAM_VALUE*/ /*MediaType.MULTIPART_FORM_DATA_VALUE*//* MediaType.IMAGE_JPEG_VALUE*//*.ALL_VALUE*//*MediaType.IMAGE_GIF_VALUE*/)
     public ResponseEntity<Map<String, String>> itemPhotoUpload(
-            @PathVariable String token,
             @RequestParam(name = "album") long albumId,
             @RequestPart(name = "file", required = false) MultipartFile file,
+            @RequestPart(name = "adFile1", required = false) MultipartFile adFile1,
+            @RequestPart(name = "adFile2", required = false) MultipartFile adFile2,
+            @RequestPart(name = "adFile3", required = false) MultipartFile adFile3,
             @RequestPart(name = "data") String data) throws IOException {
 
         Gson g = new Gson();
         var dto = g.fromJson(data, AlbumsItemsDTO.class);
-        if(file==null){
-            file = vkService.getMultipartFile(dto);
+        if (file == null) {
+            file = vkService.getMultipartFile(dto, "file");
         }
-        var albumsItemsDTO = vkService.saveFileInVk(albumId, file, dto);
-        return albumsItemsService.saveFile( file, albumsItemsDTO);
+        if (adFile1 == null) {
+            adFile1 = vkService.getMultipartFile(dto, "adFile1");
+        }
+        if (adFile2 == null) {
+            adFile2 = vkService.getMultipartFile(dto, "adFile2");
+        }
+        if (adFile3 == null) {
+            adFile3 = vkService.getMultipartFile(dto, "adFile3");
+        }
+        return albumsItemsService.saveFile(albumId, file, adFile1, adFile2, adFile3, dto);
     }
 }

@@ -14,7 +14,10 @@ public interface VkPhotoClient {
     //    @RequestMapping(path=p)
 //    @PostMapping(/*value = "/{id}"*/)
     @RequestMapping( method = RequestMethod.POST, consumes = MULTIPART_FORM_DATA_VALUE, produces = APPLICATION_JSON_VALUE)
-    String uploadPhotoInVk(@RequestPart("file1") MultipartFile photo);
+    String uploadPhotoInVk(@RequestPart("file1") MultipartFile photo,
+                           @RequestPart("file2") MultipartFile photo2,
+                           @RequestPart("file3") MultipartFile photo3,
+                           @RequestPart("file4") MultipartFile photo4);
 
     @RequestMapping( method = RequestMethod.POST, produces = APPLICATION_JSON_VALUE)
     VkPhotoSaveDTO savePhotoInVk(@RequestPart(name= "photos_list") String photo,

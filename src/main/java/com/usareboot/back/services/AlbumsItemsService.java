@@ -1,9 +1,12 @@
 package com.usareboot.back.services;
 
+import com.usareboot.back.controllers.VK.ConfigureFeignUrlController;
 import com.usareboot.back.entities.AlbumsItemsEntity;
 import com.usareboot.back.models.AlbumsItemsDTO;
 import com.usareboot.back.operators.AlbumItemOperator;
 import com.usareboot.back.operators.BotVkOperator;
+import com.usareboot.back.operators.CommonOperator;
+import com.usareboot.back.operators.VkOperator;
 import com.usareboot.back.repositories.AlbumsItemsRepository;
 import com.usareboot.back.repositories.AlbumsRepository;
 import com.usareboot.back.repositories.DStatusRepository;
@@ -39,10 +42,17 @@ public class AlbumsItemsService {
     private final AlbumsItemsRepository albumsItemsRepository;
     final ModelMapper modelMapper;
     private final AlbumItemOperator albumItemOperator;
-
+    private final VkOperator vkOperator;
+    private final ConfigureFeignUrlController configureFeignUrlController;
+    private final CommonOperator commonOperator;
+    @Value("${vk.client.standaloneId}")
+    private String standaloneId;
 
     @Value("${vk.api.pathPhoto}")
     private String pathPhoto;
+
+    @Value("${vk.api.groupId}")
+    private String groupId;
     private final ThreadLocal<String> threadLocal = new ThreadLocal<>();
 
     //    @Async
@@ -61,6 +71,9 @@ public class AlbumsItemsService {
                     x.getPhotoPath(),
                     x.getDescription(),
                     x.getItemUrl(),
+                    null,
+                    null,
+                    null,
                     null,
                     x.getDescriptionShort(),
                     x.getAlbumItemWeight(),
@@ -86,7 +99,33 @@ public class AlbumsItemsService {
 
 
 
-    public ResponseEntity<Map<String, String>> saveFile(MultipartFile file, AlbumsItemsDTO albumsItemsDTO) throws IOException {
+    public ResponseEntity<Map<String, String>> saveFile(Long albumId, MultipartFile file, MultipartFile adFile1, MultipartFile adFile2, MultipartFile adFile3, AlbumsItemsDTO albumsItemsDTO) throws IOException {
+//        var albumsItemsDTO = vkService.saveFileInVk(albumId, file, adFile1, adFile2, adFile3, dto);
+        final String accessToken = commonOperator.getTokenClient(standaloneId).orElse(null);
+
+        log.info("Редактирование комментария в вк");
+        if (file == null && (albumsItemsDTO.getPhotoUrl() == null || albumsItemsDTO.getPhotoUrl().isEmpty())) {
+            log.error("Ошибка загрузки: нет ссылки на фотографию");
+            throw new RuntimeException("Ошибка загрузки: нет ссылки на фотографию");
+        }
+
+        var photoUploadVk = vkOperator.getUrlPhotoInAlbumVk(albumId);
+        log.info("Upload photo in vk");
+        var vkPhotoList = configureFeignUrlController.uploadPhotoInVk(photoUploadVk, file, adFile1, adFile2, adFile3);
+
+        log.info("Save photo in vk");
+        var photo = vkOperator.savePhotoInVk(vkPhotoList.getPhotos_list(), String.valueOf(albumId), String.valueOf(vkPhotoList.getServer()), vkPhotoList.getHash(), accessToken);
+
+        var allDesc = vkOperator.getAllDesc(albumsItemsDTO);
+        albumsItemsDTO.setDescription(allDesc);
+        vkOperator.editPhotoInVk(photo, allDesc);
+        log.info("В ВК фотография успешно загружена и добавлено описание");
+        albumsItemsDTO.setVkItemId(Long.parseLong(photo));
+        albumsItemsDTO.setVkPhotoPath("https://vk.com/photo-" + groupId + "_" + photo);
+
+        Path filePath = Path.of(pathPhoto);
+        log.info("Сохранение фото в БД");
+        albumsItemsDTO.setPhotoPath(String.valueOf(filePath));
         copyFile(file);
         log.info("Сохранение фото в БД");
         saveAlbumItem(albumsItemsDTO);
