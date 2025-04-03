@@ -119,13 +119,13 @@ public class AlbumsService {
 
     @Async
     public void createPost(String message) {
-        var eventId = threadLocal.get();
+        /*var eventId = threadLocal.get();
 
         log.info("[Сценарий createPost][Шаг: Добавление поста на стену группы в ВК][EventID: {}]", eventId);
 //        String message = "message";
         String res = vkOperator.postInVk(message);
 log.info("res: {}", res);
-        log.info("[Сценарий createAlbum][Шаг: Финиш][EventID: {}]", eventId);
+        log.info("[Сценарий createAlbum][Шаг: Финиш][EventID: {}]", eventId);*/
     }
 
     @Transactional

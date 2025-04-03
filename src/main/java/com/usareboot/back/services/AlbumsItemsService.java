@@ -3,6 +3,7 @@ package com.usareboot.back.services;
 import com.usareboot.back.controllers.VK.ConfigureFeignUrlController;
 import com.usareboot.back.entities.AlbumsItemsEntity;
 import com.usareboot.back.models.AlbumsItemsDTO;
+import com.usareboot.back.models.vk.VkPostRequestDTO;
 import com.usareboot.back.operators.AlbumItemOperator;
 import com.usareboot.back.operators.BotVkOperator;
 import com.usareboot.back.operators.CommonOperator;
@@ -10,6 +11,7 @@ import com.usareboot.back.operators.VkOperator;
 import com.usareboot.back.repositories.AlbumsItemsRepository;
 import com.usareboot.back.repositories.AlbumsRepository;
 import com.usareboot.back.repositories.DStatusRepository;
+import com.usareboot.back.services.vk.VkPostService;
 import com.usareboot.back.services.vk.VkService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,6 +31,7 @@ import java.nio.file.StandardCopyOption;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -43,6 +46,7 @@ public class AlbumsItemsService {
     final ModelMapper modelMapper;
     private final AlbumItemOperator albumItemOperator;
     private final VkOperator vkOperator;
+    private final VkPostService vkPostService;
     private final ConfigureFeignUrlController configureFeignUrlController;
     private final CommonOperator commonOperator;
     @Value("${vk.client.standaloneId}")
@@ -97,11 +101,9 @@ public class AlbumsItemsService {
         albumItemOperator.saveAlbumItem(albumsItemsDTO);
     }
 
-
-
-    public ResponseEntity<Map<String, String>> saveFile(Long albumId, MultipartFile file, MultipartFile adFile1, MultipartFile adFile2, MultipartFile adFile3, AlbumsItemsDTO albumsItemsDTO) throws IOException {
+    public ResponseEntity<Map<String, String>> saveFile(Long albumId, MultipartFile file, List<MultipartFile> photos, AlbumsItemsDTO albumsItemsDTO) throws IOException {
 //        var albumsItemsDTO = vkService.saveFileInVk(albumId, file, adFile1, adFile2, adFile3, dto);
-        final String accessToken = commonOperator.getTokenClient(standaloneId).orElse(null);
+//        final String accessToken = commonOperator.getTokenClient(standaloneId).orElse(null);
 
         log.info("Редактирование комментария в вк");
         if (file == null && (albumsItemsDTO.getPhotoUrl() == null || albumsItemsDTO.getPhotoUrl().isEmpty())) {
@@ -111,15 +113,17 @@ public class AlbumsItemsService {
 
         var photoUploadVk = vkOperator.getUrlPhotoInAlbumVk(albumId);
         log.info("Upload photo in vk");
-        var vkPhotoList = configureFeignUrlController.uploadPhotoInVk(photoUploadVk, file, adFile1, adFile2, adFile3);
+        var vkPhotoList = configureFeignUrlController.uploadPhotoInVk(photoUploadVk, file);
 
         log.info("Save photo in vk");
-        var photo = vkOperator.savePhotoInVk(vkPhotoList.getPhotos_list(), String.valueOf(albumId), String.valueOf(vkPhotoList.getServer()), vkPhotoList.getHash(), accessToken);
+        var photo = vkOperator.savePhotoInVk(vkPhotoList.getPhotos_list(), String.valueOf(albumId), String.valueOf(vkPhotoList.getServer()), vkPhotoList.getHash());
 
         var allDesc = vkOperator.getAllDesc(albumsItemsDTO);
         albumsItemsDTO.setDescription(allDesc);
         vkOperator.editPhotoInVk(photo, allDesc);
         log.info("В ВК фотография успешно загружена и добавлено описание");
+
+
         albumsItemsDTO.setVkItemId(Long.parseLong(photo));
         albumsItemsDTO.setVkPhotoPath("https://vk.com/photo-" + groupId + "_" + photo);
 
@@ -140,8 +144,21 @@ public class AlbumsItemsService {
                 "fileUri", fileUri
         );
 
-        return ok().body(result);
+        log.info("Фото товара успешно загружено, изменено описание и сохранено в бд");
+        var itemCost = albumsItemsDTO.getAlbumItemCost() * albumsItemsDTO.getAlbumItemRate();
+        var description = albumsItemsDTO.getAlbumName() +"\n"+itemCost+"\n"+albumsItemsDTO.getVkPhotoPath();
+        VkPostRequestDTO vkPostRequestDTO = VkPostRequestDTO.builder()
+                .itemUrl(albumsItemsDTO.getVkPhotoPath())
+                .albumName(albumsItemsDTO.getAlbumName())
+                .itemCost(itemCost)
+                .description(description)
+                .build();
 
+        log.info("VkPostRequestDTO: {}",vkPostRequestDTO);
+
+//        vkOperator.postInVk(vkPostRequestDTO,  photos);
+        vkPostService.postWithPhotos(vkPostRequestDTO,  photos);
+        return ok().body(result);
     }
 
     public void copyFile(MultipartFile file) {

@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -51,6 +53,7 @@ public class AlbumsItemsController {
     public ResponseEntity<Map<String, String>> itemPhotoUpload(
             @RequestParam(name = "album") long albumId,
             @RequestPart(name = "file", required = false) MultipartFile file,
+//            @RequestPart(name = "photos", required = false) List<MultipartFile> photos,
             @RequestPart(name = "adFile1", required = false) MultipartFile adFile1,
             @RequestPart(name = "adFile2", required = false) MultipartFile adFile2,
             @RequestPart(name = "adFile3", required = false) MultipartFile adFile3,
@@ -70,6 +73,10 @@ public class AlbumsItemsController {
         if (adFile3 == null) {
             adFile3 = vkService.getMultipartFile(dto, "adFile3");
         }
-        return albumsItemsService.saveFile(albumId, file, adFile1, adFile2, adFile3, dto);
+        List<MultipartFile> photos = new ArrayList<>();
+        photos.add(adFile1);
+        photos.add(adFile2);
+        photos.add(adFile3);
+        return albumsItemsService.saveFile(albumId, file, photos, dto);
     }
 }

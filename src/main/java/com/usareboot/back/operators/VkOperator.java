@@ -6,6 +6,7 @@ import com.usareboot.back.controllers.VK.ConfigureFeignUrlController;
 import com.usareboot.back.models.AlbumsItemsDTO;
 import com.usareboot.back.models.vk.VkAlbumItemResponse;
 import com.usareboot.back.models.vk.VkAlbumResponse;
+import com.usareboot.back.models.vk.VkPostRequestDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpEntity;
@@ -82,10 +83,10 @@ public class VkOperator {
         return vkApiClient.deleteAlbum((int) albumId, Integer.parseInt(groupId), accessToken, apiVersion);
     }
 
-    public String postInVk(String message) {
+    public String postInVk(VkPostRequestDTO vkPostRequestDTO, MultipartFile file, MultipartFile adFile1, MultipartFile adFile2, MultipartFile adFile3) {
         var accessToken = commonOperator.getTokenClient(standaloneId).orElse(null);
         var ownerId = "-"+groupId;
-        return vkApiClient.createPost(accessToken, ownerId, message, "1", apiVersion);
+        return vkApiClient.createPost(accessToken, ownerId, vkPostRequestDTO.getDescription(), "1", apiVersion);
     }
 
     public String getAllDesc(AlbumsItemsDTO albumsItemsDTO) {
@@ -178,8 +179,7 @@ public class VkOperator {
     public String savePhotoInVk(String photos_list,
                                 String album_id,
                                 String server,
-                                String hash,
-                                String access_token) throws IOException {
+                                String hash) throws IOException {
         final String accessToken = commonOperator.getTokenClient(standaloneId).orElse(null);
 
         final CloseableHttpClient httpclient = HttpClients.createDefault();
@@ -194,16 +194,15 @@ public class VkOperator {
         params.add(new BasicNameValuePair("hash", hash));
 
         httpPost.setEntity(new UrlEncodedFormEntity(params));
-        System.out.println(httpPost);
+        log.debug("httpPost:{}", httpPost);
         try (
                 CloseableHttpResponse response2 = httpclient.execute(httpPost)
         ) {
             final HttpEntity entity2 = response2.getEntity();
             String tempString = EntityUtils.toString(entity2);
             ObjectMapper mapper = new ObjectMapper();
-            System.out.println(tempString);
             VkAlbumItemResponse response = mapper.readValue(tempString, VkAlbumItemResponse.class);
-            System.out.println("response: " + response);
+            log.debug("response: {}", response);
             return response.getResponse().get(0).getId();
         }
     }
