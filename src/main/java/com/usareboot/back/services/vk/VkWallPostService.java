@@ -90,7 +90,7 @@ public class VkWallPostService {
                         .hash(uploadResponse.getHash())
                         .execute();
 
-                var photo =savedPhotos.get(0);
+                var photo = savedPhotos.get(0);
 //                log.info("photo: {}", photo);
                 var photoId = photo.getId().toString();
                 log.info("photoId: {}", photoId);
@@ -104,8 +104,7 @@ public class VkWallPostService {
             }
 
             Integer itemCost = (int) (albumsItemsDTO.getAlbumItemCost() * albumsItemsDTO.getAlbumItemRate());
-            var description = albumsItemsDTO.getAlbumName() + "\n"
-                    + albumsItemsDTO.getAlbumItemName() + "\n"
+            var description = albumsItemsDTO.getAlbumItemName() + " " + albumsItemsDTO.getItemDescription() + "\n"
                     + itemCost + "+вес" + "\n" +
                     albumsItemsDTO.getVkPhotoPath();
             VkPostRequestDTO vkPostRequestDTO = VkPostRequestDTO.builder()

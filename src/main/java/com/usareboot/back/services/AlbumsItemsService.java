@@ -118,10 +118,10 @@ public class AlbumsItemsService {
 
         log.info("Save photo in vk");
         var photo = vkOperator.savePhotoInVk(vkPhotoList.getPhotos_list(), String.valueOf(albumId), String.valueOf(vkPhotoList.getServer()), vkPhotoList.getHash());
+        albumsItemsDTO.setItemDescription(albumsItemsDTO.getDescription());
 
         var allDesc = vkOperator.getAllDesc(albumsItemsDTO);
         albumsItemsDTO.setDescription(allDesc);
-        albumsItemsDTO.setItemDescription(albumsItemsDTO.getDescription());
         vkOperator.editPhotoInVk(photo, allDesc);
         log.info("В ВК фотография успешно загружена и добавлено описание");
 
