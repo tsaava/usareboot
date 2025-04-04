@@ -3,33 +3,30 @@ package com.usareboot.back.services.vk;
 import com.usareboot.back.models.AlbumsItemsDTO;
 import com.usareboot.back.models.vk.VkPostRequestDTO;
 import com.usareboot.back.operators.CommonOperator;
+import com.usareboot.back.operators.VkOperator;
 import com.vk.api.sdk.client.TransportClient;
 import com.vk.api.sdk.client.VkApiClient;
 import com.vk.api.sdk.client.actors.UserActor;
 import com.vk.api.sdk.exceptions.ApiException;
 import com.vk.api.sdk.exceptions.ClientException;
 import com.vk.api.sdk.httpclient.HttpTransportClient;
-import com.vk.api.sdk.objects.photos.Photo;
 import com.vk.api.sdk.objects.photos.responses.SaveWallPhotoResponse;
 import com.vk.api.sdk.objects.photos.responses.WallUploadResponse;
 import com.vk.api.sdk.objects.wall.responses.PostResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.lang.annotation.Inherited;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -42,9 +39,14 @@ public class VkWallPostService {
     @Value("${vk.api.groupId}")
     private Integer groupId;
 
-    private final CommonOperator commonOperator;
+    @Value("${vk.api.chatId}")
+    private Integer chatId;
 
-    public String postToWallWithPhotos(AlbumsItemsDTO albumsItemsDTO, List<MultipartFile> multipartFiles, String mainPhotoId)
+    private final CommonOperator commonOperator;
+    private final VkOperator vkOperator;
+
+    @Async
+    public void postToWallWithPhotos(AlbumsItemsDTO albumsItemsDTO, List<MultipartFile> multipartFiles, String mainPhotoId)
             throws ClientException, ApiException, IOException {
         String accessToken = commonOperator.getTokenClient(standaloneId).orElse("");
 
@@ -56,7 +58,7 @@ public class VkWallPostService {
         log.info("Загрузка фотографий на сервер VK");
 
         var uploadUrl = vk.photos().getWallUploadServer(actor)
-                .groupId(Integer.valueOf(groupId))
+                .groupId(groupId)
                 .execute()
                 .getUploadUrl().toString();
         List<String> photoAttachments = new ArrayList<>();
@@ -66,17 +68,7 @@ public class VkWallPostService {
 
         List<Path> tempFiles = new ArrayList<>();
         try {
-            log.info("Создаем временные файлы");
-            for (MultipartFile multipartFile : multipartFiles) {
-                Path tempFile = Files.createTempFile("vk_photo_", ".jpg");
-                multipartFile.transferTo(tempFile);
-                tempFiles.add(tempFile);
-            }
-
-            log.info("Конвертируем в File для совместимости");
-            List<File> photoFiles = tempFiles.stream()
-                    .map(Path::toFile)
-                    .toList();
+            List<File> photoFiles = vkOperator.getFiles(multipartFiles, tempFiles);
 
             for (File photoFile : photoFiles) {
                 WallUploadResponse uploadResponse = vk.upload()
@@ -102,23 +94,20 @@ public class VkWallPostService {
                     break;
                 }
             }
+            var message = vkOperator.getMessageForPost(albumsItemsDTO);
 
-            Integer itemCost = (int) (albumsItemsDTO.getAlbumItemCost() * albumsItemsDTO.getAlbumItemRate());
-            var description = albumsItemsDTO.getAlbumItemName() + " " + albumsItemsDTO.getItemDescription() + "\n"
-                    + itemCost + "+вес" + "\n" +
-                    albumsItemsDTO.getVkPhotoPath();
-            VkPostRequestDTO vkPostRequestDTO = VkPostRequestDTO.builder()
+           /* VkPostRequestDTO vkPostRequestDTO = VkPostRequestDTO.builder()
                     .itemUrl(albumsItemsDTO.getVkPhotoPath())
                     .albumName(albumsItemsDTO.getAlbumName())
                     .itemCost(itemCost)
                     .description(description)
-                    .build();
+                    .build();*/
             log.info("photoAttachments: {}", photoAttachments);
             // 4. Публикация поста с прикрепленными фотографиями
             postResponse = vk.wall().post(actor)
                     .ownerId(-groupId)
                     .fromGroup(true)
-                    .message(vkPostRequestDTO.getDescription())
+                    .message(message)
                     .attachments(photoAttachments)
                     .execute();
         } catch (IOException e) {
@@ -133,6 +122,26 @@ public class VkWallPostService {
                 }
             });
         }
-        return "Пост успешно опубликован с ID: " + postResponse.getPostId();
+        log.info("Пост успешно опубликован с ID: {}", postResponse.getPostId());
+    }
+
+    @Async
+    public void sendPostToChat(AlbumsItemsDTO albumsItemsDTO, List<MultipartFile> multipartFiles, String mainPhotoId) {
+        try {
+            String mainPhotoVkId = "-" + groupId + "_" + mainPhotoId;
+            log.info("Загружаем фотографии на сервер ВК");
+            List<String> photos = vkOperator.uploadPhotoForChat(multipartFiles);
+
+            log.info("Добавляем основное фото из альбома");
+            photos.add(0, mainPhotoVkId);
+
+            log.info("Формируем сообщение для сообщение");
+            var message = vkOperator.getMessageForPost(albumsItemsDTO);
+
+            log.info("Отправляем сообщение в чат");
+            vkOperator.sendPhotoToChat(chatId, photos, message);
+        } catch (Exception e) {
+            log.error("Ошибка отправки сообщения в чат", e);
+        }
     }
 }

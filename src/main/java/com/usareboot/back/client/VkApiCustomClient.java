@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
         url = "${vk.api.base-url}",
         configuration = VkClientConfig.class
 )
-public interface VkApiClient {
+public interface VkApiCustomClient {
     @PostMapping("/photos.deleteAlbum")
     String deleteAlbum(
             @RequestParam("album_id") int albumId,

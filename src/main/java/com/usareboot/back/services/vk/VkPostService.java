@@ -2,8 +2,7 @@ package com.usareboot.back.services.vk;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.usareboot.back.client.VkApiClient;
-import com.usareboot.back.client.VkUploadClient;
+import com.usareboot.back.client.VkApiCustomClient;
 import com.usareboot.back.controllers.VK.ConfigureFeignUrlController;
 import com.usareboot.back.models.vk.VkPostRequestDTO;
 import com.usareboot.back.operators.CommonOperator;
@@ -23,7 +22,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @RequiredArgsConstructor
 public class VkPostService {
-    private final VkApiClient vkApiClient;
+    private final VkApiCustomClient vkApiCustomClient;
 //    private final VkUploadClient vkUploadClient;
     private final ObjectMapper objectMapper;
     private final CommonOperator commonOperator;
@@ -44,7 +43,7 @@ public class VkPostService {
 
         log.info("Получаем URL для загрузки");
         // 1. Получаем URL для загрузки
-        String uploadServerResponse = vkApiClient.getWallUploadServer(
+        String uploadServerResponse = vkApiCustomClient.getWallUploadServer(
                 groupId, accessToken, version);
 
         /*JsonNode uploadServer = objectMapper.readTree(uploadServerResponse)
@@ -59,7 +58,7 @@ public class VkPostService {
                 .collect(Collectors.toList());
 
         log.info("Публикуем пост");
-        String response = vkApiClient.wallPost(
+        String response = vkApiCustomClient.wallPost(
                 "-" + groupId, // owner_id для группы
                 1,             // from_group
                 vkPostRequestDTO.getDescription(),
@@ -99,7 +98,7 @@ public class VkPostService {
 //        JsonNode uploadData = objectMapper.readTree(uploadServer);
 
         log.info("Сохраняем фото на сервере VK");
-        String saveResponse = vkApiClient.saveWallPhoto(
+        String saveResponse = vkApiCustomClient.saveWallPhoto(
                 groupId,
                 accessToken,
                 version,

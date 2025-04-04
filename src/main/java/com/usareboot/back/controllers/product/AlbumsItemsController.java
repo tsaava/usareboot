@@ -58,7 +58,6 @@ public class AlbumsItemsController {
     public ResponseEntity<Map<String, String>> itemPhotoUpload(
             @RequestParam(name = "album") long albumId,
             @RequestPart(name = "file", required = false) MultipartFile file,
-//            @RequestPart(name = "photos", required = false) List<MultipartFile> photos,
             @RequestPart(name = "adFile1", required = false) MultipartFile adFile1,
             @RequestPart(name = "adFile2", required = false) MultipartFile adFile2,
             @RequestPart(name = "adFile3", required = false) MultipartFile adFile3,
@@ -88,13 +87,12 @@ public class AlbumsItemsController {
         } catch (Exception e) {
         }
         List<MultipartFile> photos = new ArrayList<>();
-//        photos.add(file);
         photos.add(adFile1);
         photos.add(adFile2);
         photos.add(adFile3);
         String photoId = albumsItemsService.saveFile(albumId, file, photos, dto);
-        String s = vkWallPostService.postToWallWithPhotos(dto, photos, photoId);
-        log.info("s: {}", s);
+        vkWallPostService.postToWallWithPhotos(dto, photos, photoId);
+        vkWallPostService.sendPostToChat(dto, photos, photoId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }
