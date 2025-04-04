@@ -18,6 +18,7 @@ public class AlbumsItemsDTO {
     private Long vkItemId;
     private Long tgItemId;
     private String photoPath;
+    private String itemDescription;
     private String description;
     private String itemUrl;
     private String adItemUrl1;

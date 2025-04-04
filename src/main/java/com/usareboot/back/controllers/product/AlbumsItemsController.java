@@ -5,6 +5,9 @@ import com.usareboot.back.controllers.VK.ConfigureFeignUrlController;
 import com.usareboot.back.models.AlbumsItemsDTO;
 import com.usareboot.back.services.AlbumsItemsService;
 import com.usareboot.back.services.vk.VkService;
+import com.usareboot.back.services.vk.VkWallPostService;
+import com.vk.api.sdk.exceptions.ApiException;
+import com.vk.api.sdk.exceptions.ClientException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +35,8 @@ public class AlbumsItemsController {
     @Autowired
     private VkService vkService;
     @Autowired
+    private VkWallPostService vkWallPostService;
+    @Autowired
     private ConfigureFeignUrlController configureFeignUrlController;
     @Autowired
     private Environment environment;
@@ -57,26 +62,39 @@ public class AlbumsItemsController {
             @RequestPart(name = "adFile1", required = false) MultipartFile adFile1,
             @RequestPart(name = "adFile2", required = false) MultipartFile adFile2,
             @RequestPart(name = "adFile3", required = false) MultipartFile adFile3,
-            @RequestPart(name = "data") String data) throws IOException {
+            @RequestPart(name = "data") String data) throws IOException, ClientException, ApiException {
 
         Gson g = new Gson();
         var dto = g.fromJson(data, AlbumsItemsDTO.class);
         if (file == null) {
             file = vkService.getMultipartFile(dto, "file");
         }
-        if (adFile1 == null) {
-            adFile1 = vkService.getMultipartFile(dto, "adFile1");
+        try {
+            if (adFile1 == null) {
+                adFile1 = vkService.getMultipartFile(dto, "adFile1");
+            }
+        } catch (Exception e) {
         }
-        if (adFile2 == null) {
-            adFile2 = vkService.getMultipartFile(dto, "adFile2");
+        try {
+            if (adFile2 == null) {
+                adFile2 = vkService.getMultipartFile(dto, "adFile2");
+            }
+        } catch (Exception e) {
         }
-        if (adFile3 == null) {
-            adFile3 = vkService.getMultipartFile(dto, "adFile3");
+        try {
+            if (adFile3 == null) {
+                adFile3 = vkService.getMultipartFile(dto, "adFile3");
+            }
+        } catch (Exception e) {
         }
         List<MultipartFile> photos = new ArrayList<>();
+//        photos.add(file);
         photos.add(adFile1);
         photos.add(adFile2);
         photos.add(adFile3);
-        return albumsItemsService.saveFile(albumId, file, photos, dto);
+        String photoId = albumsItemsService.saveFile(albumId, file, photos, dto);
+        String s = vkWallPostService.postToWallWithPhotos(dto, photos, photoId);
+        log.info("s: {}", s);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

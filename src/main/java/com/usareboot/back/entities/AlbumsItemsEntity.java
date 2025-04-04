@@ -29,6 +29,10 @@ public class AlbumsItemsEntity {
     @Basic
     @Column(name = "photo_path")
     private String photoPath;
+
+    @Basic
+    @Column(name = "item_description")
+    private String itemDescription;
     @Basic
     @Column(name = "description")
     private String description;
@@ -96,6 +100,10 @@ public class AlbumsItemsEntity {
 
     public void setPhotoPath(String photoPath) {
         this.photoPath = photoPath;
+    }
+
+    public void setItemDescription(String itemDescription) {
+        this.itemDescription = itemDescription;
     }
 
     public void setDescription(String description) {

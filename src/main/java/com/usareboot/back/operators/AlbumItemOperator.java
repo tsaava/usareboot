@@ -19,10 +19,8 @@ import java.time.LocalDate;
 public class AlbumItemOperator {
     private final DStatusRepository dStatusRepository;
     private final AlbumsRepository albumsRepository;
-//    private final VkService vkService;
     private final AlbumsItemsRepository albumsItemsRepository;
     private final VkOperator vkOperator;
-
 
     public AlbumsItemsEntity saveAlbumItem(AlbumsItemsDTO albumsItemsDTO) {
         AlbumsItemsEntity albumsItemsEntity = new AlbumsItemsEntity();
@@ -41,10 +39,10 @@ public class AlbumItemOperator {
         albumsItemsEntity.setDateCreate(Date.valueOf(localDate));
         albumsItemsEntity.setVkPhotoPath(albumsItemsDTO.getVkPhotoPath());
         albumsItemsEntity.setDescription(albumsItemsDTO.getDescription());
+        albumsItemsEntity.setItemDescription(albumsItemsDTO.getItemDescription());
         albumsItemsEntity.setNoSize(albumsItemsDTO.isNoSize());
         try {
             var photoUrl = vkOperator.getCommentPhotoVk(albumsItemsDTO.getVkItemId());
-//            var photoUrl = vkService.getCommentPhotoVk(albumsItemsDTO.getVkItemId());
             albumsItemsEntity.setPhotoPath(photoUrl);
         } catch (Exception e) {
             log.error("Не удалось получить ссылку на фото в Вк: {}", e.getMessage());

@@ -73,6 +73,7 @@ public class AlbumsItemsService {
                     x.getVkItemId(),
                     x.getTgItemId(),
                     x.getPhotoPath(),
+                    x.getItemDescription(),
                     x.getDescription(),
                     x.getItemUrl(),
                     null,
@@ -101,7 +102,7 @@ public class AlbumsItemsService {
         albumItemOperator.saveAlbumItem(albumsItemsDTO);
     }
 
-    public ResponseEntity<Map<String, String>> saveFile(Long albumId, MultipartFile file, List<MultipartFile> photos, AlbumsItemsDTO albumsItemsDTO) throws IOException {
+    public String saveFile(Long albumId, MultipartFile file, List<MultipartFile> photos, AlbumsItemsDTO albumsItemsDTO) throws IOException {
 //        var albumsItemsDTO = vkService.saveFileInVk(albumId, file, adFile1, adFile2, adFile3, dto);
 //        final String accessToken = commonOperator.getTokenClient(standaloneId).orElse(null);
 
@@ -120,9 +121,9 @@ public class AlbumsItemsService {
 
         var allDesc = vkOperator.getAllDesc(albumsItemsDTO);
         albumsItemsDTO.setDescription(allDesc);
+        albumsItemsDTO.setItemDescription(albumsItemsDTO.getDescription());
         vkOperator.editPhotoInVk(photo, allDesc);
         log.info("В ВК фотография успешно загружена и добавлено описание");
-
 
         albumsItemsDTO.setVkItemId(Long.parseLong(photo));
         albumsItemsDTO.setVkPhotoPath("https://vk.com/photo-" + groupId + "_" + photo);
@@ -145,7 +146,7 @@ public class AlbumsItemsService {
         );
 
         log.info("Фото товара успешно загружено, изменено описание и сохранено в бд");
-        var itemCost = albumsItemsDTO.getAlbumItemCost() * albumsItemsDTO.getAlbumItemRate();
+        /*var itemCost = albumsItemsDTO.getAlbumItemCost() * albumsItemsDTO.getAlbumItemRate();
         var description = albumsItemsDTO.getAlbumName() +"\n"+itemCost+"\n"+albumsItemsDTO.getVkPhotoPath();
         VkPostRequestDTO vkPostRequestDTO = VkPostRequestDTO.builder()
                 .itemUrl(albumsItemsDTO.getVkPhotoPath())
@@ -157,8 +158,8 @@ public class AlbumsItemsService {
         log.info("VkPostRequestDTO: {}",vkPostRequestDTO);
 
 //        vkOperator.postInVk(vkPostRequestDTO,  photos);
-        vkPostService.postWithPhotos(vkPostRequestDTO,  photos);
-        return ok().body(result);
+        vkPostService.postWithPhotos(vkPostRequestDTO,  photos);*/
+        return photo;
     }
 
     public void copyFile(MultipartFile file) {

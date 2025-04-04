@@ -16,5 +16,5 @@ public class VkPostRequestDTO {
     private String albumName;
     private String albumUrl;
     private String itemUrl;
-    private Double itemCost;
+    private Integer itemCost;
 }
