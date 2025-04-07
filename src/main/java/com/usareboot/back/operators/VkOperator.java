@@ -14,11 +14,8 @@ import com.vk.api.sdk.client.actors.UserActor;
 import com.vk.api.sdk.exceptions.ApiException;
 import com.vk.api.sdk.exceptions.ClientException;
 import com.vk.api.sdk.httpclient.HttpTransportClient;
-import com.vk.api.sdk.objects.photos.Photo;
 import com.vk.api.sdk.objects.photos.responses.MessageUploadResponse;
-import com.vk.api.sdk.objects.photos.responses.SaveWallPhotoResponse;
-import com.vk.api.sdk.objects.photos.responses.WallUploadResponse;
-import com.vk.api.sdk.objects.wall.responses.PostResponse;
+import com.vk.api.sdk.objects.photos.responses.PhotoUploadResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpEntity;
@@ -30,7 +27,6 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -70,6 +66,8 @@ public class VkOperator {
     private final ConfigureFeignUrlController configureFeignUrlController;
 
     private final GroupActor groupActor;
+    private final UserActor userActor;
+
 
     public String getCommentPhotoVk(long photo_id) throws IOException {
         var accessToken = commonOperator.getTokenClient(standaloneId).orElse(null);
@@ -192,7 +190,7 @@ public class VkOperator {
             String tempString = EntityUtils.toString(entity2);
             ObjectMapper mapper = new ObjectMapper();
             VkAlbumItemResponse response = mapper.readValue(tempString, VkAlbumItemResponse.class);
-            log.debug("response: {}", response);
+//            log.debug("response: {}", response);
             return response.getResponse().get(0).getId();
         }
     }
@@ -208,7 +206,6 @@ public class VkOperator {
                 log.error("Файл не загружен");
             }
         }
-
         log.info("Конвертируем в File для совместимости");
         return tempFiles.stream()
                 .map(Path::toFile)
@@ -219,45 +216,62 @@ public class VkOperator {
     /**
      * Загружает фотки рекламного поста для отправки в чат
      */
-    public List<String> uploadPhotoForChat(List<MultipartFile> multipartFiles)
+    public List<String> uploadPhotoForChat(List<MultipartFile> multipartFiles, int albumId)
             throws ClientException, ApiException, IOException {
         var accessToken = commonOperator.getTokenClient(standaloneId).orElse("");
 
         TransportClient transportClient = new HttpTransportClient();
         VkApiClient vk = new VkApiClient(transportClient);
-        UserActor actor = new UserActor(Integer.valueOf(groupId), accessToken);
+        UserActor actor = new UserActor(Integer.valueOf(standaloneId), accessToken);
 
-        log.info("Загрузка фотографий на сервер VK");
-        var uploadUrl = vk.photos().getMessagesUploadServer(actor)
+        log.info("Получаем URL для загрузки");
+        var photoUploadVk = getUrlPhotoInAlbumVk(albumId);
+
+       /* var uploadUrl = vk.photos().getUploadServer(actor)
+                .albumId(albumId)
+//                .groupId(Integer.valueOf(groupId))
                 .execute()
-                .getUploadUrl();
-
+                .getUploadUrl()
+                .toString();*/
         List<String> photoAttachments = new ArrayList<>();
 
         List<Path> tempFiles = new ArrayList<>();
         List<File> photoFiles;
         try {
-            photoFiles = getFiles(multipartFiles, tempFiles);
-            for (File photoFile : photoFiles) {
-                MessageUploadResponse uploadResponse = vk.upload()
-                        .photoMessage(uploadUrl.toString(), photoFile)
-                        .execute();
+//            photoFiles = getFiles(multipartFiles, tempFiles);
+            for (var photoFile : multipartFiles) {
+//            for (File photoFile : photoFiles) {
+                log.info("Загружаем файл");
+                var vkPhotoList = configureFeignUrlController.uploadPhotoInVk(photoUploadVk, photoFile);
+
+               /* PhotoUploadResponse uploadResponse = vk.upload()
+                        .photo(uploadUrl, photoFile)
+                        .execute();*/
+
 
                 log.info("Сохранение фотографий после загрузки");
-                var photos = vk.photos().saveMessagesPhoto(actor, uploadResponse.getPhoto())
+                // 3. Сохраняем в альбом
+                /*var photos = vk.photos().save(actor)
+                        .albumId(albumId)
                         .server(uploadResponse.getServer())
                         .hash(uploadResponse.getHash())
-                        .execute();
+                        .photosList(uploadResponse.getPhotosList())
+//                        .groupId(Integer.valueOf(groupId))
+                        .execute();*/
+                var photo = savePhotoInVk(vkPhotoList.getPhotos_list(), String.valueOf(albumId), String.valueOf(vkPhotoList.getServer()), vkPhotoList.getHash());
 
-                var photo = photos.get(0);
-                var photoId = photo.getId().toString();
-                log.info("photoId: {}", photoId);
 
-                photoAttachments.add(photo.getOwnerId() + "_" + photo.getId());
+//                var photo = photos.get(0);
+//                var photoId = photo.getId().toString();
+//                log.info("photoId: {}", photoId);
+//                log.info("photo.getOwnerId(): {}", photo.getOwnerId());
+
+                photoAttachments.add("-"+groupId + "_" + photo);
+                log.info("photoAttachments: {}", photoAttachments);
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
-        } finally {
+        } /*finally {
             // Автоматическое удаление
             tempFiles.forEach(path -> {
                 try {
@@ -266,7 +280,7 @@ public class VkOperator {
                     log.error("Ошибка удаления временного файла", e);
                 }
             });
-        }
+        }*/
         return photoAttachments;
     }
 
@@ -285,23 +299,18 @@ public class VkOperator {
         VkApiClient vk = new VkApiClient(transportClient);
         UserActor actor = new UserActor(Integer.valueOf(standaloneId), accessToken);
 
-        // 1. Проверяем права токена
-        int permissions = vk.account().getAppPermissions(actor, Integer.parseInt(standaloneId)).execute();
-        log.info("permissions: {}", permissions);
-       /* if ((permissions & 4096) == 0) { // 4096 = messages
-            throw new ApiException("Токену не хватает прав messages");
-        }*/
         List<String> attachments = new ArrayList<>();
         for (var photoId : photoIds) {
             log.info("Формируем attachment");
             attachments.add("photo" + photoId);
         }
         String stringAttach = String.join(",", attachments);
+        log.info("stringAttach: {}", stringAttach);
         /*int chat = Integer.parseInt(chatId.substring(1));*/
         // Отправляем сообщение
         vk.messages().send(groupActor)
                 .chatId(chatId)
-//                .groupId(Integer.parseInt(groupId))
+                .groupId(Integer.parseInt(groupId))
                 .randomId(new Random().nextInt())
                 .message(message)
                 .attachment(stringAttach)
@@ -319,6 +328,87 @@ public class VkOperator {
                 + itemCost + "+вес" + "\n" +
                 albumsItemsDTO.getVkPhotoPath();
         return message;
+    }
+
+
+    public int getOrCreateHiddenAlbum(String albumTitle)
+            throws ClientException, ApiException {
+        var accessToken = commonOperator.getTokenClient(standaloneId).orElse("");
+
+        TransportClient transportClient = new HttpTransportClient();
+        VkApiClient vk = new VkApiClient(transportClient);
+        UserActor actor = new UserActor(Integer.valueOf(standaloneId), accessToken);
+
+        // 1. Получаем все альбомы сообщества
+        var albums = vk.photos().getAlbums(actor)
+                .ownerId(-Integer.parseInt(groupId))  // Для групп используем отрицательный ID
+                .needSystem(true)   // Включаем системные альбомы
+                .execute()
+                .getItems();
+
+        // 2. Ищем скрытый альбом по названию
+        for (var album : albums) {
+            if (album.getTitle().equalsIgnoreCase(albumTitle)){
+            // Проверяем параметры приватности
+                return album.getId();  // Нашли подходящий скрытый альбом
+            }
+        }
+
+        // 3. Если не нашли - создаем новый
+        return createHiddenAlbum(albumTitle);
+    }
+
+    private int createHiddenAlbum(String title)
+            throws ClientException, ApiException {
+        var accessToken = commonOperator.getTokenClient(standaloneId).orElse("");
+
+        TransportClient transportClient = new HttpTransportClient();
+        VkApiClient vk = new VkApiClient(transportClient);
+        UserActor actor = new UserActor(Integer.valueOf(standaloneId), accessToken);
+
+
+        return vk.photos().createAlbum(actor, title)
+                .privacyView("only_me")
+                .privacyComment("only_me")
+                .uploadByAdminsOnly(true)
+                .groupId(Integer.valueOf(groupId))
+                .execute()
+                .getId();
+    }
+
+    public String uploadToAlbum(int albumId, File photoFile)
+            throws ClientException, ApiException, IOException {
+        var accessToken = commonOperator.getTokenClient(standaloneId).orElse("");
+
+        TransportClient transportClient = new HttpTransportClient();
+        VkApiClient vk = new VkApiClient(transportClient);
+        UserActor actor = new UserActor(Integer.valueOf(standaloneId), accessToken);
+
+
+        // 1. Получаем URL для загрузки
+        var uploadUrl = vk.photos().getUploadServer(actor)
+                .albumId(albumId)
+                .groupId(Integer.valueOf(groupId))
+                .execute()
+                .getUploadUrl()
+                .toString();
+
+        // 2. Загружаем файл
+        PhotoUploadResponse uploadResponse = vk.upload()
+                .photo(uploadUrl, photoFile)
+                .execute();
+
+        // 3. Сохраняем в альбом
+        var photos = vk.photos().save(actor)
+                .albumId(albumId)
+                .server(uploadResponse.getServer())
+                .hash(uploadResponse.getHash())
+                .photosList(uploadResponse.getPhoto())
+                .groupId(Integer.valueOf(groupId))
+                .execute();
+
+        var photo = photos.get(0);
+        return "photo" + photo.getOwnerId() + "_" + photo.getId();
     }
 
 }

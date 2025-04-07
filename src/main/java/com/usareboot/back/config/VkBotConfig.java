@@ -5,6 +5,7 @@ import com.usareboot.back.repositories.ApiTokenRepository;
 import com.usareboot.back.services.vk.VkService;
 import com.vk.api.sdk.client.VkApiClient;
 import com.vk.api.sdk.client.actors.GroupActor;
+import com.vk.api.sdk.client.actors.UserActor;
 import com.vk.api.sdk.httpclient.HttpTransportClient;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
@@ -20,14 +21,20 @@ public class VkBotConfig {
 
     @Value("${vk.api.groupId}") // ID группы из application.properties
     private Integer groupId;
-    @Value("${vk.client.id}")
-    private String clientId;
+    @Value("${vk.client.standaloneId}")
+    private String standaloneId;
 
     private final ApiTokenRepository apiTokenRepository;
 
     public Optional<String> getToken() {
 //        return apiTokenRepository.findApiTokenEntityByVkClientId(Long.parseLong(clientId))
         return apiTokenRepository.findApiTokenEntityByGroupId(Long.valueOf(groupId))
+                .map(ApiTokenEntity::getToken);
+    }
+
+    public Optional<String> getClientToken() {
+        return apiTokenRepository.findApiTokenEntityByVkClientId(Long.parseLong(standaloneId))
+//        return apiTokenRepository.findApiTokenEntityByGroupId(Long.valueOf(groupId))
                 .map(ApiTokenEntity::getToken);
     }
 
@@ -43,5 +50,13 @@ public class VkBotConfig {
         String accessToken = getToken().orElse("");
         // Создаем актора для группы
         return new GroupActor(groupId, accessToken);
+    }
+
+    @Bean
+    public UserActor userActor() {
+        // Получаем токен из базы данных
+        String accessToken = getClientToken().orElse("");
+        // Создаем актора для группы
+        return new UserActor(groupId, accessToken);
     }
 }

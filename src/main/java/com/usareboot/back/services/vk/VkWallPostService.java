@@ -28,6 +28,8 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.usareboot.back.models.constant.Constant.ALBUM_TITLE;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -123,14 +125,18 @@ public class VkWallPostService {
             });
         }
         log.info("Пост успешно опубликован с ID: {}", postResponse.getPostId());
+//        return photoAttachments;
     }
 
     @Async
     public void sendPostToChat(AlbumsItemsDTO albumsItemsDTO, List<MultipartFile> multipartFiles, String mainPhotoId) {
         try {
             String mainPhotoVkId = "-" + groupId + "_" + mainPhotoId;
+
+            log.info("Проверяем существование скрытого альбома или  создаем новый");
+            int albumId = vkOperator.getOrCreateHiddenAlbum(ALBUM_TITLE);
             log.info("Загружаем фотографии на сервер ВК");
-            List<String> photos = vkOperator.uploadPhotoForChat(multipartFiles);
+            List<String> photos = vkOperator.uploadPhotoForChat(multipartFiles, albumId);
 
             log.info("Добавляем основное фото из альбома");
             photos.add(0, mainPhotoVkId);

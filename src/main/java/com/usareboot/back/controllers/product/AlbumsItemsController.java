@@ -87,9 +87,12 @@ public class AlbumsItemsController {
         } catch (Exception e) {
         }
         List<MultipartFile> photos = new ArrayList<>();
-        photos.add(adFile1);
-        photos.add(adFile2);
-        photos.add(adFile3);
+        if (adFile1 != null)
+            photos.add(adFile1);
+        if (adFile2 != null)
+            photos.add(adFile2);
+        if (adFile3 != null)
+            photos.add(adFile3);
         String photoId = albumsItemsService.saveFile(albumId, file, photos, dto);
         vkWallPostService.postToWallWithPhotos(dto, photos, photoId);
         vkWallPostService.sendPostToChat(dto, photos, photoId);

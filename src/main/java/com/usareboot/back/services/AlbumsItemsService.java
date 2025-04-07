@@ -94,7 +94,7 @@ public class AlbumsItemsService {
                     x.isNoSize()
             )));
         }
-        log.info("[Сценарий getAlbumsItems][Шаг: вывод AlbumsItemsDTO list: {}][EventID: {}]", list, eventId);
+//        log.info("[Сценарий getAlbumsItems][Шаг: вывод AlbumsItemsDTO list: {}][EventID: {}]", list, eventId);
         return list;
     }
 
