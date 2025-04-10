@@ -24,22 +24,17 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.net.URL;
-import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -396,6 +391,7 @@ public class VkService {
     public MultipartFile getMultipartFile(AlbumsItemsDTO albumsItemsDTO, String type) throws IOException {
         InputStream inputStream = null;
         String fileName = "";
+        String fileType = "";
         if (type.equals("file")) {
             // Загружаем InputStream из URL
             URL url = new URL(albumsItemsDTO.getPhotoUrl());
@@ -403,6 +399,7 @@ public class VkService {
 
             // Достаем имя файла из URL (например, "image.jpg")
             fileName = albumsItemsDTO.getPhotoUrl().substring(albumsItemsDTO.getPhotoUrl().lastIndexOf("/") + 1);
+            fileType = getTypeFile(albumsItemsDTO);
             log.info("Фото по ссылке получено");
         }
         if (type.equals("adFile1")) {
@@ -410,6 +407,7 @@ public class VkService {
             inputStream = url.openStream();
 
             fileName = albumsItemsDTO.getAdItemUrl1().substring(albumsItemsDTO.getAdItemUrl1().lastIndexOf("/") + 1);
+            fileType = getTypeFile(albumsItemsDTO);
             log.info("Фото по ссылке получено");
         }
         if (type.equals("adFile2")) {
@@ -417,6 +415,7 @@ public class VkService {
             inputStream = url.openStream();
 
             fileName = albumsItemsDTO.getAdItemUrl2().substring(albumsItemsDTO.getAdItemUrl2().lastIndexOf("/") + 1);
+            fileType = getTypeFile(albumsItemsDTO);
             log.info("Фото по ссылке получено");
         }
         if (type.equals("adFile3")) {
@@ -424,15 +423,49 @@ public class VkService {
             inputStream = url.openStream();
 
             fileName = albumsItemsDTO.getAdItemUrl3().substring(albumsItemsDTO.getAdItemUrl3().lastIndexOf("/") + 1);
+            fileType = getTypeFile(albumsItemsDTO);
             log.info("Фото по ссылке получено");
         }
         // Создаем MultipartFile из InputStream
         return new MockMultipartFile(
                 fileName,         // Имя файла
                 fileName,         // Оригинальное имя файла
-                "image/jpeg",     // MIME тип (укажите нужный тип, например, "image/png")
+                fileType,     // MIME тип (укажите нужный тип, например, "image/png")
                 inputStream       // Данные файла
         );
+    }
+
+    private  String getTypeFile(AlbumsItemsDTO albumsItemsDTO) {
+        // Определяем имя файла и расширение
+        String fullFileName = albumsItemsDTO.getPhotoUrl().substring(albumsItemsDTO.getPhotoUrl().lastIndexOf("/") + 1);
+        String fileName = fullFileName.contains(".") ?
+                fullFileName.substring(0, fullFileName.lastIndexOf('.')) :
+                "file_" + System.currentTimeMillis();
+        String fileExtension = fullFileName.contains(".") ?
+                fullFileName.substring(fullFileName.lastIndexOf('.') + 1) :
+                "jpg"; // дефолтное расширение
+
+        // Определяем Content-Type по расширению
+        return determineContentType(fileExtension);
+    }
+
+    // Метод для определения Content-Type
+    private String determineContentType(String fileExtension) {
+        switch (fileExtension.toLowerCase()) {
+            case "jpg":
+            case "jpeg":
+                return "image/jpeg";
+            case "png":
+                return "image/png";
+            case "gif":
+                return "image/gif";
+            case "webp":
+                return "image/webp";
+            case "x-webp":
+                return "image/x-webp";
+            default:
+                return "application/octet-stream";
+        }
     }
 
     //    public String getComments(String postId) {

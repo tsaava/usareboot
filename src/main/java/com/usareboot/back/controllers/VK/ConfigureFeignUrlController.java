@@ -6,6 +6,7 @@ import com.usareboot.back.client.config.vk.DynamicUrlInterceptor;
 import com.usareboot.back.models.vk.VkPhotoGetListDTO;
 import feign.Feign;
 import feign.Target;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,6 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 
 @RestController
+@Slf4j
 @Import(FeignClientsConfiguration.class)
 public class ConfigureFeignUrlController {
     @Value("${vk.api.version}")
@@ -42,10 +44,10 @@ public class ConfigureFeignUrlController {
     public VkPhotoGetListDTO uploadPhotoInVk(String vkPath, MultipartFile photo) throws IOException {
         VkPhotoClient client = getVkClient(vkPath);
         String tempString = client.uploadPhotoInVk(photo);
-        System.out.println("tempString: " + tempString);
+        log.info("tempString: {}", tempString);
         ObjectMapper mapper = new ObjectMapper();
-        System.out.println(tempString);
         VkPhotoGetListDTO userDtoList = mapper.readValue(tempString, VkPhotoGetListDTO.class);
+        log.info("userDtoList: {}", userDtoList);
         return userDtoList;
     }
 

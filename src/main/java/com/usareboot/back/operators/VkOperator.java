@@ -14,7 +14,6 @@ import com.vk.api.sdk.client.actors.UserActor;
 import com.vk.api.sdk.exceptions.ApiException;
 import com.vk.api.sdk.exceptions.ClientException;
 import com.vk.api.sdk.httpclient.HttpTransportClient;
-import com.vk.api.sdk.objects.photos.responses.MessageUploadResponse;
 import com.vk.api.sdk.objects.photos.responses.PhotoUploadResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -216,7 +215,7 @@ public class VkOperator {
     /**
      * Загружает фотки рекламного поста для отправки в чат
      */
-    public List<String> uploadPhotoForChat(List<MultipartFile> multipartFiles, int albumId)
+    public List<String> uploadPhotoForAlbum(List<MultipartFile> multipartFiles, int albumId)
             throws ClientException, ApiException, IOException {
         var accessToken = commonOperator.getTokenClient(standaloneId).orElse("");
 
@@ -227,51 +226,50 @@ public class VkOperator {
         log.info("Получаем URL для загрузки");
         var photoUploadVk = getUrlPhotoInAlbumVk(albumId);
 
-       /* var uploadUrl = vk.photos().getUploadServer(actor)
+        var uploadUrl = vk.photos().getUploadServer(actor)
                 .albumId(albumId)
-//                .groupId(Integer.valueOf(groupId))
+                .groupId(Integer.valueOf(groupId))
                 .execute()
                 .getUploadUrl()
-                .toString();*/
+                .toString();
         List<String> photoAttachments = new ArrayList<>();
 
         List<Path> tempFiles = new ArrayList<>();
         List<File> photoFiles;
         try {
-//            photoFiles = getFiles(multipartFiles, tempFiles);
-            for (var photoFile : multipartFiles) {
-//            for (File photoFile : photoFiles) {
+            photoFiles = getFiles(multipartFiles, tempFiles);
+//            for (var photoFile : multipartFiles) {
+            for (File photoFile : photoFiles) {
                 log.info("Загружаем файл");
-                var vkPhotoList = configureFeignUrlController.uploadPhotoInVk(photoUploadVk, photoFile);
+//                var vkPhotoList = configureFeignUrlController.uploadPhotoInVk(photoUploadVk, photoFile);
 
-               /* PhotoUploadResponse uploadResponse = vk.upload()
+                PhotoUploadResponse uploadResponse = vk.upload()
                         .photo(uploadUrl, photoFile)
-                        .execute();*/
+                        .execute();
 
 
                 log.info("Сохранение фотографий после загрузки");
-                // 3. Сохраняем в альбом
-                /*var photos = vk.photos().save(actor)
+                var photos = vk.photos().save(actor)
                         .albumId(albumId)
                         .server(uploadResponse.getServer())
                         .hash(uploadResponse.getHash())
                         .photosList(uploadResponse.getPhotosList())
-//                        .groupId(Integer.valueOf(groupId))
-                        .execute();*/
-                var photo = savePhotoInVk(vkPhotoList.getPhotos_list(), String.valueOf(albumId), String.valueOf(vkPhotoList.getServer()), vkPhotoList.getHash());
+                        .groupId(Integer.valueOf(groupId))
+                        .execute();
+//                var photo = savePhotoInVk(vkPhotoList.getPhotos_list(), String.valueOf(albumId), String.valueOf(vkPhotoList.getServer()), vkPhotoList.getHash());
 
+                var photo = photos.get(0);
+                var photoId = photo.getId().toString();
+                log.info("photoId: {}", photoId);
+                log.info("photo.getOwnerId(): {}", photo.getOwnerId());
 
-//                var photo = photos.get(0);
-//                var photoId = photo.getId().toString();
-//                log.info("photoId: {}", photoId);
-//                log.info("photo.getOwnerId(): {}", photo.getOwnerId());
-
-                photoAttachments.add("-"+groupId + "_" + photo);
+//                photoAttachments.add("-"+groupId + "_" + photo);
+                photoAttachments.add(photo.getOwnerId() + "_" + photoId);
                 log.info("photoAttachments: {}", photoAttachments);
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
-        } /*finally {
+        } finally {
             // Автоматическое удаление
             tempFiles.forEach(path -> {
                 try {
@@ -280,7 +278,7 @@ public class VkOperator {
                     log.error("Ошибка удаления временного файла", e);
                 }
             });
-        }*/
+        }
         return photoAttachments;
     }
 
@@ -318,7 +316,7 @@ public class VkOperator {
         log.info("Сообщение успешно отправлено");
     }
 
-    public String getMessageForPost(AlbumsItemsDTO albumsItemsDTO) {
+    public String getMessage(AlbumsItemsDTO albumsItemsDTO) {
         int itemCost = 0;
         if (albumsItemsDTO.getAlbumItemCost() != null && albumsItemsDTO.getAlbumItemRate() != null) {
             itemCost = (int) (albumsItemsDTO.getAlbumItemCost() * albumsItemsDTO.getAlbumItemRate());

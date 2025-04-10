@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.usareboot</groupId>
     <artifactId>back</artifactId>
-    <version>0</version>
+    <version>001.00</version>
     <name>back</name>
     <description>интернет магазин</description>
     <properties>
@@ -166,6 +166,26 @@
             <artifactId>thumbnailator</artifactId>
             <version>0.4.19</version>
         </dependency>
+        <dependency>
+            <groupId>com.twelvemonkeys.imageio</groupId>
+            <artifactId>imageio-jpeg</artifactId>
+            <version>3.12.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.twelvemonkeys.imageio</groupId>
+            <artifactId>imageio-webp</artifactId>
+            <version>3.12.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-imaging</artifactId>
+            <version>1.0.0-alpha5</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.17.0</version>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
@@ -203,6 +223,14 @@
                 <configuration>
                     <webappDirectory>/sample/servlet/container/deploy/directory</webappDirectory>
 
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>3.2.1</version> <!-- Актуальная версия Spring Boot -->
+                <configuration>
+                    <finalName>${project.artifactId}</finalName> <!-- Имя файла без версии -->
                 </configuration>
             </plugin>
         </plugins>

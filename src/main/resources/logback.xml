@@ -36,4 +36,14 @@
         <appender-ref ref="FILE"  level="debug"/>
     </Logger>
 
+   <!-- <Logger name="com.usareboot.back" level ="debug">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="FILE"  level="debug"/>
+    </Logger>-->
+
+    <!--<Logger name="org.springframework" level ="debug">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="FILE"  level="debug"/>
+    </Logger>-->
+
 </configuration>

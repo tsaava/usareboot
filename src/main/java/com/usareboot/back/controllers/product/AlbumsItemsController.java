@@ -2,7 +2,9 @@ package com.usareboot.back.controllers.product;
 
 import com.google.gson.Gson;
 import com.usareboot.back.controllers.VK.ConfigureFeignUrlController;
+import com.usareboot.back.exceptions.ImageProcessingException;
 import com.usareboot.back.models.AlbumsItemsDTO;
+import com.usareboot.back.other.VkImageConverter;
 import com.usareboot.back.services.AlbumsItemsService;
 import com.usareboot.back.services.vk.VkService;
 import com.usareboot.back.services.vk.VkWallPostService;
@@ -41,6 +43,8 @@ public class AlbumsItemsController {
     @Autowired
     private Environment environment;
 
+    private final VkImageConverter vkImageConverter;
+
 
     @GetMapping("/list/{albumId}")
     public ResponseEntity<?> albumItemsList(@PathVariable long albumId) {
@@ -55,7 +59,7 @@ public class AlbumsItemsController {
     }
 
     @PostMapping(value = "/photo/upload/param", consumes = MediaType.MULTIPART_FORM_DATA_VALUE/*, consumes=MediaType.APPLICATION_OCTET_STREAM_VALUE*/ /*MediaType.MULTIPART_FORM_DATA_VALUE*//* MediaType.IMAGE_JPEG_VALUE*//*.ALL_VALUE*//*MediaType.IMAGE_GIF_VALUE*/)
-    public ResponseEntity<Map<String, String>> itemPhotoUpload(
+    public ResponseEntity<Map<String, String>> itemPhotoUpload (
             @RequestParam(name = "album") long albumId,
             @RequestPart(name = "file", required = false) MultipartFile file,
             @RequestPart(name = "adFile1", required = false) MultipartFile adFile1,
@@ -65,35 +69,42 @@ public class AlbumsItemsController {
 
         Gson g = new Gson();
         var dto = g.fromJson(data, AlbumsItemsDTO.class);
+        MultipartFile vkFile, vkAdFile1 = null, vkAdFile2 = null, vkAdFile3 = null;
         if (file == null) {
             file = vkService.getMultipartFile(dto, "file");
         }
+//        vkFile = vkImageConverter.convertToSupportedFormat(file);
+//        log.debug("vkFile:{}", vkFile);
         try {
             if (adFile1 == null) {
                 adFile1 = vkService.getMultipartFile(dto, "adFile1");
             }
+            vkAdFile1 = vkImageConverter.convertToSupportedFormat(adFile1);
         } catch (Exception e) {
         }
         try {
             if (adFile2 == null) {
                 adFile2 = vkService.getMultipartFile(dto, "adFile2");
             }
+            vkAdFile2 = vkImageConverter.convertToSupportedFormat(adFile2);
         } catch (Exception e) {
         }
         try {
             if (adFile3 == null) {
                 adFile3 = vkService.getMultipartFile(dto, "adFile3");
             }
+            vkAdFile3 = vkImageConverter.convertToSupportedFormat(adFile3);
         } catch (Exception e) {
         }
         List<MultipartFile> photos = new ArrayList<>();
-        if (adFile1 != null)
-            photos.add(adFile1);
-        if (adFile2 != null)
-            photos.add(adFile2);
-        if (adFile3 != null)
-            photos.add(adFile3);
-        String photoId = albumsItemsService.saveFile(albumId, file, photos, dto);
+        if (vkAdFile1 != null)
+            photos.add(vkAdFile1);
+        if (vkAdFile2 != null)
+            photos.add(vkAdFile2);
+        if (vkAdFile3 != null)
+            photos.add(vkAdFile3);
+
+        String photoId = albumsItemsService.saveFile(albumId, file, dto);
         vkWallPostService.postToWallWithPhotos(dto, photos, photoId);
         vkWallPostService.sendPostToChat(dto, photos, photoId);
         return new ResponseEntity<>(HttpStatus.OK);

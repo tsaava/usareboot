@@ -1,7 +1,6 @@
 package com.usareboot.back.services.vk;
 
 import com.usareboot.back.models.AlbumsItemsDTO;
-import com.usareboot.back.models.vk.VkPostRequestDTO;
 import com.usareboot.back.operators.CommonOperator;
 import com.usareboot.back.operators.VkOperator;
 import com.vk.api.sdk.client.TransportClient;
@@ -15,7 +14,6 @@ import com.vk.api.sdk.objects.photos.responses.WallUploadResponse;
 import com.vk.api.sdk.objects.wall.responses.PostResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -96,7 +94,7 @@ public class VkWallPostService {
                     break;
                 }
             }
-            var message = vkOperator.getMessageForPost(albumsItemsDTO);
+            var message = vkOperator.getMessage(albumsItemsDTO);
 
            /* VkPostRequestDTO vkPostRequestDTO = VkPostRequestDTO.builder()
                     .itemUrl(albumsItemsDTO.getVkPhotoPath())
@@ -136,13 +134,13 @@ public class VkWallPostService {
             log.info("Проверяем существование скрытого альбома или  создаем новый");
             int albumId = vkOperator.getOrCreateHiddenAlbum(ALBUM_TITLE);
             log.info("Загружаем фотографии на сервер ВК");
-            List<String> photos = vkOperator.uploadPhotoForChat(multipartFiles, albumId);
+            List<String> photos = vkOperator.uploadPhotoForAlbum(multipartFiles, albumId);
 
             log.info("Добавляем основное фото из альбома");
             photos.add(0, mainPhotoVkId);
 
             log.info("Формируем сообщение для сообщение");
-            var message = vkOperator.getMessageForPost(albumsItemsDTO);
+            var message = vkOperator.getMessage(albumsItemsDTO);
 
             log.info("Отправляем сообщение в чат");
             vkOperator.sendPhotoToChat(chatId, photos, message);

@@ -13,6 +13,8 @@ import com.usareboot.back.repositories.AlbumsRepository;
 import com.usareboot.back.repositories.DStatusRepository;
 import com.usareboot.back.services.vk.VkPostService;
 import com.usareboot.back.services.vk.VkService;
+import com.vk.api.sdk.exceptions.ApiException;
+import com.vk.api.sdk.exceptions.ClientException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -102,7 +104,7 @@ public class AlbumsItemsService {
         albumItemOperator.saveAlbumItem(albumsItemsDTO);
     }
 
-    public String saveFile(Long albumId, MultipartFile file, List<MultipartFile> photos, AlbumsItemsDTO albumsItemsDTO) throws IOException {
+    public String saveFile(Long albumId, MultipartFile file, AlbumsItemsDTO albumsItemsDTO) throws IOException, ClientException, ApiException {
 //        var albumsItemsDTO = vkService.saveFileInVk(albumId, file, adFile1, adFile2, adFile3, dto);
 //        final String accessToken = commonOperator.getTokenClient(standaloneId).orElse(null);
 
@@ -112,21 +114,33 @@ public class AlbumsItemsService {
             throw new RuntimeException("Ошибка загрузки: нет ссылки на фотографию");
         }
 
-        var photoUploadVk = vkOperator.getUrlPhotoInAlbumVk(albumId);
+       /* var photoUploadVk = vkOperator.getUrlPhotoInAlbumVk(albumId);
         log.info("Upload photo in vk");
         var vkPhotoList = configureFeignUrlController.uploadPhotoInVk(photoUploadVk, file);
-
+        log.info("vkPhotoList: {}", vkPhotoList);
         log.info("Save photo in vk");
         var photo = vkOperator.savePhotoInVk(vkPhotoList.getPhotos_list(), String.valueOf(albumId), String.valueOf(vkPhotoList.getServer()), vkPhotoList.getHash());
+        */
+        List<MultipartFile> files = new ArrayList<>();
+        files.add(file);
+        log.info("Загружаем фотографии на сервер ВК");
+        List<String> photos = vkOperator.uploadPhotoForAlbum(files, Math.toIntExact(albumId));
+        var photo = photos.get(0);
         albumsItemsDTO.setItemDescription(albumsItemsDTO.getDescription());
 
         var allDesc = vkOperator.getAllDesc(albumsItemsDTO);
         albumsItemsDTO.setDescription(allDesc);
-        vkOperator.editPhotoInVk(photo, allDesc);
+        String photoId="";
+        if (photo != null && photo.contains("_")) {
+            photoId = photo.split("_")[1];
+        }
+
+        vkOperator.editPhotoInVk(photoId, allDesc);
         log.info("В ВК фотография успешно загружена и добавлено описание");
 
-        albumsItemsDTO.setVkItemId(Long.parseLong(photo));
-        albumsItemsDTO.setVkPhotoPath("https://vk.com/photo-" + groupId + "_" + photo);
+        albumsItemsDTO.setVkItemId(Long.parseLong(photoId));
+//        albumsItemsDTO.setVkPhotoPath("https://vk.com/photo-" + groupId + "_" + photo);
+        albumsItemsDTO.setVkPhotoPath("https://vk.com/photo" + photo);
 
         Path filePath = Path.of(pathPhoto);
         log.info("Сохранение фото в БД");
@@ -159,7 +173,7 @@ public class AlbumsItemsService {
 
 //        vkOperator.postInVk(vkPostRequestDTO,  photos);
         vkPostService.postWithPhotos(vkPostRequestDTO,  photos);*/
-        return photo;
+        return photoId;
     }
 
     public void copyFile(MultipartFile file) {
