@@ -7,46 +7,11 @@ spring:
         properties:
             hibernate:
     datasource:
-        #        url: jdbc:postgresql://ep-cold-king-62125412.us-east-1.aws.neon.tech/usa_reboot
-        url: jdbc:postgresql://localhost:5432/dbusareboot
+        url: jdbc:postgresql://localhost:5432/dbusareboot?prod
         username: usareboot
         password: Katerina_2022
         driver-class-name: org.postgresql.Driver
-    host: localhost
-    port: 6379
-#    cloud:
-#        openfeign:
-#            client:
-#                config:
-#                    default:
-#                        read-timeout: 300000
-#                        connect-timeout: 30000
-#                        logger-level: full
-server:
-    port: 9000
-    servlet:
-        encoding:
-            charset: UTF-8
-            enabled: true
-            force: true
-springdoc:
-    show-actuator: true
-    swagger-ui:
-        enabled: true
-        path: swagger-ui.html
 
-jwt:
-    header:
-        Authorization
-    secret:
-        spmi
-    time:
-        expired:
-            5000
-        accept:
-            300
-    issuer:
-        app
 vk:
     api:
         groupId: '224336762'
@@ -55,15 +20,8 @@ vk:
         redirectUri: 'https://usareboot.ru/vkAuth'
         pathPhoto: '/usr/vk_img/'
         redirectStandaloneUri: 'https://usareboot.ru/vkAuth'
-
-    token: 'YOUR_ACCESS_TOKEN'
     client:
         id: '51727454'
         secret: 'Lp8in0hLVi4I7SR7VMKz'
-#        standaloneId: '53220192'
         standaloneId: '53265929'
         secretStandalone: 'nTITx5lir3dNSjKk6jAj'
-
-    config:
-        file:
-            path: 'src/main/resources/application.yaml'

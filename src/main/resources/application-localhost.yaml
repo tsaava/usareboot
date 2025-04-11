@@ -7,56 +7,16 @@ spring:
         properties:
             hibernate:
     datasource:
-#        url: jdbc:postgresql://ep-cold-king-62125412.us-east-1.aws.neon.tech/usa_reboot
-        url: jdbc:postgresql://77.222.58.194:5432/dbusareboot
-#        url: jdbc:postgresql://localhost:5432/usareboot
+        url: jdbc:postgresql://77.222.58.194:5432/dbusareboot?public
         username: usareboot
         password: Katerina_2022
         driver-class-name: org.postgresql.Driver
 #        hikari:
-#            maxLifeTime:6000000 #10 minutes wait time
-        hikari:
-            minimumIdle: 2
-            maximumPoolSize: 10
-            idleTimeout: 120000
-            connectionTimeout: 300000
-            maxLifetime: 6000000
-    cloud:
-        openfeign:
-            client:
-                config:
-                    default:
-                        read-timeout: 300000
-                        connect-timeout: 30000
-                        loggerLevel: full
-    host: localhost
-    port: 6379
-server:
-    port: 9000
-    servlet:
-        encoding:
-            charset: UTF-8
-            enabled: true
-            force: true
-
-springdoc:
-    show-actuator: true
-    swagger-ui:
-        enabled: true
-        path: swagger-ui.html
-
-jwt:
-    header:
-        Authorization
-    secret:
-        spmi
-    time:
-        expired:
-            5000
-        accept:
-            300
-    issuer:
-        app
+#            minimumIdle: 2
+#            maximumPoolSize: 10
+#            idleTimeout: 120000
+#            connectionTimeout: 300000
+#            maxLifetime: 6000000
 vk:
     api:
         groupId: '224336762'
@@ -65,13 +25,8 @@ vk:
         redirectUri: 'https://localhost:80/vkAuth'
         pathPhoto: '/vk_img/'
         redirectStandaloneUri: 'https://localhost/vkAuth'
-#    token: 'YOUR_ACCESS_TOKEN'
     client:
         id: '51727454'
         secret: 'Lp8in0hLVi4I7SR7VMKz'
-#        standaloneId: '53220192'
         standaloneId: '53265929'
         secretStandalone: 'nTITx5lir3dNSjKk6jAj'
-    config:
-        file:
-            path: 'src/main/resources/application.yaml'

@@ -1,3 +1,28 @@
 vk:
     api:
         base-url: https://api.vk.com/method
+server:
+    port: 9000
+    servlet:
+        encoding:
+            charset: UTF-8
+            enabled: true
+            force: true
+springdoc:
+    show-actuator: true
+    swagger-ui:
+        enabled: true
+        path: swagger-ui.html
+
+jwt:
+    header:
+        Authorization
+    secret:
+        spmi
+    time:
+        expired:
+            5000
+        accept:
+            300
+    issuer:
+        app
