@@ -1,12 +1,12 @@
 spring:
 #    profiles:
-#        active: prod
+#        active: test
     jpa:
         show-sql: false
         properties:
             hibernate:
     datasource:
-        url: jdbc:postgresql://localhost:5432/dbusareboot?prod
+        url: jdbc:postgresql://localhost:5432/dbusareboot?public
         username: usareboot
         password: Katerina_2022
         driver-class-name: org.postgresql.Driver

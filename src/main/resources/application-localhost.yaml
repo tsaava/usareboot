@@ -1,7 +1,6 @@
 spring:
-    config:
-        activate:
-            on-profile: localhost
+#    profiles:
+#        active: localhost
     jpa:
         show-sql: false
         properties:
