@@ -14,6 +14,7 @@ import com.vk.api.sdk.client.actors.UserActor;
 import com.vk.api.sdk.exceptions.ApiException;
 import com.vk.api.sdk.exceptions.ClientException;
 import com.vk.api.sdk.httpclient.HttpTransportClient;
+import com.vk.api.sdk.objects.photos.responses.MessageUploadResponse;
 import com.vk.api.sdk.objects.photos.responses.PhotoUploadResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -283,6 +284,64 @@ public class VkOperator {
     }
 
     /**
+     * Загружает фотки рекламного поста для отправки в чат
+     */
+    public List<String> uploadPhotoForChat(List<MultipartFile> multipartFiles)
+            throws ClientException, ApiException, IOException {
+        var accessToken = commonOperator.getTokenClient(standaloneId).orElse("");
+
+        TransportClient transportClient = new HttpTransportClient();
+        VkApiClient vk = new VkApiClient(transportClient);
+        UserActor actor = new UserActor(Integer.valueOf(standaloneId), accessToken);
+//        UserActor actor = new UserActor(Integer.valueOf(groupId), accessToken);
+
+        log.info("Загрузка фотографий на сервер VK");
+        var uploadUrl = vk.photos().getMessagesUploadServer(actor)
+                .execute()
+                .setGroupId(Integer.valueOf(groupId))
+                .getUploadUrl();
+
+        List<String> photoAttachments = new ArrayList<>();
+
+        List<Path> tempFiles = new ArrayList<>();
+        List<File> photoFiles;
+        try {
+            photoFiles = getFiles(multipartFiles, tempFiles);
+            for (File photoFile : photoFiles) {
+                MessageUploadResponse uploadResponse = vk.upload()
+                        .photoMessage(uploadUrl.toString(), photoFile)
+                        .execute();
+
+                log.info("Сохранение фотографий после загрузки");
+                var photos = vk.photos().saveMessagesPhoto(actor, uploadResponse.getPhoto())
+                        .server(uploadResponse.getServer())
+                        .hash(uploadResponse.getHash())
+                        .execute();
+
+                var photo = photos.get(0);
+                var photoId = photo.getId().toString();
+                log.info("photoId: {}", photoId);
+                log.info("photo.getOwnerId(): {}", photo.getOwnerId());
+
+                photoAttachments.add(photo.getOwnerId() + "_" + photo.getId());
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } finally {
+            // Автоматическое удаление
+            tempFiles.forEach(path -> {
+                try {
+                    Files.deleteIfExists(path);
+                } catch (IOException e) {
+                    log.error("Ошибка удаления временного файла", e);
+                }
+            });
+        }
+        return photoAttachments;
+    }
+
+
+    /**
      * Отправляет фото из альбома в чат
      *
      * @param chatId   ID беседы (положительное число)
@@ -304,9 +363,8 @@ public class VkOperator {
         }
         String stringAttach = String.join(",", attachments);
         log.info("stringAttach: {}", stringAttach);
-        /*int chat = Integer.parseInt(chatId.substring(1));*/
         // Отправляем сообщение
-        vk.messages().send(groupActor)
+        vk.messages().send(actor)
                 .chatId(chatId)
                 .groupId(Integer.parseInt(groupId))
                 .randomId(new Random().nextInt())

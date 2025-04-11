@@ -148,4 +148,24 @@ public class VkWallPostService {
             log.error("Ошибка отправки сообщения в чат", e);
         }
     }
+
+  /*  @Async
+    public void sendPostToChat(AlbumsItemsDTO albumsItemsDTO, List<MultipartFile> multipartFiles, String mainPhotoId) {
+        try {
+            String mainPhotoVkId = "-" + groupId + "_" + mainPhotoId;
+            log.info("Загружаем фотографии на сервер ВК");
+            List<String> photos = vkOperator.uploadPhotoForChat(multipartFiles);
+
+            log.info("Добавляем основное фото из альбома");
+            photos.add(0, mainPhotoVkId);
+
+            log.info("Формируем сообщение для сообщение");
+            var message = vkOperator.getMessage(albumsItemsDTO);
+
+            log.info("Отправляем сообщение в чат");
+            vkOperator.sendPhotoToChat(chatId, photos, message);
+        } catch (Exception e) {
+            log.error("Ошибка отправки сообщения в чат", e);
+        }
+    }*/
 }
