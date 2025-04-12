@@ -149,7 +149,7 @@ public class VkWallPostService {
         }
     }
 
-  /*  @Async
+    /*@Async
     public void sendPostToChat(AlbumsItemsDTO albumsItemsDTO, List<MultipartFile> multipartFiles, String mainPhotoId) {
         try {
             String mainPhotoVkId = "-" + groupId + "_" + mainPhotoId;

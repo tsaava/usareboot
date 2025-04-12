@@ -36,7 +36,7 @@ public class VkController {
         JsonObject json = JsonParser.parseString(requestBody).getAsJsonObject();
         String type = json.get("type").getAsString();
         if (type.equals("confirmation")) {
-            return "6c0d90eb";
+            return "9da08a29";
 //            return vkDAO.getCallbackConfirmationCode();
         }
         if (type.equals("photo_comment_new")) {

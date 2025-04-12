@@ -6,6 +6,7 @@ import com.usareboot.back.controllers.VK.ConfigureFeignUrlController;
 import com.usareboot.back.models.AlbumsItemsDTO;
 import com.usareboot.back.models.vk.VkAlbumItemResponse;
 import com.usareboot.back.models.vk.VkAlbumResponse;
+import com.usareboot.back.models.vk.VkPhotoSaveDTO;
 import com.usareboot.back.models.vk.VkPostRequestDTO;
 import com.vk.api.sdk.client.TransportClient;
 import com.vk.api.sdk.client.VkApiClient;
@@ -28,16 +29,17 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -61,10 +63,14 @@ public class VkOperator {
     @Value("${vk.api.pathPhoto}")
     private String pathPhoto;
 
+    @Value("${vk.api.base-url}")
+    private String VK_API_URL;
+
+
     private final CommonOperator commonOperator;
     private final VkApiCustomClient vkApiCustomClient;
     private final ConfigureFeignUrlController configureFeignUrlController;
-
+    private final RestTemplate restTemplate;
     private final GroupActor groupActor;
     private final UserActor userActor;
 
@@ -296,10 +302,11 @@ public class VkOperator {
 //        UserActor actor = new UserActor(Integer.valueOf(groupId), accessToken);
 
         log.info("Загрузка фотографий на сервер VK");
-        var uploadUrl = vk.photos().getMessagesUploadServer(actor)
+        var uploadUrl = getMessagesUploadServer();
+       /* var uploadUrl = vk.photos().getMessagesUploadServer(actor)
                 .execute()
                 .setGroupId(Integer.valueOf(groupId))
-                .getUploadUrl();
+                .getUploadUrl();*/
 
         List<String> photoAttachments = new ArrayList<>();
 
@@ -340,7 +347,23 @@ public class VkOperator {
         return photoAttachments;
     }
 
+    public String getMessagesUploadServer() {
+        String url = VK_API_URL + "/photos.getMessagesUploadServer";
+        var accessToken = commonOperator.getTokenClient(standaloneId).orElse("");
 
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url)
+                .queryParam("group_id", groupId)
+//                .queryParam("user_id", standaloneId)
+                .queryParam("access_token", accessToken)
+                .queryParam("v", apiVersion);
+
+        ResponseEntity<Map> response = restTemplate.getForEntity(
+                builder.toUriString(),
+                Map.class
+        );
+
+        return (String) ((Map<?, ?>) Objects.requireNonNull(response.getBody()).get("response")).get("upload_url");
+    }
     /**
      * Отправляет фото из альбома в чат
      *
@@ -364,9 +387,10 @@ public class VkOperator {
         String stringAttach = String.join(",", attachments);
         log.info("stringAttach: {}", stringAttach);
         // Отправляем сообщение
-        vk.messages().send(actor)
+        vk.messages().send(groupActor)
                 .chatId(chatId)
                 .groupId(Integer.parseInt(groupId))
+//                .userId(Integer.valueOf(standaloneId))
                 .randomId(new Random().nextInt())
                 .message(message)
                 .attachment(stringAttach)
