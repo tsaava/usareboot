@@ -231,7 +231,7 @@ public class VkOperator {
         UserActor actor = new UserActor(Integer.valueOf(standaloneId), accessToken);
 
         log.info("Получаем URL для загрузки");
-        var photoUploadVk = getUrlPhotoInAlbumVk(albumId);
+//        var photoUploadVk = getUrlPhotoInAlbumVk(albumId);
 
         var uploadUrl = vk.photos().getUploadServer(actor)
                 .albumId(albumId)

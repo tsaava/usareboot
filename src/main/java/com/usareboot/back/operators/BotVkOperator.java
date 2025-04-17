@@ -35,6 +35,7 @@ public class BotVkOperator {
     private final VkApiClient vk;
     private final GroupActor actor;
     private final String DEFAULT_ALBUM_URL = "https://default";
+    private final long DEFAULT_ALBUM_MAPPING_ID = 2L;
 
     public AlbumsItemsDTO getAlbumItem(VkBotResponseDTO vkBotResponseDTO) {
         log.info("vkBotResponseDTO.getItemUrl(): {}", vkBotResponseDTO.getItemUrl());
@@ -49,13 +50,17 @@ public class BotVkOperator {
         if (albumMapping == null) {
             albumMapping = albumMappingDictionaryRepository.getAlbumMappingDictionaryEntityByLinkContains(DEFAULT_ALBUM_URL).orElse(null);
         }
-        assert albumMapping != null;
-        log.info("albumMapping: {}", albumMapping.getAlbumMappingDictionaryId());
+        long albumMappingId = Optional.ofNullable(albumMapping).map(AlbumMappingDictionaryEntity::getAlbumMappingDictionaryId).orElse(DEFAULT_ALBUM_MAPPING_ID);
+        log.info("albumMapping: {}", albumMappingId);
 
         DStatusesEntity dStatusesEntity = new DStatusesEntity();
         dStatusesEntity.setStatusId(17);
-        AlbumsEntity album = albumsRepository.getAlbumsEntityByAlbumMappingDictionaryIdAndStatuses(albumMapping.getAlbumMappingDictionaryId(), dStatusesEntity);
-        log.info("album: {}", album.getAlbumId());
+        AlbumsEntity album = albumsRepository.getAlbumsEntityByAlbumMappingDictionaryIdAndStatuses(albumMappingId, dStatusesEntity).orElse(null);
+        if (album == null) {
+            album = albumsRepository.getAlbumsEntityByAlbumMappingDictionaryIdAndStatuses(DEFAULT_ALBUM_MAPPING_ID, dStatusesEntity).orElse(null);
+        }
+        Optional<Long> albumId = Optional.ofNullable(album).map(AlbumsEntity::getAlbumId);
+        log.info("album: {}", albumId);
         return album;
     }
 
