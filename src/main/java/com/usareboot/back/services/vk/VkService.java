@@ -6,12 +6,14 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.usareboot.back.client.VkIdClient;
 import com.usareboot.back.controllers.VK.ConfigureFeignUrlController;
-import com.usareboot.back.entities.*;
+//import com.usareboot.back.entities.*;
 import com.usareboot.back.models.AlbumRowRequestDTO;
 import com.usareboot.back.models.AlbumsItemsDTO;
 import com.usareboot.back.models.vk.*;
 import com.usareboot.back.operators.*;
-import com.usareboot.back.repositories.*;
+import com.usareboot.back.persistence.usareboot.entities.AlbumsEntity;
+import com.usareboot.back.persistence.usareboot.entities.ApiTokenEntity;
+import com.usareboot.back.persistence.usareboot.repository.*;
 import com.vk.api.sdk.objects.messages.Keyboard;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -199,7 +201,8 @@ public class VkService {
     public Integer createAlbum(AlbumsEntity albumsEntity) throws IOException {
         var eventId = threadLocal.get();
         log.info("[Сценарий createAlbum][Шаг: Начало][EventID: {}]", eventId);
-        accessToken = commonOperator.getTokenClient(clientId).orElse(null);
+        accessToken = commonOperator.getTokenClient(standaloneId).orElse(null);
+//        accessToken = commonOperator.getTokenGroup(groupId).orElse(null);
         final CloseableHttpClient httpclient = HttpClients.createDefault();
         final HttpPost httpPost = new HttpPost("https://api.vk.com/method/photos.createAlbum");
         final List<NameValuePair> params = new ArrayList<>();

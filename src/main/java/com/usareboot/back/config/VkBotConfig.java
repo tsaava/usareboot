@@ -1,13 +1,11 @@
 package com.usareboot.back.config;
 
-import com.usareboot.back.entities.ApiTokenEntity;
-import com.usareboot.back.repositories.ApiTokenRepository;
-import com.usareboot.back.services.vk.VkService;
+import com.usareboot.back.persistence.usareboot.entities.ApiTokenEntity;
+import com.usareboot.back.persistence.usareboot.repository.ApiTokenRepository;
 import com.vk.api.sdk.client.VkApiClient;
 import com.vk.api.sdk.client.actors.GroupActor;
 import com.vk.api.sdk.client.actors.UserActor;
 import com.vk.api.sdk.httpclient.HttpTransportClient;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

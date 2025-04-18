@@ -22,7 +22,7 @@ public class JwtUtils {
     @Autowired
     private UserDAO userDAO;
 
-    // создает токен на основе настроек из application.yaml
+
     public String generateJwtToken(String username, Long role) {
         Algorithm algorithm = Algorithm.HMAC256(environment.getRequiredProperty("jwt.secret"));
         Calendar calendar = Calendar.getInstance();

@@ -1,13 +1,12 @@
 package com.usareboot.back.services;
 
-import com.usareboot.back.entities.DStatusesEntity;
-import com.usareboot.back.entities.ItemsEntity;
-import com.usareboot.back.entities.RepaymentsEntity;
+import com.usareboot.back.persistence.usareboot.entities.DStatusesEntity;
+import com.usareboot.back.persistence.usareboot.entities.ItemsEntity;
 import com.usareboot.back.models.ImportDTO;
 import com.usareboot.back.models.ItemListDTO;
 import com.usareboot.back.models.ItemWeightListDTO;
 import com.usareboot.back.models.ItemsRequestDTO;
-import com.usareboot.back.repositories.*;
+import com.usareboot.back.persistence.usareboot.repository.*;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.StoredProcedureQuery;
@@ -16,13 +15,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Objects;
-import java.util.Optional;
-
-import static com.usareboot.back.models.constant.Constant.ITEM_STATUS_REPAYMENT;
-import static com.usareboot.back.models.constant.Constant.PERCENTAGE_INCOME_DEFAULT;
 
 @Service
 @Slf4j

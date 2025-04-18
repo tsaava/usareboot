@@ -451,6 +451,7 @@ public class VkOperator {
                 .privacyView("only_me")
                 .privacyComment("only_me")
                 .uploadByAdminsOnly(true)
+                .commentsDisabled(true)
                 .groupId(Integer.valueOf(groupId))
                 .execute()
                 .getId();

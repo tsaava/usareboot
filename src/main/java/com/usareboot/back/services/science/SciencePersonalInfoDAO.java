@@ -1,6 +1,6 @@
 package com.usareboot.back.services.science;
 
-import com.usareboot.back.repositories.science.ScienceRepository;
+import com.usareboot.back.persistence.usareboot.repository.science.ScienceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

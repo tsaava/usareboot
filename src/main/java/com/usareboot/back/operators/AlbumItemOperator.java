@@ -1,12 +1,11 @@
 package com.usareboot.back.operators;
 
-import com.usareboot.back.entities.AlbumsItemsEntity;
-import com.usareboot.back.entities.DStatusesEntity;
+import com.usareboot.back.persistence.usareboot.entities.AlbumsItemsEntity;
+import com.usareboot.back.persistence.usareboot.entities.DStatusesEntity;
 import com.usareboot.back.models.AlbumsItemsDTO;
-import com.usareboot.back.repositories.AlbumsItemsRepository;
-import com.usareboot.back.repositories.AlbumsRepository;
-import com.usareboot.back.repositories.DStatusRepository;
-import com.usareboot.back.services.vk.VkService;
+import com.usareboot.back.persistence.usareboot.repository.AlbumsItemsRepository;
+import com.usareboot.back.persistence.usareboot.repository.AlbumsRepository;
+import com.usareboot.back.persistence.usareboot.repository.DStatusRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

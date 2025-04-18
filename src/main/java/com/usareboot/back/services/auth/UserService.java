@@ -9,7 +9,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import com.usareboot.back.entities.auth.UsersEntity;
+import com.usareboot.back.persistence.usareboot.entities.auth.UsersEntity;
 
 import java.util.*;
 

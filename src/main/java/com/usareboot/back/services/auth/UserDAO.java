@@ -2,12 +2,12 @@ package com.usareboot.back.services.auth;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.usareboot.back.entities.auth.DRolesEntity;
-import com.usareboot.back.entities.auth.UsersEntity;
-import com.usareboot.back.repositories.auth.PersonRepository;
-import com.usareboot.back.repositories.auth.RolesRepository;
-import com.usareboot.back.repositories.science.ScienceRepository;
-import com.usareboot.back.repositories.auth.UserRepository;
+import com.usareboot.back.persistence.usareboot.entities.auth.DRolesEntity;
+import com.usareboot.back.persistence.usareboot.entities.auth.UsersEntity;
+import com.usareboot.back.persistence.usareboot.repository.auth.PersonRepository;
+import com.usareboot.back.persistence.usareboot.repository.auth.RolesRepository;
+import com.usareboot.back.persistence.usareboot.repository.science.ScienceRepository;
+import com.usareboot.back.persistence.usareboot.repository.auth.UserRepository;
 
 import javax.xml.bind.DatatypeConverter;
 import java.io.UnsupportedEncodingException;

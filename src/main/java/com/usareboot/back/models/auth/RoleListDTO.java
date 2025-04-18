@@ -1,6 +1,6 @@
 package com.usareboot.back.models.auth;
 
-import com.usareboot.back.entities.auth.DRolesEntity;
+import com.usareboot.back.persistence.usareboot.entities.auth.DRolesEntity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

@@ -1,18 +1,10 @@
 package com.usareboot.back.operators;
 
-import com.usareboot.back.entities.AlbumsEntity;
-import com.usareboot.back.entities.AlbumsItemsEntity;
-import com.usareboot.back.entities.DStatusesEntity;
-import com.usareboot.back.models.AlbumsItemsDTO;
-import com.usareboot.back.repositories.AlbumsItemsRepository;
-import com.usareboot.back.repositories.AlbumsRepository;
-import com.usareboot.back.repositories.DStatusRepository;
+import com.usareboot.back.persistence.usareboot.entities.AlbumsEntity;
+import com.usareboot.back.persistence.usareboot.repository.AlbumsRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-
-import java.sql.Date;
-import java.time.LocalDate;
 
 @Slf4j
 @Service

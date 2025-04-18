@@ -1,10 +1,10 @@
 package com.usareboot.back.operators;
 
 import com.google.gson.JsonObject;
-import com.usareboot.back.entities.OrdersEntity;
-import com.usareboot.back.entities.auth.UsersEntity;
-import com.usareboot.back.repositories.OrdersRepository;
-import com.usareboot.back.repositories.UsersRepository;
+import com.usareboot.back.persistence.usareboot.entities.OrdersEntity;
+import com.usareboot.back.persistence.usareboot.entities.auth.UsersEntity;
+import com.usareboot.back.persistence.usareboot.repository.OrdersRepository;
+import com.usareboot.back.persistence.usareboot.repository.UsersRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

@@ -1,0 +1,34 @@
+spring:
+#    profiles: prod
+#    profiles:
+#        active: prod
+    jpa:
+        hibernate:
+            default_schema: prod
+        show-sql: false
+#        properties:
+#            hibernate:
+    datasource:
+        usareboot:
+            url: jdbc:postgresql://localhost:5432/dbusareboot_prod
+            username: usareboot_prod
+            password: Katerina_2022
+            driver-class-name: org.postgresql.Driver
+            schema: prod
+            hibernate:
+                dialect: org.hibernate.dialect.PostgreSQLDialect
+
+vk:
+    api:
+        groupId: '103967197'
+        chatId: '5'
+#        chatId: '131'
+        version: '5.139'
+        redirectUri: 'https://usareboot.ru/vkAuth'
+        pathPhoto: '/usr/vk_img/'
+        redirectStandaloneUri: 'https://usareboot.ru/vkAuth'
+    client:
+        id: '51727454'
+        secret: 'Lp8in0hLVi4I7SR7VMKz'
+        standaloneId: '53265929'
+        secretStandalone: 'nTITx5lir3dNSjKk6jAj'

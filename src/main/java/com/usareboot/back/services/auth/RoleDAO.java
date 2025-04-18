@@ -1,6 +1,6 @@
 package com.usareboot.back.services.auth;
 
-import com.usareboot.back.repositories.auth.RolesRepository;
+import com.usareboot.back.persistence.usareboot.repository.auth.RolesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

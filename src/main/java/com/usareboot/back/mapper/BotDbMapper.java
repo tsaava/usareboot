@@ -1,7 +1,6 @@
 package com.usareboot.back.mapper;
 
-import com.usareboot.back.entities.AlbumsEntity;
-import com.usareboot.back.models.AlbumsDTO;
+import com.usareboot.back.persistence.usareboot.entities.AlbumsEntity;
 import com.usareboot.back.models.AlbumsItemsDTO;
 import com.usareboot.back.models.vk.*;
 import lombok.RequiredArgsConstructor;

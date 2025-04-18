@@ -1,11 +1,11 @@
 package com.usareboot.back.operators;
 
-import com.usareboot.back.entities.AlbumsItemsEntity;
-import com.usareboot.back.entities.ItemsEntity;
+import com.usareboot.back.persistence.usareboot.entities.AlbumsItemsEntity;
+import com.usareboot.back.persistence.usareboot.entities.ItemsEntity;
 import com.usareboot.back.models.ParsedComment;
 import com.usareboot.back.models.vk.VkBotResponseDTO;
 import com.usareboot.back.parser.CommentParser;
-import com.usareboot.back.repositories.ItemsRepository;
+import com.usareboot.back.persistence.usareboot.repository.ItemsRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

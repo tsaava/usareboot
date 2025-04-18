@@ -2,8 +2,8 @@ package com.usareboot.back.operators;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.usareboot.back.entities.ApiTokenEntity;
-import com.usareboot.back.repositories.ApiTokenRepository;
+import com.usareboot.back.persistence.usareboot.entities.ApiTokenEntity;
+import com.usareboot.back.persistence.usareboot.repository.ApiTokenRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;

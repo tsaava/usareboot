@@ -1,14 +1,14 @@
 package com.usareboot.back.operators;
 
-import com.usareboot.back.entities.AlbumMappingDictionaryEntity;
-import com.usareboot.back.entities.AlbumsEntity;
-import com.usareboot.back.entities.DStatusesEntity;
+import com.usareboot.back.persistence.usareboot.entities.AlbumMappingDictionaryEntity;
+import com.usareboot.back.persistence.usareboot.entities.AlbumsEntity;
+import com.usareboot.back.persistence.usareboot.entities.DStatusesEntity;
 import com.usareboot.back.mapper.BotDbMapper;
 import com.usareboot.back.models.AlbumsItemsDTO;
 import com.usareboot.back.models.vk.VkBotResponseDTO;
-import com.usareboot.back.repositories.AlbumMappingDictionaryRepository;
-import com.usareboot.back.repositories.AlbumsItemsRepository;
-import com.usareboot.back.repositories.AlbumsRepository;
+import com.usareboot.back.persistence.usareboot.repository.AlbumMappingDictionaryRepository;
+import com.usareboot.back.persistence.usareboot.repository.AlbumsItemsRepository;
+import com.usareboot.back.persistence.usareboot.repository.AlbumsRepository;
 import com.vk.api.sdk.client.VkApiClient;
 import com.vk.api.sdk.client.actors.GroupActor;
 import com.vk.api.sdk.exceptions.ApiException;
@@ -16,7 +16,6 @@ import com.vk.api.sdk.exceptions.ClientException;
 import com.vk.api.sdk.objects.messages.Keyboard;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
