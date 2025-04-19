@@ -36,6 +36,10 @@ public class ApiTokenEntity {
     @Column(name = "group_id")
     private Long groupId;
 
+    @Basic
+    @Column(name = "service_passkey")
+    private String servicePasskey;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

@@ -14,11 +14,11 @@ import java.util.Optional;
 public class BotDbMapper {
     public AlbumsItemsDTO mapBotVkToAlbumItem(VkBotResponseDTO vkBotResponseDTO, AlbumsEntity albumsEntity) {
 
-        var photoId = Optional.ofNullable(vkBotResponseDTO.getVk_event())
+        var photoId = Optional.ofNullable(vkBotResponseDTO.getVkEvent())
                 .map(VkEvent::getObject)
                 .map(VkPhotoObject::getId).orElse(0L);
 
-        var photoPatch = Optional.ofNullable(vkBotResponseDTO.getVk_event())
+        var photoPatch = Optional.ofNullable(vkBotResponseDTO.getVkEvent())
                 .map(VkEvent::getObject)
                 .map(VkPhotoObject::getAttachments)
                 .stream()
@@ -28,20 +28,20 @@ public class BotDbMapper {
                         .map(VkPhotoSizeResponse::getUrl)
                 ).findFirst().orElse("");
 
-        var rate = Arrays.stream(albumsEntity.getCourseAlbum().split("/")).toList();
+        /*var rate = Arrays.stream(albumsEntity.getCourseAlbum().split("/")).toList();
         double itemRate = 1;
         if(!rate.isEmpty()){
-            itemRate = Double.parseDouble(rate.get(0));}
+            itemRate = Double.parseDouble(rate.get(0));}*/
         return AlbumsItemsDTO.builder()
                 .albumId(albumsEntity.getAlbumId())
                 .vkItemId(photoId)
                 .photoPath(photoPatch)
                 .albumItemName(vkBotResponseDTO.getItemName())
                 .albumItemCount(vkBotResponseDTO.getItemCount())
-                .albumItemRate(itemRate)/*Поправить!!! стоит заглушка на курс выкупа*/
+                .albumItemRate(vkBotResponseDTO.getRate())
                 .vkPhotoPath("https://vk.com/photo-" + albumsEntity.getAlbumId() + "-" + photoId)
                 .itemUrl(vkBotResponseDTO.getItemUrl())
-                .albumItemCost(vkBotResponseDTO.getCost())
+                .albumItemCost(vkBotResponseDTO.getItemCost())
                 .albumItemColor(vkBotResponseDTO.getItemColor())
                 .build();
     }

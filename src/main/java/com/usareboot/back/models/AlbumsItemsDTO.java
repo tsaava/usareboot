@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 
 @Data
@@ -31,7 +32,7 @@ public class AlbumsItemsDTO {
     private Integer albumItemCount;
     private String dateCreate;
     private Double albumItemCost;
-    private Double albumItemRate;
+    private BigDecimal albumItemRate;
     private String albumItemColor;
     private Long albumItemStatus;
     private String albumItemStatusName;

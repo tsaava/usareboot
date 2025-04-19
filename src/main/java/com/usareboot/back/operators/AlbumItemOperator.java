@@ -10,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Date;
 import java.time.LocalDate;
 @Slf4j
@@ -27,10 +29,14 @@ public class AlbumItemOperator {
         DStatusesEntity status = dStatusRepository.findDStatusesEntityByStatusId(albumItemStatus);
         albumsItemsEntity.setAlbumItemStatus(status);
         albumsItemsEntity.setAlbumItemName(albumsItemsDTO.getAlbumItemName());
-        albumsItemsEntity.setAlbumItemCost(albumsItemsDTO.getAlbumItemCost());
+        BigDecimal albumItemCost = BigDecimal.valueOf(albumsItemsDTO.getAlbumItemCost());
+        albumsItemsEntity.setAlbumItemCost(albumItemCost);
         albumsItemsEntity.setAlbumItemRate(albumsItemsDTO.getAlbumItemRate());
         albumsItemsEntity.setItemColor(albumsItemsDTO.getAlbumItemColor());
-        albumsItemsEntity.setCost(albumsItemsDTO.getAlbumItemRate() * albumsItemsDTO.getAlbumItemCost());
+//        albumsItemsEntity.setCost(albumsItemsDTO.getAlbumItemRate() * albumsItemsDTO.getAlbumItemCost());
+        var cost = albumItemCost.multiply(albumsItemsDTO.getAlbumItemRate())
+                .setScale(2, RoundingMode.CEILING);
+        albumsItemsEntity.setCost(cost);
         albumsItemsEntity.setItemUrl(albumsItemsDTO.getItemUrl());
         albumsItemsEntity.setVkItemId(albumsItemsDTO.getVkItemId());
         albumsItemsEntity.setAlbumId(albumsRepository.findAlbumsEntityByAlbumId(albumsItemsDTO.getAlbumId()));

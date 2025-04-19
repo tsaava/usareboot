@@ -72,7 +72,7 @@ public class BotVkOperator {
                 data.getItemUrl() + " " +
                 data.getItemSize() + " " +
                 data.getItemColor() + " " +
-                data.getCost() + " " +
+                data.getItemCost() + " " +
                 data.getItemCount();
         itemOperator.saveItem(albumsItems, data.getTimestamp(), textOrder, orderId, data);
     }

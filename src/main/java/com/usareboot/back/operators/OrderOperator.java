@@ -19,7 +19,7 @@ public class OrderOperator {
 
     public long getOrderId(long fromId, Long albumId) {
 
-        //проверка на существующего пользователя в базе
+        log.debug("проверка на существующего пользователя в базе");
         var user = usersRepository.getUsersEntityByVkId(fromId);
         if (user == null) {
             JsonObject userName = commonOperator.getUserName((int) fromId);

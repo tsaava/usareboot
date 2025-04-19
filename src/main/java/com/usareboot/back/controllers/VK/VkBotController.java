@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 
 @RestController
 @RequiredArgsConstructor
@@ -27,8 +28,9 @@ public class VkBotController {
                                    @RequestParam(name = "cost", required = false) String cost,
                                    @RequestParam(name = "itemColor", required = false) String itemColor,
                                    @RequestParam(name = "timestamp", required = false) Integer timestamp,
-                                   @RequestParam(name = "vk_event", required = false) String vk_event) throws IOException {
-        vkBotService.saveClientItem(itemName, itemUrl, itemPhotoPath, itemSize, itemCount, clientId, cost, itemColor, timestamp, vk_event);
+                                   @RequestParam(name = "vk_event", required = false) String vk_event,
+                                   @RequestParam(name = "rate", required = false) BigDecimal rate) throws IOException {
+        vkBotService.saveClientItem(itemName, itemUrl, itemPhotoPath, itemSize, itemCount, clientId, cost, itemColor, timestamp, vk_event, rate);
         return ResponseEntity.ok("ok");
     }
 

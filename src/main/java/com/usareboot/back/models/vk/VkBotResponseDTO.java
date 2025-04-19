@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -20,6 +22,8 @@ public class VkBotResponseDTO {
     private String itemColor;
     private Integer clientId;
     private Integer timestamp;
-    private Double cost;
-    private VkEvent vk_event;
+    private Double itemCost;
+    private BigDecimal resultCost;
+    private VkEvent vkEvent;
+    private BigDecimal rate;
 }

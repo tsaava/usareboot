@@ -26,6 +26,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -214,7 +215,7 @@ public class VkBotService {
 
 
     @Async
-    public void saveClientItem(String itemName, String itemUrl, String itemPhotoPath, String itemSize, String itemCount, String clientId, String cost, String itemColor, Integer timestamp, String vk_event) throws IOException {
+    public void saveClientItem(String itemName, String itemUrl, String itemPhotoPath, String itemSize, String itemCount, String clientId, String cost, String itemColor, Integer timestamp, String vkEvent, BigDecimal rate) throws IOException {
         try {
             var eventId = threadLocal.get();
             VkBotResponseDTO data;
@@ -234,23 +235,24 @@ public class VkBotService {
                         .itemSize(itemSize)
                         .itemCount(Integer.valueOf(Optional.of(itemCount.trim()).orElse("1")))
                         .clientId(Integer.valueOf(clientId.trim()))
-                        .cost(cost1)
+                        .itemCost(cost1)
                         .itemColor(itemColor)
                         .timestamp(timestamp)
-                        .cost(cost.isEmpty() ? Double.parseDouble(cost) : 0)
+//                        .cost(cost.isEmpty() ? Double.parseDouble(cost) : 0)
+                        .rate(rate)
                         .build();
             } else {
                 log.error("clientId был равен 0");
                 throw new RuntimeException("Ошибка при сохранении заказа клиента: id клиента не был передан");
             }
-            if (vk_event != null) {
-                JsonObject json = JsonParser.parseString(vk_event).getAsJsonObject();
+            if (vkEvent != null) {
+                JsonObject json = JsonParser.parseString(vkEvent).getAsJsonObject();
                 vkPhotoObject = mapper.readValue(json.toString(), VkEvent.class);
-                data.setVk_event(vkPhotoObject);
+                data.setVkEvent(vkPhotoObject);
             }
             log.info("[Сценарий saveClientItem][Шаг: вывод полученных данных: {}][EventID: {}]", data, eventId);
 
-            if (itemUrl == null || vk_event == null)
+            if (itemUrl == null || vkEvent == null)
                 throw new RuntimeException("Ссылка на товар или фотография не была введена! Ошибка сохранения заказа");
 
             log.info("[Сценарий saveClientItem][Шаг: преобразование данных в AlbumItem][EventID: {}]", eventId);

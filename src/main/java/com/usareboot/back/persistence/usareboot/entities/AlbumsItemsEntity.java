@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.Date;
 import java.util.Objects;
@@ -62,7 +63,7 @@ public class AlbumsItemsEntity {
     private Date dateCreate;
     @Basic
     @Column(name = "albom_item_cost")
-    private Double albumItemCost;
+    private BigDecimal albumItemCost;
     @Basic
     @Column(name = "albom_item_rate")
     private Double albumItemRate;
@@ -75,7 +76,7 @@ public class AlbumsItemsEntity {
 
     @Basic
     @Column(name = "cost")
-    private Double cost;
+    private BigDecimal cost;
 
     @Basic
     @Column(name = "no_size")
@@ -139,11 +140,11 @@ public class AlbumsItemsEntity {
         this.dateCreate = dateCreate;
     }
 
-    public void setAlbumItemCost(Double albumItemCost) {
+    public void setAlbumItemCost(BigDecimal albumItemCost) {
         this.albumItemCost = albumItemCost;
     }
 
-    public void setAlbumItemRate(Double albumItemRate) {
+    public void setAlbumItemRate(BigDecimal albumItemRate) {
         this.albumItemRate = albumItemRate;
     }
 
@@ -155,7 +156,7 @@ public class AlbumsItemsEntity {
         this.vkPhotoPath = vkPhotoPath;
     }
 
-    public void setCost(Double cost) {
+    public void setCost(BigDecimal cost) {
         this.cost = cost;
     }
 

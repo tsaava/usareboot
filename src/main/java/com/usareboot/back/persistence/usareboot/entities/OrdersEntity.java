@@ -29,7 +29,7 @@ public class OrdersEntity {
 //    @Column(name = "order_cost")
 //    private Number orderCost;
     @Basic
-    @Column(name = "statusId")
+    @Column(name = "status_id")
     private Long statusId;
     @Basic
     @Column(name = "count_items_compleate")

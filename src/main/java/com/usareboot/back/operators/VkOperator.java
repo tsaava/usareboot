@@ -77,6 +77,7 @@ public class VkOperator {
 
     public String getCommentPhotoVk(long photo_id) throws IOException {
         var accessToken = commonOperator.getTokenClient(standaloneId).orElse(null);
+//        var accessToken = commonOperator.getServicePasskeyClient(standaloneId).orElse(null);
         final CloseableHttpClient httpclient = HttpClients.createDefault();
         final HttpPost httpPost = new HttpPost("https://api.vk.com/method/photos.getById");
         final List<NameValuePair> params = new ArrayList<>();
