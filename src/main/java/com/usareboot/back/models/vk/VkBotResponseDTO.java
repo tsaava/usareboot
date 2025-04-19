@@ -22,7 +22,7 @@ public class VkBotResponseDTO {
     private String itemColor;
     private Integer clientId;
     private Integer timestamp;
-    private Double itemCost;
+    private BigDecimal itemCost;
     private BigDecimal resultCost;
     private VkEvent vkEvent;
     private BigDecimal rate;
