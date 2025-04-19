@@ -76,7 +76,7 @@ public class AlbumsItemsService {
                     x.getAlbumItemWeight(),
                     x.getAlbumItemName(),
                     x.getAlbumItemCount(),
-                    x.getAlbumItemName(),
+                    null,
                     x.getAlbumItemCost(),
                     x.getAlbumItemRate(),
                     x.getItemColor(),

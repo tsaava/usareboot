@@ -37,6 +37,8 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
@@ -400,9 +402,11 @@ public class VkOperator {
     }
 
     public String getMessage(AlbumsItemsDTO albumsItemsDTO) {
-        int itemCost = 0;
+        BigDecimal itemCost = BigDecimal.valueOf(0);
         if (albumsItemsDTO.getAlbumItemCost() != null && albumsItemsDTO.getAlbumItemRate() != null) {
-            itemCost = (int) (albumsItemsDTO.getAlbumItemCost() * albumsItemsDTO.getAlbumItemRate());
+//            itemCost = (int) (albumsItemsDTO.getAlbumItemCost() * albumsItemsDTO.getAlbumItemRate());
+            itemCost = albumsItemsDTO.getAlbumItemCost().multiply(albumsItemsDTO.getAlbumItemRate())
+                    .setScale(0, RoundingMode.CEILING);
         }
         var message = albumsItemsDTO.getAlbumItemName() + " "
                 + albumsItemsDTO.getItemDescription() + "\n"

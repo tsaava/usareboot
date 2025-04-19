@@ -29,13 +29,13 @@ public class AlbumItemOperator {
         DStatusesEntity status = dStatusRepository.findDStatusesEntityByStatusId(albumItemStatus);
         albumsItemsEntity.setAlbumItemStatus(status);
         albumsItemsEntity.setAlbumItemName(albumsItemsDTO.getAlbumItemName());
-        BigDecimal albumItemCost = BigDecimal.valueOf(albumsItemsDTO.getAlbumItemCost());
+        BigDecimal albumItemCost = albumsItemsDTO.getAlbumItemCost();
         albumsItemsEntity.setAlbumItemCost(albumItemCost);
         albumsItemsEntity.setAlbumItemRate(albumsItemsDTO.getAlbumItemRate());
         albumsItemsEntity.setItemColor(albumsItemsDTO.getAlbumItemColor());
 //        albumsItemsEntity.setCost(albumsItemsDTO.getAlbumItemRate() * albumsItemsDTO.getAlbumItemCost());
         var cost = albumItemCost.multiply(albumsItemsDTO.getAlbumItemRate())
-                .setScale(2, RoundingMode.CEILING);
+                .setScale(0, RoundingMode.CEILING);
         albumsItemsEntity.setCost(cost);
         albumsItemsEntity.setItemUrl(albumsItemsDTO.getItemUrl());
         albumsItemsEntity.setVkItemId(albumsItemsDTO.getVkItemId());

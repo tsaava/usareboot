@@ -31,7 +31,7 @@ public class AlbumsItemsDTO {
     private String albumItemName;
     private Integer albumItemCount;
     private String dateCreate;
-    private Double albumItemCost;
+    private BigDecimal albumItemCost;
     private BigDecimal albumItemRate;
     private String albumItemColor;
     private Long albumItemStatus;

@@ -66,7 +66,7 @@ public class AlbumsItemsEntity {
     private BigDecimal albumItemCost;
     @Basic
     @Column(name = "albom_item_rate")
-    private Double albumItemRate;
+    private BigDecimal albumItemRate;
     @OneToOne
     @JoinColumn(name = "status_id")
     private DStatusesEntity statuses;
