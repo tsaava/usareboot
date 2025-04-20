@@ -12,6 +12,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 
 @Slf4j
@@ -46,7 +47,8 @@ public class CommonOperator {
 
     public boolean isExpiredToken(String clientId) {
         ApiTokenEntity apiTokenEntity = apiTokenRepository.findApiTokenEntityByVkClientId(Long.parseLong(clientId)).orElse(null);
-        return apiTokenEntity != null && LocalDateTime.now().isAfter(apiTokenEntity.getTokenEnd());
+        LocalDateTime now = LocalDateTime.now();
+        return apiTokenEntity != null && (LocalDateTime.now().isAfter(apiTokenEntity.getTokenEnd()) || ChronoUnit.MINUTES.between(now, apiTokenEntity.getTokenEnd()) <= 5);
     }
 
     public Optional<String> getRefreshToken(String clientId) {
