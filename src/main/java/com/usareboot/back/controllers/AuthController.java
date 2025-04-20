@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.usareboot.back.models.auth.*;
 import com.usareboot.back.security.JwtUtils;
 import com.usareboot.back.services.auth.UserDAO;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -137,8 +138,7 @@ public class AuthController {
     public Authentication authenticateUser(String login, String password) throws UnsupportedEncodingException, NoSuchAlgorithmException {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(login, userDAO.toSha1(password)));
-        System.out.println(userDAO.toSha1(password));
-        System.out.println(authentication);
+//        log.debug(authentication);
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         return authentication;

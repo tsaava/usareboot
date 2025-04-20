@@ -1,5 +1,6 @@
 package com.usareboot.back.services.auth;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -14,6 +15,7 @@ import com.usareboot.back.persistence.usareboot.entities.auth.UsersEntity;
 import java.util.*;
 
 @Service("userDetailsService")
+@Slf4j
 public class UserService implements UserDetailsService {
 
 
@@ -27,6 +29,7 @@ public class UserService implements UserDetailsService {
         UsersEntity user = userDAO.findUserByLogin(login);
 //        user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        log.debug("passwordEncoder.encode(user.getPassword()):{}", passwordEncoder.encode(user.getPassword()));
 
         List<GrantedAuthority> authorities = buildUserAuthority(userDAO.getRoleEntityByLogin(login));
 //        System.out.println(authorities.size());

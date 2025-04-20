@@ -235,7 +235,7 @@ public class VkBotService {
                         .itemSize(itemSize)
                         .itemCount(Integer.valueOf(Optional.of(itemCount.trim()).orElse("1")))
                         .clientId(Integer.valueOf(clientId.trim()))
-                        .itemCost(cost1)
+                        .itemCost(BigDecimal.valueOf(cost1))
                         .itemColor(itemColor)
                         .timestamp(timestamp)
 //                        .cost(cost.isEmpty() ? Double.parseDouble(cost) : 0)

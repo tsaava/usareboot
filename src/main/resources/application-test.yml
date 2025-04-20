@@ -8,10 +8,14 @@ spring:
         properties:
             hibernate:
     datasource:
-        url: jdbc:postgresql://localhost:5432/dbusareboot?currentSchema=public
-        username: usareboot
-        password: Katerina_2022
-        driver-class-name: org.postgresql.Driver
+        usareboot:
+            url: jdbc:postgresql://localhost:5432/dbusareboot
+            username: usareboot
+            password: Katerina_2022
+            driver-class-name: org.postgresql.Driver
+            schema: public
+            hibernate:
+                dialect: org.hibernate.dialect.PostgreSQLDialect
 
 vk:
     api:

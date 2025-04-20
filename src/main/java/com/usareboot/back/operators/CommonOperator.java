@@ -38,11 +38,11 @@ public class CommonOperator {
                 .map(ApiTokenEntity::getToken);
     }
 
-    public Optional<String> getServicePasskeyClient(String clientId) {
+   /* public Optional<String> getServicePasskeyClient(String clientId) {
         //        if(LocalDateTime.now().isAfter(token.getTokenEnd()))
         return apiTokenRepository.findApiTokenEntityByVkClientId(Long.parseLong(clientId))
                 .map(ApiTokenEntity::getServicePasskey);
-    }
+    }*/
 
     public boolean isExpiredToken(String clientId) {
         ApiTokenEntity apiTokenEntity = apiTokenRepository.findApiTokenEntityByVkClientId(Long.parseLong(clientId)).orElse(null);

@@ -1,5 +1,6 @@
 package com.usareboot.back.services.auth;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.usareboot.back.persistence.usareboot.entities.auth.DRolesEntity;
@@ -18,6 +19,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class UserDAO {
 
     @Autowired
@@ -29,11 +31,11 @@ public class UserDAO {
     @Autowired
     private ScienceRepository scienceRepository;
 
-//    кодировщик
+    //    кодировщик
     public String toSha1(String input) throws UnsupportedEncodingException, NoSuchAlgorithmException {
         MessageDigest msdDigest = MessageDigest.getInstance("SHA-1");
         msdDigest.update(input.getBytes("UTF-8"), 0, input.length());
-        String msd =  "\\x"+DatatypeConverter.printHexBinary(msdDigest.digest()).toLowerCase();
+        String msd = "\\x" + DatatypeConverter.printHexBinary(msdDigest.digest()).toLowerCase();
         return msd;
     }
 
@@ -52,7 +54,6 @@ public class UserDAO {
     public UsersEntity findUserByLogin(String login) {
         return userRepository.findUsersEntityByLogin(login).get();
     }
-
 
 
     public UsersEntity findUserByLoginAndPassword(String login, String password) throws UnsupportedEncodingException, NoSuchAlgorithmException {
@@ -77,7 +78,7 @@ public class UserDAO {
     public Set<DRolesEntity> findAllUserRolesUserId(UsersEntity user) {
 //        var userID = userRepository.findAllByUserId(user.getUserId());
         //из таблицы UsersEntity вытаскиваем поле roles с колекцией ролей
-        var roleArray =  (userRepository.findAllRolesByUserId(user.getUserId()).get(0).getRoles());//.toList();//.get(0).getRoles();
+        var roleArray = (userRepository.findAllRolesByUserId(user.getUserId()).get(0).getRoles());//.toList();//.get(0).getRoles();
 
 //        System.out.println(roleArray);
 //        var personRoles = roleArray.stream()
@@ -111,7 +112,7 @@ public class UserDAO {
         return personRepository.findPersonUsersEntitiesByUserId(userRepository.findUsersEntityByLogin(login).get().getUserId()).stream().map(x -> x.getRoleId()).collect(Collectors.toSet());
     }
 
-    private long getPersonUsersId(long roleId){
+    private long getPersonUsersId(long roleId) {
         return personRepository.findPersonUsersEntityByRoleId(roleId).getPersonUserId();
     }
 
@@ -141,17 +142,14 @@ public class UserDAO {
 //    }
 //    public String getUserByPidAndRole()
     public String getPasswordByLogin(String login) throws UnsupportedEncodingException, NoSuchAlgorithmException {
-        System.out.println( userRepository.findUsersEntityByLogin(login).get().getPassword());
-
+//        System.out.println( userRepository.findUsersEntityByLogin(login).get().getPassword());
+        log.debug(userRepository.findUsersEntityByLogin(login).get().getPassword());
         return userRepository.findUsersEntityByLogin(login).get().getPassword();
     }
 
-    public Long getRoleNameByRoleId(Long roleId){
+    public Long getRoleNameByRoleId(Long roleId) {
         return rolesRepository.findDRolesEntityByRoleId(roleId).getRoleId();
     }
-
-
-
 
 
 //    // convert Entity to Dto

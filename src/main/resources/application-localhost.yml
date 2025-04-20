@@ -6,10 +6,14 @@ spring:
         properties:
             hibernate:
     datasource:
-        url: jdbc:postgresql://77.222.58.194:5432/dbusareboot?public
-        username: usareboot
-        password: Katerina_2022
-        driver-class-name: org.postgresql.Driver
+        usareboot:
+            url: jdbc:postgresql://77.222.58.194:5432/dbusareboot
+            username: usareboot
+            password: Katerina_2022
+            driver-class-name: org.postgresql.Driver
+            schema: public
+            hibernate:
+                dialect: org.hibernate.dialect.PostgreSQLDialect
 #        hikari:
 #            minimumIdle: 2
 #            maximumPoolSize: 10
