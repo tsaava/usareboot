@@ -74,6 +74,9 @@ public class ItemsEntity {
     @Basic
     @Column(name = "repayment_name")
     private String repaymentName;
+    @Basic
+    @Column(name = "item_cost")
+    private String itemCost;
 
     public void setItemId(long itemId) {
         this.itemId = itemId;
@@ -150,6 +153,9 @@ public class ItemsEntity {
     }
     public void setRepaymentName(String repaymentName) {
         this.repaymentName = repaymentName;
+    }
+    public void setItemCost(String itemCost) {
+        this.itemCost = itemCost;
     }
 
     @Override

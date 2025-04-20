@@ -27,9 +27,7 @@ public class UserService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
         UsersEntity user = userDAO.findUserByLogin(login);
-//        user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        log.debug("passwordEncoder.encode(user.getPassword()):{}", passwordEncoder.encode(user.getPassword()));
 
         List<GrantedAuthority> authorities = buildUserAuthority(userDAO.getRoleEntityByLogin(login));
 //        System.out.println(authorities.size());

@@ -51,12 +51,16 @@ public class ItemOperator {
 
             if (parsedComment.getCount() != null)
                 itemsEntity.setItemCount(Integer.valueOf(parsedComment.getCount()));
+            else
+                itemsEntity.setItemCount(1);
         } else {
             itemsEntity.setItemSize(data.getItemSize());
             itemsEntity.setItemUrl(data.getItemUrl());
             itemsEntity.setItemColor(data.getItemColor());
             itemsEntity.setItemCount(data.getItemCount());
         }
+        //TODO записывать явно стоимость товара-вытянуть стоимость в валюте и умножить на курс
+//        itemsEntity.setItemCost();
 //        itemsEntity.setVkUrl("https://vk.com/photo-" + groupId + "_" + photoId);
 
         itemsRepository.save(itemsEntity);
