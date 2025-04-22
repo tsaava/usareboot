@@ -234,7 +234,6 @@ public class VkOperator {
         UserActor actor = new UserActor(Integer.valueOf(standaloneId), accessToken);
 
         log.info("Получаем URL для загрузки");
-//        var photoUploadVk = getUrlPhotoInAlbumVk(albumId);
 
         var uploadUrl = vk.photos().getUploadServer(actor)
                 .albumId(albumId)
@@ -248,16 +247,12 @@ public class VkOperator {
         List<File> photoFiles;
         try {
             photoFiles = getFiles(multipartFiles, tempFiles);
-//            for (var photoFile : multipartFiles) {
             for (File photoFile : photoFiles) {
                 log.info("Загружаем файл");
-//                var vkPhotoList = configureFeignUrlController.uploadPhotoInVk(photoUploadVk, photoFile);
 
                 PhotoUploadResponse uploadResponse = vk.upload()
                         .photo(uploadUrl, photoFile)
                         .execute();
-
-
                 log.info("Сохранение фотографий после загрузки");
                 var photos = vk.photos().save(actor)
                         .albumId(albumId)
@@ -266,14 +261,12 @@ public class VkOperator {
                         .photosList(uploadResponse.getPhotosList())
                         .groupId(Integer.valueOf(groupId))
                         .execute();
-//                var photo = savePhotoInVk(vkPhotoList.getPhotos_list(), String.valueOf(albumId), String.valueOf(vkPhotoList.getServer()), vkPhotoList.getHash());
 
                 var photo = photos.get(0);
                 var photoId = photo.getId().toString();
                 log.info("photoId: {}", photoId);
                 log.info("photo.getOwnerId(): {}", photo.getOwnerId());
 
-//                photoAttachments.add("-"+groupId + "_" + photo);
                 photoAttachments.add(photo.getOwnerId() + "_" + photoId);
                 log.info("photoAttachments: {}", photoAttachments);
             }
@@ -497,4 +490,14 @@ public class VkOperator {
         return "photo" + photo.getOwnerId() + "_" + photo.getId();
     }
 
+    /**
+     * Получает фото из таблицы маппинга альбомов
+     *
+     * @param chatId   ID беседы (положительное число)
+     * @param photoIds ID фото в формате "ownerId_photoId"
+     * @param message  Текст сообщения
+     */
+    public MultipartFile getAlbumCoverPhoto(){
+        return null;
+    }
 }

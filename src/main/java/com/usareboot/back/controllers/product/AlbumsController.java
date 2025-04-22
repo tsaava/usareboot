@@ -5,6 +5,8 @@ import com.usareboot.back.persistence.usareboot.entities.AlbumsEntity;
 import com.usareboot.back.models.AlbumRowRequestDTO;
 import com.usareboot.back.services.AlbumsService;
 import com.usareboot.back.services.vk.VkService;
+import com.vk.api.sdk.exceptions.ApiException;
+import com.vk.api.sdk.exceptions.ClientException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -41,10 +43,10 @@ public class AlbumsController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<?> addAlbum(@RequestBody AlbumsEntity data) throws IOException {
+    public ResponseEntity<?> addAlbum(@RequestBody AlbumsEntity data) throws IOException, ClientException, ApiException {
         albumsService.albumsAdd(data, null);
-        Integer album = vkService.createAlbum(data);
-        albumsService.albumsAdd(data, album);
+        Integer albumId = vkService.createAlbum(data);
+        albumsService.albumsAdd(data, albumId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

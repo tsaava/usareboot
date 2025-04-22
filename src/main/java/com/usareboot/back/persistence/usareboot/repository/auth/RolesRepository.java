@@ -7,7 +7,8 @@ import com.usareboot.back.persistence.usareboot.entities.auth.DRolesEntity;
 @Repository
 public interface RolesRepository extends JpaRepository<DRolesEntity, Long> {
 
-    DRolesEntity findDRolesEntityByRoleId(Long roleId);
+    DRolesEntity findDRolesEntityByRoleIdAndActive(Long roleId, int active);
+//    DRolesEntity findDRolesEntityByRoleIdAndActive(Long roleId, int active);
 
 //    DRolesEntity findDRolesEntityByRoleName(String roleName);
 

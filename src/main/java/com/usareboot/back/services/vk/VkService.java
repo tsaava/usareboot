@@ -14,6 +14,8 @@ import com.usareboot.back.operators.*;
 import com.usareboot.back.persistence.usareboot.entities.AlbumsEntity;
 import com.usareboot.back.persistence.usareboot.entities.ApiTokenEntity;
 import com.usareboot.back.persistence.usareboot.repository.*;
+import com.vk.api.sdk.exceptions.ApiException;
+import com.vk.api.sdk.exceptions.ClientException;
 import com.vk.api.sdk.objects.messages.Keyboard;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -198,7 +200,7 @@ public class VkService {
     }
 
     @Async
-    public Integer createAlbum(AlbumsEntity albumsEntity) throws IOException {
+    public Integer createAlbum(AlbumsEntity albumsEntity) throws IOException, ApiException, ClientException {
         var eventId = threadLocal.get();
         log.info("[Сценарий createAlbum][Шаг: Начало][EventID: {}]", eventId);
         accessToken = commonOperator.getTokenClient(standaloneId).orElse(null);
@@ -236,6 +238,15 @@ public class VkService {
             if (!userDtoList.isEmpty())
                 id = userDtoList.get(0).getResponse().getId();
             log.debug("[Сценарий createAlbum][Шаг: Проверка serDtoList.size(): {} и id: {}][EventID: {}]", userDtoList.size(), id, eventId);
+
+            log.info("[Сценарий createAlbum][Шаг: Получение фото по ссылке из таблицы маппинга][EventID: {}]", eventId);
+//            MultipartFile albumCoverPhoto = vkOperator.getAlbumCoverPhoto(id);
+//            List<MultipartFile> multipartFileList = new ArrayList<>();
+//            multipartFileList.add(albumCoverPhoto);
+//            if (id != null) {
+//                log.info("[Сценарий createAlbum][Шаг: Загрузка обложки в альбом][EventID: {}]", eventId);
+//                vkOperator.uploadPhotoForAlbum(multipartFileList, id);
+//            }
             log.info("[Сценарий createAlbum][Шаг: Финиш][EventID: {}]", eventId);
             return id;
         }
@@ -438,7 +449,7 @@ public class VkService {
         );
     }
 
-    private  String getTypeFile(AlbumsItemsDTO albumsItemsDTO) {
+    private String getTypeFile(AlbumsItemsDTO albumsItemsDTO) {
         // Определяем имя файла и расширение
         String fullFileName = albumsItemsDTO.getPhotoUrl().substring(albumsItemsDTO.getPhotoUrl().lastIndexOf("/") + 1);
         String fileName = fullFileName.contains(".") ?

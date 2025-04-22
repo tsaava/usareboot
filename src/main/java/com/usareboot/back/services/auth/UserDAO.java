@@ -117,7 +117,7 @@ public class UserDAO {
     }
 
     public DRolesEntity getRoleById(Long roleId) {
-        return rolesRepository.findDRolesEntityByRoleId(roleId);
+        return rolesRepository.findDRolesEntityByRoleIdAndActive(roleId, 1);
     }
 
 
@@ -132,7 +132,7 @@ public class UserDAO {
         var roleArray = userRepository.findUsersEntityByLogin(login).get().getRoles();
         System.out.println(roleArray.stream().findFirst());
 //        return rolesRepository.findDRolesEntityByRoleId(roleArray.stream().findFirst().get().getRoleId()).getRoleName();
-        return rolesRepository.findDRolesEntityByRoleId(roleArray.stream().findFirst().get().getRoleId()).getRoleName();
+        return rolesRepository.findDRolesEntityByRoleIdAndActive(roleArray.stream().findFirst().get().getRoleId(),1).getRoleName();
 
     }
 
@@ -147,9 +147,6 @@ public class UserDAO {
         return userRepository.findUsersEntityByLogin(login).get().getPassword();
     }
 
-    public Long getRoleNameByRoleId(Long roleId) {
-        return rolesRepository.findDRolesEntityByRoleId(roleId).getRoleId();
-    }
 
 
 //    // convert Entity to Dto

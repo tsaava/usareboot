@@ -1,5 +1,6 @@
 package com.usareboot.back.services.auth;
 
+import com.usareboot.back.persistence.usareboot.entities.auth.DRolesEntity;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
@@ -43,7 +44,9 @@ public class UserService implements UserDetailsService {
     public List<GrantedAuthority> buildUserAuthority(Set<Long> userRolesId) {
         Set<GrantedAuthority> grantedAuthorities = new HashSet<>();
 //        System.out.println(userRolesId.size());
-        userRolesId.forEach((userRoleId) -> grantedAuthorities.add(new SimpleGrantedAuthority(userDAO.getRoleById(userRoleId).getRoleName())));
+        userRolesId.forEach((userRoleId) -> {
+            Optional.ofNullable(userDAO.getRoleById(userRoleId)).map(DRolesEntity::getRoleName).ifPresent(roleName -> grantedAuthorities.add(new SimpleGrantedAuthority(roleName)));
+        });
         return new ArrayList<>(grantedAuthorities);
     }
 
