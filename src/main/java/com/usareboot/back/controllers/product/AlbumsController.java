@@ -21,7 +21,6 @@ import java.io.IOException;
 @RequiredArgsConstructor
 
 public class AlbumsController {
-
     private AlbumsService albumsService;
     private VkService vkService;
 
@@ -57,18 +56,12 @@ public class AlbumsController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-   /* @PostMapping("/wall")
-    public ResponseEntity<?> createPost(@RequestParam(name="message") String message) {
-        albumsService.createPost(message);
-        return new ResponseEntity<>(HttpStatus.OK);
-    }*/
-
     @PatchMapping("/update/{token}")
     public ResponseEntity<?> patchAlbum(
             @PathVariable String token,
             @RequestBody AlbumRowRequestDTO data) throws IOException {
         System.out.println(data);
-        var vk = vkService.updAlbum(String.valueOf(data.getAlbumVkId()), token, data);
+        var vk = vkService.updAlbum(String.valueOf(data.getAlbumVkId()), data);
         System.out.println(vk);
         System.out.println("в вк альбом обновился, id = " + data.getAlbumVkId());
         albumsService.albumsUpd(data, data.getAlbumId());

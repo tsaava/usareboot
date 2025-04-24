@@ -8,6 +8,7 @@ import com.usareboot.back.models.vk.VkAlbumItemResponse;
 import com.usareboot.back.models.vk.VkAlbumResponse;
 import com.usareboot.back.models.vk.VkPhotoSaveDTO;
 import com.usareboot.back.models.vk.VkPostRequestDTO;
+import com.usareboot.back.other.VkImageConverter;
 import com.vk.api.sdk.client.TransportClient;
 import com.vk.api.sdk.client.VkApiClient;
 import com.vk.api.sdk.client.actors.GroupActor;
@@ -17,6 +18,7 @@ import com.vk.api.sdk.exceptions.ClientException;
 import com.vk.api.sdk.httpclient.HttpTransportClient;
 import com.vk.api.sdk.objects.photos.responses.MessageUploadResponse;
 import com.vk.api.sdk.objects.photos.responses.PhotoUploadResponse;
+import jakarta.persistence.criteria.CriteriaBuilder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpEntity;
@@ -30,6 +32,7 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
@@ -37,8 +40,11 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
@@ -70,6 +76,7 @@ public class VkOperator {
 
 
     private final CommonOperator commonOperator;
+    private final VkImageConverter vkImageConverter;
     private final VkApiCustomClient vkApiCustomClient;
     private final ConfigureFeignUrlController configureFeignUrlController;
     private final RestTemplate restTemplate;
@@ -204,7 +211,8 @@ public class VkOperator {
         }
     }
 
-    public List<File> getFiles(List<MultipartFile> multipartFiles, List<Path> tempFiles) throws IOException {
+    public List<Path> getFiles(List<MultipartFile> multipartFiles) throws IOException {
+        List<Path> tempFiles = new ArrayList<>();
         log.info("Создаем временные файлы");
         for (MultipartFile multipartFile : multipartFiles) {
             try {
@@ -216,9 +224,10 @@ public class VkOperator {
             }
         }
         log.info("Конвертируем в File для совместимости");
-        return tempFiles.stream()
+        return tempFiles;
+       /* return tempFiles.stream()
                 .map(Path::toFile)
-                .toList();
+                .toList();*/
     }
 
 
@@ -226,7 +235,7 @@ public class VkOperator {
      * Загружает фотки рекламного поста для отправки в чат
      */
     public List<String> uploadPhotoForAlbum(List<MultipartFile> multipartFiles, int albumId)
-            throws ClientException, ApiException, IOException {
+            throws ClientException, ApiException {
         var accessToken = commonOperator.getTokenClient(standaloneId).orElse("");
 
         TransportClient transportClient = new HttpTransportClient();
@@ -246,7 +255,10 @@ public class VkOperator {
         List<Path> tempFiles = new ArrayList<>();
         List<File> photoFiles;
         try {
-            photoFiles = getFiles(multipartFiles, tempFiles);
+            tempFiles = getFiles(multipartFiles);
+            photoFiles = tempFiles.stream()
+                    .map(Path::toFile)
+                    .toList();
             for (File photoFile : photoFiles) {
                 log.info("Загружаем файл");
 
@@ -288,7 +300,7 @@ public class VkOperator {
     /**
      * Загружает фотки рекламного поста для отправки в чат
      */
-    public List<String> uploadPhotoForChat(List<MultipartFile> multipartFiles)
+    /*public List<String> uploadPhotoForChat(List<MultipartFile> multipartFiles)
             throws ClientException, ApiException, IOException {
         var accessToken = commonOperator.getTokenClient(standaloneId).orElse("");
 
@@ -299,18 +311,22 @@ public class VkOperator {
 
         log.info("Загрузка фотографий на сервер VK");
         var uploadUrl = getMessagesUploadServer();
-       /* var uploadUrl = vk.photos().getMessagesUploadServer(actor)
+        var uploadUrl = vk.photos().getMessagesUploadServer(actor)
                 .execute()
                 .setGroupId(Integer.valueOf(groupId))
-                .getUploadUrl();*/
+                .getUploadUrl();
 
         List<String> photoAttachments = new ArrayList<>();
 
         List<Path> tempFiles = new ArrayList<>();
         List<File> photoFiles;
         try {
-            photoFiles = getFiles(multipartFiles, tempFiles);
+            tempFiles = getFiles(multipartFiles);
+            photoFiles = tempFiles.stream()
+                    .map(Path::toFile)
+                    .toList();
             for (File photoFile : photoFiles) {
+                tempFiles.add(photoFile.toPath());
                 MessageUploadResponse uploadResponse = vk.upload()
                         .photoMessage(uploadUrl.toString(), photoFile)
                         .execute();
@@ -341,25 +357,8 @@ public class VkOperator {
             });
         }
         return photoAttachments;
-    }
+    }*/
 
-    public String getMessagesUploadServer() {
-        String url = VK_API_URL + "/photos.getMessagesUploadServer";
-        var accessToken = commonOperator.getTokenClient(standaloneId).orElse("");
-
-        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url)
-                .queryParam("group_id", groupId)
-//                .queryParam("user_id", standaloneId)
-                .queryParam("access_token", accessToken)
-                .queryParam("v", apiVersion);
-
-        ResponseEntity<Map> response = restTemplate.getForEntity(
-                builder.toUriString(),
-                Map.class
-        );
-
-        return (String) ((Map<?, ?>) Objects.requireNonNull(response.getBody()).get("response")).get("upload_url");
-    }
     /**
      * Отправляет фото из альбома в чат
      *
@@ -394,6 +393,18 @@ public class VkOperator {
         log.info("Сообщение успешно отправлено");
     }
 
+    public void photosMakeCover(int vkPhotoId, int albumId) throws ClientException, ApiException {
+        var accessToken = commonOperator.getTokenClient(standaloneId).orElse("");
+        TransportClient transportClient = new HttpTransportClient();
+        VkApiClient vk = new VkApiClient(transportClient);
+        UserActor actor = new UserActor(Integer.valueOf(standaloneId), accessToken);
+
+        log.info("Выбираем фотографию {} обложкой альбома {}", vkPhotoId, albumId);
+        vk.photos().makeCover(actor, vkPhotoId)
+                .albumId(albumId)
+                .execute();
+    }
+
     public String getMessage(AlbumsItemsDTO albumsItemsDTO) {
         BigDecimal itemCost = BigDecimal.valueOf(0);
         if (albumsItemsDTO.getAlbumItemCost() != null && albumsItemsDTO.getAlbumItemRate() != null) {
@@ -426,8 +437,8 @@ public class VkOperator {
 
         // 2. Ищем скрытый альбом по названию
         for (var album : albums) {
-            if (album.getTitle().equalsIgnoreCase(albumTitle)){
-            // Проверяем параметры приватности
+            if (album.getTitle().equalsIgnoreCase(albumTitle)) {
+                // Проверяем параметры приватности
                 return album.getId();  // Нашли подходящий скрытый альбом
             }
         }
@@ -490,14 +501,100 @@ public class VkOperator {
         return "photo" + photo.getOwnerId() + "_" + photo.getId();
     }
 
+    public String getTypeFile(AlbumsItemsDTO albumsItemsDTO) {
+        // Определяем имя файла и расширение
+        String fullFileName = albumsItemsDTO.getPhotoUrl().substring(albumsItemsDTO.getPhotoUrl().lastIndexOf("/") + 1);
+        String fileName = fullFileName.contains(".") ?
+                fullFileName.substring(0, fullFileName.lastIndexOf('.')) :
+                "file_" + System.currentTimeMillis();
+        String fileExtension = fullFileName.contains(".") ?
+                fullFileName.substring(fullFileName.lastIndexOf('.') + 1) :
+                "jpg"; // дефолтное расширение
+
+        // Определяем Content-Type по расширению
+        return determineContentType(fileExtension);
+    }
+
+    // Метод для определения Content-Type
+    private String determineContentType(String fileExtension) {
+        switch (fileExtension.toLowerCase()) {
+            case "jpg":
+            case "jpeg":
+                return "image/jpeg";
+            case "png":
+                return "image/png";
+            case "gif":
+                return "image/gif";
+            case "webp":
+                return "image/webp";
+            case "x-webp":
+                return "image/x-webp";
+            default:
+                return "application/octet-stream";
+        }
+    }
+    /* */
+
+    public MultipartFile getMultipartFile(AlbumsItemsDTO albumsItemsDTO, String type) throws IOException {
+        InputStream inputStream = null;
+        String fileName = "";
+        String fileType = "";
+        if (type.equals("file")) {
+            // Загружаем InputStream из URL
+            URL url = new URL(albumsItemsDTO.getPhotoUrl());
+            inputStream = url.openStream();
+
+            // Достаем имя файла из URL (например, "image.jpg")
+            fileName = albumsItemsDTO.getPhotoUrl().substring(albumsItemsDTO.getPhotoUrl().lastIndexOf("/") + 1);
+            fileType = getTypeFile(albumsItemsDTO);
+            log.info("Фото по ссылке получено");
+        }
+        if (type.equals("adFile1")) {
+            URL url = new URL(albumsItemsDTO.getAdItemUrl1());
+            inputStream = url.openStream();
+
+            fileName = albumsItemsDTO.getAdItemUrl1().substring(albumsItemsDTO.getAdItemUrl1().lastIndexOf("/") + 1);
+            fileType = getTypeFile(albumsItemsDTO);
+            log.info("Фото по ссылке получено");
+        }
+        if (type.equals("adFile2")) {
+            URL url = new URL(albumsItemsDTO.getAdItemUrl2());
+            inputStream = url.openStream();
+
+            fileName = albumsItemsDTO.getAdItemUrl2().substring(albumsItemsDTO.getAdItemUrl2().lastIndexOf("/") + 1);
+            fileType = getTypeFile(albumsItemsDTO);
+            log.info("Фото по ссылке получено");
+        }
+        if (type.equals("adFile3")) {
+            URL url = new URL(albumsItemsDTO.getAdItemUrl3());
+            inputStream = url.openStream();
+
+            fileName = albumsItemsDTO.getAdItemUrl3().substring(albumsItemsDTO.getAdItemUrl3().lastIndexOf("/") + 1);
+            fileType = getTypeFile(albumsItemsDTO);
+            log.info("Фото по ссылке получено");
+        }
+        // Создаем MultipartFile из InputStream
+        return new MockMultipartFile(
+                fileName,         // Имя файла
+                fileName,         // Оригинальное имя файла
+                fileType,     // MIME тип (укажите нужный тип, например, "image/png")
+                inputStream       // Данные файла
+        );
+    }
+
     /**
      * Получает фото из таблицы маппинга альбомов
      *
-     * @param chatId   ID беседы (положительное число)
-     * @param photoIds ID фото в формате "ownerId_photoId"
-     * @param message  Текст сообщения
+     * @param coverPhotoUrl ID беседы (положительное число)
      */
-    public MultipartFile getAlbumCoverPhoto(){
+    public MultipartFile getAlbumCoverPhoto(String coverPhotoUrl) {
+        try {
+            AlbumsItemsDTO dto = AlbumsItemsDTO.builder().photoUrl(coverPhotoUrl).build();
+            var file = getMultipartFile(dto, "file");
+
+            var vkCoverPhoto = vkImageConverter.convertToSupportedFormat(file);
+        } catch (Exception e) {
+        }
         return null;
     }
 }

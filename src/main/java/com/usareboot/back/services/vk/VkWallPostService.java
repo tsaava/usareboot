@@ -68,8 +68,11 @@ public class VkWallPostService {
 
         List<Path> tempFiles = new ArrayList<>();
         try {
-            List<File> photoFiles = vkOperator.getFiles(multipartFiles, tempFiles);
 
+            tempFiles= vkOperator.getFiles(multipartFiles);
+            List<File> photoFiles = tempFiles.stream()
+                    .map(Path::toFile)
+                    .toList();
             for (File photoFile : photoFiles) {
                 WallUploadResponse uploadResponse = vk.upload()
                         .photoWall(uploadUrl, photoFile)

@@ -1,10 +1,14 @@
 package com.usareboot.back.persistence.usareboot.entities;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Objects;
 
 @Entity
+@Getter
+@Setter
 @Table(name = "album_mapping_dictionary",  catalog = "dbusareboot")
 public class AlbumMappingDictionaryEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,6 +24,16 @@ public class AlbumMappingDictionaryEntity {
     @Basic
     @Column(name = "active")
     private long active;
+
+    @Basic
+    @Column(name = "currency")
+    private String currency;
+    @Basic
+    @Column(name = "country")
+    private String country;
+    @Basic
+    @Column(name = "url_cover")
+    private String url_cover;
 
     public long getAlbumMappingDictionaryId() {
         return albumMappingDictionaryId;

@@ -38,10 +38,6 @@ public class AlbumsItemsController {
     private VkService vkService;
     @Autowired
     private VkWallPostService vkWallPostService;
-    @Autowired
-    private ConfigureFeignUrlController configureFeignUrlController;
-    @Autowired
-    private Environment environment;
 
     private final VkImageConverter vkImageConverter;
 
@@ -51,14 +47,7 @@ public class AlbumsItemsController {
         return new ResponseEntity<>(new Gson().toJson(albumsItemsService.getAlbumsItems(albumId)), HttpStatus.OK);
     }
 
-    @PostMapping(value = "/create/{albumId}"/*, produces=MediaType.APPLICATION_OCTET_STREAM_VALUE, consumes=MediaType.APPLICATION_OCTET_STREAM_VALUE*/ /*MediaType.MULTIPART_FORM_DATA_VALUE*//* MediaType.IMAGE_JPEG_VALUE*//*.ALL_VALUE*//*MediaType.IMAGE_GIF_VALUE*/)
-    public void itemCreate(
-            @PathVariable long albumId,
-            @RequestBody AlbumsItemsDTO albumsItemsDTO,
-            @RequestBody ByteArrayResource photo) {
-    }
-
-    @PostMapping(value = "/photo/upload/param", consumes = MediaType.MULTIPART_FORM_DATA_VALUE/*, consumes=MediaType.APPLICATION_OCTET_STREAM_VALUE*/ /*MediaType.MULTIPART_FORM_DATA_VALUE*//* MediaType.IMAGE_JPEG_VALUE*//*.ALL_VALUE*//*MediaType.IMAGE_GIF_VALUE*/)
+    @PostMapping(value = "/photo/upload/param", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Map<String, String>> itemPhotoUpload (
             @RequestParam(name = "album") long albumId,
             @RequestPart(name = "file", required = false) MultipartFile file,
