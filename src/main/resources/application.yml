@@ -8,6 +8,10 @@ server:
             charset: UTF-8
             enabled: true
             force: true
+    tomcat:
+        basedir: ./tmp-tomcat  # хранить временные файлы в ./tmp (относительно рабочей директории)
+        background-processor:
+            delay: 30s    # интервал очистки временных файлов
 springdoc:
     show-actuator: true
     swagger-ui:

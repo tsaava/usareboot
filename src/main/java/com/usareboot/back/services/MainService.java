@@ -12,6 +12,7 @@ import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.StoredProcedureQuery;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,7 +29,8 @@ public class MainService {
     private final DStatusRepository dStatusRepository;
     private final RepaymentsRepository repaymentsRepository;
     private final ApiTokenRepository apiTokenRepository;
-
+    @Value("${spring.datasource.usareboot.schema}")
+    String schemaName;
     public ArrayList<ImportDTO> getListImport(String listAlbom) {
         ArrayList<ImportDTO> scienceDiplomsList = new ArrayList<>();
         if (!Objects.equals(listAlbom, "[]"))

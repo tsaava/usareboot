@@ -14,7 +14,7 @@ public class ItemListDTO {
         Long payStatusId;
         long albumId;
         Long albumItemId;
-        long vkId;
+        Long vkId;
         long orderId;
         String clientUrl;
         String fi;

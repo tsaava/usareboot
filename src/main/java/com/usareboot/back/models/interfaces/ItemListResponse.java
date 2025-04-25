@@ -7,7 +7,7 @@ public interface ItemListResponse {
     Long getpay_status_id();
     long getalbom_id();
     Long getalbom_item_id();
-    long getvk_id();
+    Long getvk_id();
     long getorder_id();
     String getfi();
     String getclient_Url();
