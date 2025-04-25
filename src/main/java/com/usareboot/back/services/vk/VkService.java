@@ -272,9 +272,10 @@ public class VkService {
                 var commentText = object.get("text").getAsString();
                 var albumId = albumsItems.getAlbum().getAlbumId();
                 var fromId = object.get("from_id").getAsLong();
+                var commentId = object.get("id").getAsLong();
                 var orderId = orderOperator.getOrderId(fromId, albumId);
 
-                itemOperator.saveItem(albumsItems, dateInSeconds, commentText, orderId, null);
+                itemOperator.saveItem(albumsItems, dateInSeconds, commentText, orderId, null, commentId);
             } catch (Exception e) {
                 log.error("Ошибка при сохранения комментария: ", e);
             }

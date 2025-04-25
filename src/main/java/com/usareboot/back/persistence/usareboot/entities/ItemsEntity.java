@@ -2,6 +2,7 @@ package com.usareboot.back.persistence.usareboot.entities;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.math.BigInteger;
 import java.sql.Date;
@@ -9,6 +10,7 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Getter
+@Setter
 @Entity
 @Table(name = "items",  catalog = "usareboot")
 public class ItemsEntity {
@@ -77,6 +79,10 @@ public class ItemsEntity {
     @Basic
     @Column(name = "item_cost")
     private String itemCost;
+
+    @Basic
+    @Column(name = "comment_id")
+    private Long commentId;
 
     public void setItemId(long itemId) {
         this.itemId = itemId;

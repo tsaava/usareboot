@@ -20,7 +20,7 @@ import java.time.ZoneId;
 public class ItemOperator {
     private final ItemsRepository itemsRepository;
 
-    public void saveItem(AlbumsItemsEntity albumsItems, long dateInSeconds, String commentText, long orderId, VkBotResponseDTO data) {
+    public void saveItem(AlbumsItemsEntity albumsItems, long dateInSeconds, String commentText, long orderId, VkBotResponseDTO data, Long commentId) {
         LocalDateTime commentDate = LocalDateTime.ofInstant(Instant.ofEpochSecond(dateInSeconds), ZoneId.systemDefault());// Преобразование даты в LocalDateTime
 
         ItemsEntity itemsEntity = new ItemsEntity();
@@ -59,6 +59,7 @@ public class ItemOperator {
             itemsEntity.setItemColor(data.getItemColor());
             itemsEntity.setItemCount(data.getItemCount());
         }
+        itemsEntity.setCommentId(commentId);
         //TODO записывать явно стоимость товара-вытянуть стоимость в валюте и умножить на курс
 //        itemsEntity.setItemCost();
 //        itemsEntity.setVkUrl("https://vk.com/photo-" + groupId + "_" + photoId);

@@ -74,7 +74,7 @@ public class BotVkOperator {
                 data.getItemColor() + " " +
                 data.getItemCost() + " " +
                 data.getItemCount();
-        itemOperator.saveItem(albumsItems, data.getTimestamp(), textOrder, orderId, data);
+        itemOperator.saveItem(albumsItems, data.getTimestamp(), textOrder, orderId, data, null);
     }
 
     public String getHost(String itemUrl) {
