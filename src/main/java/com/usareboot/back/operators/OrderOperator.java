@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import static com.usareboot.back.models.constant.Constant.NEW_ITEM_STATUS;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -36,7 +38,7 @@ public class OrderOperator {
             orders = new OrdersEntity();
             orders.setClientId(user.getUserId());
             orders.setAlbumId(albumId);
-            orders.setStatusId(24L);
+            orders.setStatusId(NEW_ITEM_STATUS);
             log.info(String.valueOf(orders));
             ordersId = ordersRepository.save(orders).getOrderId();
         } else

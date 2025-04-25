@@ -14,6 +14,8 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 
+import static com.usareboot.back.models.constant.Constant.NEW_ITEM_STATUS;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -30,7 +32,7 @@ public class ItemOperator {
         itemsEntity.setOrderId(orderId);
         itemsEntity.setItemName(albumsItems.getAlbumItemName());
         itemsEntity.setVkUrl(albumsItems.getItemUrl());
-        itemsEntity.setItemStatus(24L);
+        itemsEntity.setItemStatus(NEW_ITEM_STATUS);
 
         if (data == null) {
             CommentParser parser = new CommentParser();// Вызов парсера комментариев
@@ -59,7 +61,7 @@ public class ItemOperator {
             itemsEntity.setItemColor(data.getItemColor());
             itemsEntity.setItemCount(data.getItemCount());
         }
-        itemsEntity.setCommentId(commentId);
+        itemsEntity.setVkCommentId(commentId);
         //TODO записывать явно стоимость товара-вытянуть стоимость в валюте и умножить на курс
 //        itemsEntity.setItemCost();
 //        itemsEntity.setVkUrl("https://vk.com/photo-" + groupId + "_" + photoId);

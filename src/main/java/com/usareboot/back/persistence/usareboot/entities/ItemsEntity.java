@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.Date;
 import java.time.LocalDateTime;
@@ -78,11 +79,11 @@ public class ItemsEntity {
     private String repaymentName;
     @Basic
     @Column(name = "item_cost")
-    private String itemCost;
+    private BigDecimal itemCost;
 
     @Basic
-    @Column(name = "comment_id")
-    private Long commentId;
+    @Column(name = "vk_comment_id")
+    private Long vkCommentId;
 
     public void setItemId(long itemId) {
         this.itemId = itemId;
@@ -160,9 +161,9 @@ public class ItemsEntity {
     public void setRepaymentName(String repaymentName) {
         this.repaymentName = repaymentName;
     }
-    public void setItemCost(String itemCost) {
+   /* public void setItemCost(Double itemCost) {
         this.itemCost = itemCost;
-    }
+    }*/
 
     @Override
     public boolean equals(Object o) {

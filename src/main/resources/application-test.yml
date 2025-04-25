@@ -36,7 +36,7 @@ logging:
 #        org.springframework.web: DEBUG          # Логи Spring Web только от WARN
         com.usareboot.back.VkApiClient: TRACE               # Все ваши классы в DEBUG
 #        com.usareboot.back: DEBUG
-        com.vk.api.sdk: DEBUG # VK SDK (пакет по умолчанию)
+#        com.vk.api.sdk: DEBUG # VK SDK (пакет по умолчанию)
         # HTTP-клиент внутри SDK
-        org.apache.http: WARN
-        org.apache.http.wire: ERROR          # Все ваши классы в DEBUG
+#        org.apache.http: WARN
+#        org.apache.http.wire: ERROR          # Все ваши классы в DEBUG
