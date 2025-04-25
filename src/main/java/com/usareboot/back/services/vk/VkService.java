@@ -168,9 +168,15 @@ public class VkService {
     }
 
     @Async
-    public Integer createAlbum(AlbumsEntity albumsEntity) throws IOException, ApiException, ClientException {
+    public Integer createAlbum(AlbumsEntity albumsEntity) throws IOException {
         var eventId = threadLocal.get();
         log.info("[Сценарий createAlbum][Шаг: Начало][EventID: {}]", eventId);
+
+        log.info("[Сценарий createAlbum][Шаг: Определить есть ли в словаре данные по альбому][EventID: {}]", eventId);
+        Optional<AlbumMappingDictionaryEntity> albumMappingDictionaryEntity = albumMappingDictionaryRepository.getAlbumMappingDictionaryEntityByLinkContains(Optional.ofNullable(albumsEntity).map(AlbumsEntity::getShopUrl).orElse(""));
+        if (albumMappingDictionaryEntity.isEmpty())
+            throw new RuntimeException("В словаре нет сопоставления с введенной ссылкой");
+
         var accessToken = commonOperator.getTokenClient(standaloneId).orElse(null);
 //        accessToken = commonOperator.getTokenGroup(groupId).orElse(null);
         final CloseableHttpClient httpclient = HttpClients.createDefault();
@@ -178,9 +184,9 @@ public class VkService {
         final List<NameValuePair> params = new ArrayList<>();
         params.add(new BasicNameValuePair("access_token", accessToken));
         params.add(new BasicNameValuePair("v", apiVersion));
-        params.add(new BasicNameValuePair("title", albumsEntity.getAlbumName()));
+        params.add(new BasicNameValuePair("title", Optional.ofNullable(albumsEntity).map(AlbumsEntity::getAlbumName).orElse("")));
         params.add(new BasicNameValuePair("group_id", groupId));
-        params.add(new BasicNameValuePair("description", albumsEntity.getAlbumDesc()));
+        params.add(new BasicNameValuePair("description", Optional.ofNullable(albumsEntity).map(AlbumsEntity::getAlbumDesc).orElse("")));
         params.add(new BasicNameValuePair("upload_by_admins_only", "0"/*фотографии могут добавлять все пользователи*/));
         params.add(new BasicNameValuePair("http.protocol.content-charset", "UTF-8"));
         httpPost.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));
@@ -206,12 +212,11 @@ public class VkService {
                 log.debug("[Сценарий createAlbum][Шаг: Проверка userDtoList.size(): {} и albumId: {}][EventID: {}]", userDtoList.size(), albumId, eventId);
                 try {
                     log.info("[Сценарий createAlbum][Шаг: Получение фото по ссылке из таблицы маппинга][EventID: {}]", eventId);
-                    AlbumsEntity albumsEntityByAlbumId = albumsRepository.findAlbumsEntityByAlbumId(Long.valueOf(albumId));
-                    Long albumMappingDictionaryId = albumsEntityByAlbumId.getAlbumMappingDictionaryId();
-                    AlbumMappingDictionaryEntity albumMapping = albumMappingDictionaryRepository.getAlbumMappingDictionaryEntityByAlbumMappingDictionaryId(albumMappingDictionaryId).orElse(null);
+                    String coverPhotoUrl = albumMappingDictionaryEntity.map(AlbumMappingDictionaryEntity::getUrlCover).orElse("");
                     List<MultipartFile> multipartFileList = new ArrayList<>();
-                    if (albumMapping != null) {
-                        MultipartFile albumCoverPhoto = vkOperator.getAlbumCoverPhoto(albumMapping.getUrl_cover());
+                    if (!coverPhotoUrl.isEmpty()) {
+                        log.info("[Сценарий createAlbum][Шаг: Получение multipartFile по методу getAlbumCoverPhoto][EventID: {}]", eventId);
+                        MultipartFile albumCoverPhoto = vkOperator.getAlbumCoverPhoto(coverPhotoUrl);
                         multipartFileList.add(albumCoverPhoto);
                     }
                     log.info("[Сценарий createAlbum][Шаг: Загрузка фото в альбом: {}][EventID: {}]", albumId, eventId);

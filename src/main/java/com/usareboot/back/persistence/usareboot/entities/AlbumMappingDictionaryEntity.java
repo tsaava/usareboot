@@ -33,7 +33,7 @@ public class AlbumMappingDictionaryEntity {
     private String country;
     @Basic
     @Column(name = "url_cover")
-    private String url_cover;
+    private String urlCover;
 
     public long getAlbumMappingDictionaryId() {
         return albumMappingDictionaryId;
@@ -58,6 +58,8 @@ public class AlbumMappingDictionaryEntity {
     public void setLink(String link) {
         this.link = link;
     }
+
+
 
     public long getActive() {
         return active;

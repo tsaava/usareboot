@@ -10,5 +10,6 @@ import java.util.Optional;
 public interface AlbumsRepository extends JpaRepository<AlbumsEntity, Long> {
     ArrayList<AlbumsEntity> getAlbumsEntitiesByAlbumDateAfterOrderByAlbumDate(Date albumDate);
     AlbumsEntity findAlbumsEntityByAlbumId(Long albumId);
+    Optional<AlbumsEntity> findAlbumsEntityByShopUrl(String url);
     Optional<AlbumsEntity> getAlbumsEntityByAlbumMappingDictionaryIdAndStatuses(long albumMappingId, DStatusesEntity statusId);
 }

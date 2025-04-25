@@ -217,10 +217,12 @@ public class VkOperator {
         for (MultipartFile multipartFile : multipartFiles) {
             try {
                 Path tempFile = Files.createTempFile("vk_photo_", ".jpg");
+                log.info("Создаем временные файлы vk_photo_");
                 multipartFile.transferTo(tempFile);
                 tempFiles.add(tempFile);
             } catch (Exception e) {
-                log.error("Файл не загружен");
+                log.error("Файл не загружен e {}", e.toString());
+                e.getStackTrace();
             }
         }
         log.info("Конвертируем в File для совместимости");
@@ -394,15 +396,21 @@ public class VkOperator {
     }
 
     public void photosMakeCover(int vkPhotoId, int albumId) throws ClientException, ApiException {
-        var accessToken = commonOperator.getTokenClient(standaloneId).orElse("");
-        TransportClient transportClient = new HttpTransportClient();
-        VkApiClient vk = new VkApiClient(transportClient);
-        UserActor actor = new UserActor(Integer.valueOf(standaloneId), accessToken);
+        try {
+            var accessToken = commonOperator.getTokenClient(standaloneId).orElse("");
+            TransportClient transportClient = new HttpTransportClient();
+            VkApiClient vk = new VkApiClient(transportClient);
+            UserActor actor = new UserActor(Integer.valueOf(standaloneId), accessToken);
 
-        log.info("Выбираем фотографию {} обложкой альбома {}", vkPhotoId, albumId);
-        vk.photos().makeCover(actor, vkPhotoId)
-                .albumId(albumId)
-                .execute();
+            log.info("Выбираем фотографию {} обложкой альбома {}", vkPhotoId, albumId);
+            vk.photos().makeCover(actor, vkPhotoId)
+                    .ownerId(-Integer.parseInt(groupId))
+                    .albumId(albumId)
+                    .execute();
+        }
+        catch (Exception e){
+            log.error("Обложка для альбома не выбрана");
+        }
     }
 
     public String getMessage(AlbumsItemsDTO albumsItemsDTO) {
@@ -540,6 +548,7 @@ public class VkOperator {
         String fileName = "";
         String fileType = "";
         if (type.equals("file")) {
+            log.info("file albumsItemsDTO.getPhotoUrl(): {}", albumsItemsDTO.getPhotoUrl());
             // Загружаем InputStream из URL
             URL url = new URL(albumsItemsDTO.getPhotoUrl());
             inputStream = url.openStream();
@@ -588,13 +597,14 @@ public class VkOperator {
      * @param coverPhotoUrl ID беседы (положительное число)
      */
     public MultipartFile getAlbumCoverPhoto(String coverPhotoUrl) {
+        MultipartFile vkCoverPhoto = null;
         try {
             AlbumsItemsDTO dto = AlbumsItemsDTO.builder().photoUrl(coverPhotoUrl).build();
             var file = getMultipartFile(dto, "file");
 
-            var vkCoverPhoto = vkImageConverter.convertToSupportedFormat(file);
+            vkCoverPhoto = vkImageConverter.convertToSupportedFormat(file);
         } catch (Exception e) {
         }
-        return null;
+        return vkCoverPhoto;
     }
 }
