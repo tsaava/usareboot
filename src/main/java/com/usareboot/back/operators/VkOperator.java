@@ -9,6 +9,8 @@ import com.usareboot.back.models.vk.VkAlbumResponse;
 import com.usareboot.back.models.vk.VkPhotoSaveDTO;
 import com.usareboot.back.models.vk.VkPostRequestDTO;
 import com.usareboot.back.other.VkImageConverter;
+import com.usareboot.back.persistence.usareboot.entities.AlbumsItemsEntity;
+import com.usareboot.back.persistence.usareboot.entities.ItemsEntity;
 import com.vk.api.sdk.client.TransportClient;
 import com.vk.api.sdk.client.VkApiClient;
 import com.vk.api.sdk.client.actors.GroupActor;
@@ -606,5 +608,29 @@ public class VkOperator {
         } catch (Exception e) {
         }
         return vkCoverPhoto;
+    }
+
+    /**
+     * Отправляет фото из альбома в чат
+     *
+     * @param itemsEntity
+     * @param albumsItem
+     * @param message  Текст сообщения
+     */
+    public void createCommentInVk(String message, ItemsEntity itemsEntity, AlbumsItemsEntity albumsItem) throws ClientException, ApiException {
+        var accessToken = commonOperator.getTokenClient(standaloneId).orElse("");
+
+        TransportClient transportClient = new HttpTransportClient();
+        VkApiClient vk = new VkApiClient(transportClient);
+        UserActor actor = new UserActor(Integer.valueOf(standaloneId), accessToken);
+        log.debug("message {}",message);
+        log.info("Создаем комментарий в ответ на пост {}", itemsEntity.getVkCommentId());
+        vk.photos().createComment(actor, Math.toIntExact(albumsItem.getVkItemId()))
+                .ownerId(-Integer.parseInt(groupId))
+                .fromGroup(true)
+                .replyToComment(Math.toIntExact(itemsEntity.getVkCommentId()))
+                .message(message)
+                .execute();
+        log.info("Комментарий успешно добавлен");
     }
 }

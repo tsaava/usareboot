@@ -34,7 +34,7 @@ logging:
     level:
 #        root: INFO
 #        org.springframework.web: DEBUG          # Логи Spring Web только от WARN
-        com.usareboot.back.VkApiClient: TRACE               # Все ваши классы в DEBUG
+#        com.usareboot.back.VkApiClient: TRACE               # Все ваши классы в DEBUG
 #        com.usareboot.back: DEBUG
 #        com.vk.api.sdk: DEBUG # VK SDK (пакет по умолчанию)
         # HTTP-клиент внутри SDK

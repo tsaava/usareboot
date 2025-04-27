@@ -1,5 +1,8 @@
 package com.usareboot.back.services;
 
+import com.usareboot.back.operators.MainOperator;
+import com.usareboot.back.operators.VkOperator;
+import com.usareboot.back.persistence.usareboot.entities.AlbumsItemsEntity;
 import com.usareboot.back.persistence.usareboot.entities.DStatusesEntity;
 import com.usareboot.back.persistence.usareboot.entities.ItemsEntity;
 import com.usareboot.back.models.ImportDTO;
@@ -18,19 +21,24 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Objects;
+import java.util.concurrent.ThreadLocalRandom;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
 public class MainService {
+    private final ThreadLocal<Integer> threadLocal = ThreadLocal.withInitial(() -> ThreadLocalRandom.current().nextInt(10000, 100000));
 
     private final ImportListRepository importListRepository;
     private final ItemsRepository itemsRepository;
     private final DStatusRepository dStatusRepository;
     private final RepaymentsRepository repaymentsRepository;
     private final ApiTokenRepository apiTokenRepository;
+    private final MainOperator mainOperator;
+    private final VkOperator vkOperator;
     @Value("${spring.datasource.usareboot.schema}")
     String schemaName;
+
     public ArrayList<ImportDTO> getListImport(String listAlbom) {
         ArrayList<ImportDTO> scienceDiplomsList = new ArrayList<>();
         if (!Objects.equals(listAlbom, "[]"))
@@ -107,9 +115,9 @@ public class MainService {
         return scienceDiplomsList;
     }
 
-    public void saveItemList(ItemListDTO itemListDTO) {
+    public void saveItemAttribute(ItemListDTO itemListDTO) {
         try {
-            ItemsEntity itemList = itemsRepository.getItemsEntitiesByItemId(itemListDTO.getItemId());
+            ItemsEntity itemList = itemsRepository.getItemsEntityByItemId(itemListDTO.getItemId());
             if (itemListDTO.getItemStatus() != null) {
                 var itemStatusId = dStatusRepository.findDStatusesEntityByStatusName(itemListDTO.getItemStatus()).getStatusId();
                 itemList.setItemStatus(itemStatusId);
@@ -154,6 +162,36 @@ public class MainService {
         }
     }
 
+    public void saveItemStatus(ItemListDTO itemListDTO) {
+        try {
+            var eventId = threadLocal.get();
+            log.info("[Сценарий saveItemStatus][Шаг: Начало][EventID: {}]", eventId);
+
+            log.info("[Сценарий saveItemStatus][Шаг: Получаем информацию о заказе][EventID: {}]", eventId);
+            ItemsEntity item = mainOperator.getItem(itemListDTO);
+
+            log.info("[Сценарий saveItemStatus][Шаг: Вытаскиваем информацию о товаре][EventID: {}]", eventId);
+            AlbumsItemsEntity albumItem = mainOperator.getAlbumItem(item);
+
+            log.info("[Сценарий saveItemStatus][Шаг: Маппинг наименования статуса товара и вытаскивание id][EventID: {}]", eventId);
+            var itemStatusId = mainOperator.getItemStatus(itemListDTO);
+            log.info("[Сценарий saveItemStatus][Шаг: Статус заказа клиента: {}, id: {}][EventID: {}]", itemListDTO.getItemStatus(), itemStatusId, eventId);
+
+            log.info("[Сценарий saveItemStatus][Шаг: Сохраняем стоимость заказа для тех товаров которые выкупили][EventID: {}]", eventId);
+            ItemsEntity itemsEntity = mainOperator.saveItemCost(item, itemStatusId, albumItem);
+
+            log.info("[Сценарий saveItemStatus][Шаг: Формирование сообщения для создания комментария под фото клиенту][EventID: {}]", eventId);
+            String messageClientForItem = mainOperator.getMessageClientForItem(itemsEntity, itemStatusId);
+
+            log.info("[Сценарий saveItemStatus][Шаг: Создание комментария под фото][EventID: {}]", eventId);
+            vkOperator.createCommentInVk(messageClientForItem, itemsEntity, albumItem);
+
+            log.info("[Сценарий saveItemStatus][Шаг: Финиш][EventID: {}]", eventId);
+        } catch (Exception e) {
+            log.error("Сценарий завершился с ошибкой, itemListDTO: {}: {}", itemListDTO, e.getMessage());
+        }
+    }
+
     public ArrayList<ItemWeightListDTO> getItemWeightListDao() {
         ArrayList<ItemWeightListDTO> scienceDiplomsList = new ArrayList<>();
         var bdFuncResponse = importListRepository.weightItemListProcedure();
@@ -182,7 +220,7 @@ public class MainService {
     }
 
     public void saveItemWeightAndStatus(long itemId, ItemsRequestDTO itemsRequestDTO) {
-        ItemsEntity ie = itemsRepository.getItemsEntitiesByItemId(itemId);
+        ItemsEntity ie = itemsRepository.getItemsEntityByItemId(itemId);
         ie.setItemWeight(itemsRequestDTO.getItemWeight());
         ie.setItemStatus(itemsRequestDTO.getStatusId());
         if (itemsRequestDTO.getDateDelivery() != null)

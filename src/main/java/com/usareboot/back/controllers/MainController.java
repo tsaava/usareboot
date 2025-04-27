@@ -44,11 +44,16 @@ public class MainController {
         return new ResponseEntity<>(new Gson().toJson(mainService.getItemWeightListDao()), HttpStatus.OK);
     }
 
-
     @PostMapping("/item/list")
     public ResponseEntity<?> saveItemList(@RequestBody ItemListDTO data) {
-        mainService.saveItemList(data);
+        mainService.saveItemAttribute(data);
         return new ResponseEntity<>( HttpStatus.OK);
+    }
+
+    @PostMapping("/item/status")
+    public ResponseEntity<?> saveItemStatus(@RequestBody ItemListDTO data) {
+        mainService.saveItemStatus(data);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping("/statuses/list/{type}")

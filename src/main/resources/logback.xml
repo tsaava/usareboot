@@ -28,7 +28,7 @@
     </appender>
     <!-- Настройка уровня логирования -->
     <root level="info">
-        <appender-ref ref="STDOUT" />
+<!--        <appender-ref ref="STDOUT" />-->
 <!--        <appender-ref ref="FILE" />-->
     </root>
     <!--<Logger name="org.springframework.web.filter.CommonsRequestLoggingFilter" level ="debug">
