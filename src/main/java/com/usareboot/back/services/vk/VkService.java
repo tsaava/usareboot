@@ -272,16 +272,20 @@ public class VkService {
                 var commentText = object.get("text").getAsString();
                 var albumId = albumsItems.getAlbum().getAlbumId();
                 var fromId = object.get("from_id").getAsLong();
+                if(object.get("from_id").getAsString().contains(groupId)) {
+                    log.debug("Комментарий создала наша группа, выход из сценария сохранения комментария");
+                    return;
+                }
                 var commentId = object.get("id").getAsLong();
                 var orderId = orderOperator.getOrderId(fromId, albumId);
 
                 itemOperator.saveItem(albumsItems, dateInSeconds, commentText, orderId, null, commentId);
             } catch (Exception e) {
-                log.error("Ошибка при сохранения комментария: ", e);
+                log.error("Ошибка при сохранения комментария: {}", e.getMessage());
             }
 
         } catch (Exception e) {
-            throw new RuntimeException("Не удалось записать комментарий в базу\n" + e);
+            throw new RuntimeException("Не удалось записать комментарий в базу\n" + e.getMessage());
         }
     }
 

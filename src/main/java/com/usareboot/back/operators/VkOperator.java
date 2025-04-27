@@ -409,8 +409,7 @@ public class VkOperator {
                     .ownerId(-Integer.parseInt(groupId))
                     .albumId(albumId)
                     .execute();
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             log.error("Обложка для альбома не выбрана");
         }
     }
@@ -615,7 +614,7 @@ public class VkOperator {
      *
      * @param itemsEntity
      * @param albumsItem
-     * @param message  Текст сообщения
+     * @param message     Текст сообщения
      */
     public void createCommentInVk(String message, ItemsEntity itemsEntity, AlbumsItemsEntity albumsItem) throws ClientException, ApiException {
         var accessToken = commonOperator.getTokenClient(standaloneId).orElse("");
@@ -623,7 +622,7 @@ public class VkOperator {
         TransportClient transportClient = new HttpTransportClient();
         VkApiClient vk = new VkApiClient(transportClient);
         UserActor actor = new UserActor(Integer.valueOf(standaloneId), accessToken);
-        log.debug("message {}",message);
+        log.debug("message {}", message);
         log.info("Создаем комментарий в ответ на пост {}", itemsEntity.getVkCommentId());
         vk.photos().createComment(actor, Math.toIntExact(albumsItem.getVkItemId()))
                 .ownerId(-Integer.parseInt(groupId))

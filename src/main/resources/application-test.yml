@@ -30,10 +30,10 @@ vk:
         secret: 'Lp8in0hLVi4I7SR7VMKz'
         standaloneId: '53265929'
         secretStandalone: 'nTITx5lir3dNSjKk6jAj'
-logging:
-    level:
-#        root: INFO
-#        org.springframework.web: DEBUG          # Логи Spring Web только от WARN
+#logging:
+#    level:
+##        root: INFO
+##        org.springframework.web: DEBUG          # Логи Spring Web только от WARN
 #        com.usareboot.back.VkApiClient: TRACE               # Все ваши классы в DEBUG
 #        com.usareboot.back: DEBUG
 #        com.vk.api.sdk: DEBUG # VK SDK (пакет по умолчанию)

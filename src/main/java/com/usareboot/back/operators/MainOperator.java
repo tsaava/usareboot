@@ -3,9 +3,9 @@ package com.usareboot.back.operators;
 import com.usareboot.back.models.ItemListDTO;
 import com.usareboot.back.persistence.usareboot.entities.AlbumsItemsEntity;
 import com.usareboot.back.persistence.usareboot.entities.ItemsEntity;
-import com.usareboot.back.persistence.usareboot.repository.AlbumsItemsRepository;
-import com.usareboot.back.persistence.usareboot.repository.DStatusRepository;
-import com.usareboot.back.persistence.usareboot.repository.ItemsRepository;
+import com.usareboot.back.persistence.usareboot.entities.OrdersEntity;
+import com.usareboot.back.persistence.usareboot.entities.auth.UsersEntity;
+import com.usareboot.back.persistence.usareboot.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 
-import static com.usareboot.back.models.constant.Constant.ITEM_IN_REDEEMED_STATUS_ID;
+import static com.usareboot.back.models.constant.Constant.*;
 
 @Slf4j
 @Service
@@ -22,6 +22,8 @@ public class MainOperator {
     private final ItemsRepository itemsRepository;
     private final AlbumsItemsRepository albumsItemsRepository;
     private final DStatusRepository dStatusRepository;
+    private final OrdersRepository ordersRepository;
+    private final UsersRepository usersRepository;
 
     @Value("${vk.api.groupId}")
     private String groupId;
@@ -61,25 +63,33 @@ public class MainOperator {
 
     public String getMessageClientForItem(ItemsEntity itemsEntity, Long itemStatusId) {
         String message = "";
+        var orderId = itemsEntity.getOrderId();
+        OrdersEntity order = ordersRepository.findFirstByOrderId(orderId);
+        var clientId = order.getClientId();
+        UsersEntity user = usersRepository.findFirstByUserId(clientId);
+        var userName = user.getIName();
         if (itemStatusId == ITEM_IN_REDEEMED_STATUS_ID) {
-            /*сообщение о том, что товар выкуплен
-            * Название
-              Размер
-              Цвет
-              Цена из базы*/
             String itemName = itemsEntity.getItemName();
             String itemSize = itemsEntity.getItemSize();
             Integer itemCount = itemsEntity.getItemCount();
             String itemColor = itemsEntity.getItemColor();
             BigDecimal itemCost = itemsEntity.getItemCost();
-            message = itemName + "\n"
-                    + "Размер: " + itemSize + "\n"
-                    + "Цвет: " + itemColor + "\n"
+            message = userName + ",\n"
+                    + itemName + "\n"
+                    + ((itemSize != null && itemSize.isEmpty()) ? ("Размер: " + itemSize + "\n") : "")
+                    + ((itemColor != null && itemColor.isEmpty()) ? ("Цвет: " + itemColor + "\n") : "")
                     + "Цена: " + itemCost + (itemCount > 1 ? " * " + itemCount : "") + "\n"
                     + "выкуплено";
         }
+        if (itemStatusId == ITEM_IN_NOT_REDEEMED_STATUS_ID) {
+            message = userName + ",\n"
+                    + "Ваш товар не был выкуплен по нескольким возможным причинам:" +
+                    "\n1.Закончилась акция\n2.Выбранного размера не осталось";
+        }
+        if (itemStatusId == ITEM_IN_CANCELED_BY_STORE_STATUS_ID) {
+            message = userName + ",\n"
+                    + "Ваш товар был выкуплен но отменен магазином:";
+        }
         return message;
     }
-
-
 }

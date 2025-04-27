@@ -2,11 +2,14 @@ package com.usareboot.back.persistence.usareboot.entities.auth;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDate;
 import java.util.Set;
 
 @Entity
+@Getter
+@Setter
 @Table(name = "clients",  catalog = "usareboot")
 public class UsersEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)

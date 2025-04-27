@@ -183,9 +183,10 @@ public class MainService {
             log.info("[Сценарий saveItemStatus][Шаг: Формирование сообщения для создания комментария под фото клиенту][EventID: {}]", eventId);
             String messageClientForItem = mainOperator.getMessageClientForItem(itemsEntity, itemStatusId);
 
-            log.info("[Сценарий saveItemStatus][Шаг: Создание комментария под фото][EventID: {}]", eventId);
-            vkOperator.createCommentInVk(messageClientForItem, itemsEntity, albumItem);
-
+            if(!messageClientForItem.isEmpty()) {
+                log.info("[Сценарий saveItemStatus][Шаг: Создание комментария под фото][EventID: {}]", eventId);
+                vkOperator.createCommentInVk(messageClientForItem, itemsEntity, albumItem);
+            }
             log.info("[Сценарий saveItemStatus][Шаг: Финиш][EventID: {}]", eventId);
         } catch (Exception e) {
             log.error("Сценарий завершился с ошибкой, itemListDTO: {}: {}", itemListDTO, e.getMessage());

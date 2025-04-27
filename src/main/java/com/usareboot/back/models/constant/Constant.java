@@ -7,12 +7,16 @@ public class Constant {
     public static final String ALBUM_TITLE;
     public static final long NEW_ITEM_STATUS;
     public static final long ITEM_IN_REDEEMED_STATUS_ID;
+    public static final long ITEM_IN_NOT_REDEEMED_STATUS_ID;
+    public static final long ITEM_IN_CANCELED_BY_STORE_STATUS_ID;
     static {
         ALBUM_STATUS_OPEN = 8;
         PERCENTAGE_INCOME_DEFAULT = 25;
         ITEM_STATUS_REPAYMENT = 16L;
         NEW_ITEM_STATUS = 15L;
         ITEM_IN_REDEEMED_STATUS_ID = 16L;
+        ITEM_IN_NOT_REDEEMED_STATUS_ID = 18L;
+        ITEM_IN_CANCELED_BY_STORE_STATUS_ID = 17L;
         ALBUM_TITLE = "Фотографии на стене сообщества";
     }
 }
