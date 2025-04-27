@@ -45,6 +45,10 @@ public class MainOperator {
         return albumsItemsRepository.findFirstByAlbumItemId(itemsEntity.getAlbomItemId());
     }
 
+    public ItemsEntity getItem(Long itemId) {
+        return itemsRepository.getItemsEntityByItemId(itemId);
+    }
+
     public Long getItemStatus(ItemListDTO itemListDTO) {
         return dStatusRepository.findDStatusesEntityByStatusName(itemListDTO.getItemStatus()).getStatusId();
     }
@@ -91,5 +95,16 @@ public class MainOperator {
                     + "Ваш товар был выкуплен но отменен магазином:";
         }
         return message;
+    }
+
+    public boolean deleteItem(Long itemId){
+        try {
+            itemsRepository.deleteById(itemId);
+            return true;
+        }
+        catch (Exception e){
+            log.error("Ошибка удаления комментария в бд {}", e.toString());
+            throw new RuntimeException("Ошибка удаления комментария в бд");
+        }
     }
 }

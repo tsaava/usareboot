@@ -632,4 +632,18 @@ public class VkOperator {
                 .execute();
         log.info("Комментарий успешно добавлен");
     }
+
+    public String photosDeleteComment(Long postId) throws ClientException, ApiException {
+        var accessToken = commonOperator.getTokenClient(standaloneId).orElse("");
+
+        TransportClient transportClient = new HttpTransportClient();
+        VkApiClient vk = new VkApiClient(transportClient);
+        UserActor actor = new UserActor(Integer.valueOf(standaloneId), accessToken);
+        String res = vk.photos().deleteComment(actor, Math.toIntExact(postId))
+                .ownerId(-Integer.parseInt(groupId))
+                .execute().toString();
+        log.debug("res: {}", res);
+        log.info("Комментарий успешно удален");
+        return res;
+    }
 }

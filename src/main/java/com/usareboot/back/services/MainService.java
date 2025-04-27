@@ -10,17 +10,21 @@ import com.usareboot.back.models.ItemListDTO;
 import com.usareboot.back.models.ItemWeightListDTO;
 import com.usareboot.back.models.ItemsRequestDTO;
 import com.usareboot.back.persistence.usareboot.repository.*;
+import com.vk.api.sdk.exceptions.ApiException;
+import com.vk.api.sdk.exceptions.ClientException;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.StoredProcedureQuery;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 
 @Service
@@ -243,5 +247,24 @@ public class MainService {
         System.out.println(date);
         itemsRepository.item_set_date_all();
         log.info("обновление прошло успешно");
+    }
+
+    @Async
+    public void deleteItem(long itemId) throws ClientException, ApiException {
+        var eventId = threadLocal.get();
+
+        ItemsEntity itemsEntity = mainOperator.getItem(itemId);
+        var vkPostId = Optional.ofNullable(itemsEntity).map(ItemsEntity::getAlbomItemId).orElse(0L);
+
+        log.info("[Сценарий deleteItem][Шаг: Удаления поста в ВК][EventID: {}]", eventId);
+        String res = vkOperator.photosDeleteComment(vkPostId);
+
+        log.info("[Сценарий deleteAlbum][Шаг: результат удаления поста в ВК: {}][EventID: {}]", res, eventId);
+
+        log.info("[Сценарий deleteAlbum][Шаг: Удаления коментария в БД][EventID: {}]", eventId);
+        mainOperator.deleteItem(itemId);
+        log.info("[Сценарий deleteAlbum][Шаг: Комментарий успешно удалился в БД: {}][EventID: {}]", res, eventId);
+
+        log.info("[Сценарий createAlbum][Шаг: Финиш][EventID: {}]", eventId);
     }
 }

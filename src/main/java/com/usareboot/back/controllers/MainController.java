@@ -4,6 +4,8 @@ import com.google.gson.Gson;
 import com.usareboot.back.models.ItemListDTO;
 import com.usareboot.back.models.ItemsRequestDTO;
 import com.usareboot.back.services.MainService;
+import com.vk.api.sdk.exceptions.ApiException;
+import com.vk.api.sdk.exceptions.ClientException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -53,6 +55,13 @@ public class MainController {
     @PostMapping("/item/status")
     public ResponseEntity<?> saveItemStatus(@RequestBody ItemListDTO data) {
         mainService.saveItemStatus(data);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @DeleteMapping("/item/delete/{itemId}")
+    public ResponseEntity<?> saveItemStatus(@PathVariable Long itemId) throws ClientException, ApiException {
+        if (itemId != null)
+            mainService.deleteItem(itemId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
