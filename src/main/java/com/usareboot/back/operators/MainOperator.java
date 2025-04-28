@@ -85,10 +85,17 @@ public class MainOperator {
                     + "Цена: " + itemCost + (itemCount > 1 ? " * " + itemCount : "") + "\n"
                     + "выкуплено";
         }
-        if (itemStatusId == ITEM_IN_NOT_REDEEMED_STATUS_ID) {
+        if (itemStatusId == ITEM_IN_NOT_REDEEMED_SIZE_STATUS_ID) {
             message = userName + ",\n"
-                    + "Ваш товар не был выкуплен по нескольким возможным причинам:" +
-                    "\n1.Закончилась акция\n2.Выбранного размера не осталось";
+                    + "Ваш товар не был выкуплен: нет размера/товар закончился";
+        }
+        if (itemStatusId == ITEM_IN_NOT_REDEEMED_COURSE_STATUS_ID) {
+            message = userName + ",\n"
+                    + "Ваш товар не был выкуплен: закончилась акция";
+        }
+        if (itemStatusId == ITEM_IN_NOT_REDEEMED_COST_STATUS_ID) {
+            message = userName + ",\n"
+                    + "Ваш товар не был выкуплен: изменилась цена";
         }
         if (itemStatusId == ITEM_IN_CANCELED_BY_STORE_STATUS_ID) {
             message = userName + ",\n"

@@ -237,7 +237,7 @@ public class MainService {
     }
 
     public ArrayList<DStatusesEntity> getStatusesItem(int type) {
-        return dStatusRepository.getDStatusesEntityByActiveAndStatusTypeOrderByStatusName(1, type);
+        return dStatusRepository.getDStatusesEntityByActiveAndStatusTypeOrderBySort(1, type);
     }
 
     @Transactional
