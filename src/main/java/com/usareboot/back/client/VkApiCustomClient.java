@@ -20,6 +20,14 @@ public interface VkApiCustomClient {
             @RequestParam("v") String version
     );
 
+    @PostMapping("/photos.deleteComment")
+    String deleteItem(
+            @RequestParam("comment_id") int albumId,
+            @RequestParam("owner_id") String groupId,
+            @RequestParam("access_token") String accessToken,
+            @RequestParam("v") String version
+    );
+
     @PostMapping("/wall.post")
     String createPost(
             @RequestParam("access_token") String accessToken,

@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.query.Procedure;
 public interface ItemsRepository extends JpaRepository<ItemsEntity, Long> {
 
     ItemsEntity getItemsEntityByItemId(long itemId);
+    ItemsEntity findFirstByItemId(long itemId);
 
     @Procedure
     void item_set_date_all();

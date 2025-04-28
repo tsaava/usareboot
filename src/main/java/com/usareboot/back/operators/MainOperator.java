@@ -46,7 +46,7 @@ public class MainOperator {
     }
 
     public ItemsEntity getItem(Long itemId) {
-        return itemsRepository.getItemsEntityByItemId(itemId);
+        return itemsRepository.findFirstByItemId(itemId);
     }
 
     public Long getItemStatus(ItemListDTO itemListDTO) {
@@ -92,13 +92,14 @@ public class MainOperator {
         }
         if (itemStatusId == ITEM_IN_CANCELED_BY_STORE_STATUS_ID) {
             message = userName + ",\n"
-                    + "Ваш товар был выкуплен но отменен магазином:";
+                    + "Ваш товар был выкуплен но отменен магазином";
         }
         return message;
     }
 
     public boolean deleteItem(Long itemId){
         try {
+            log.debug("удаление item:{}", itemId);
             itemsRepository.deleteById(itemId);
             return true;
         }

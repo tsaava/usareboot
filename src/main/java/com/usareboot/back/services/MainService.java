@@ -254,17 +254,18 @@ public class MainService {
         var eventId = threadLocal.get();
 
         ItemsEntity itemsEntity = mainOperator.getItem(itemId);
-        var vkPostId = Optional.ofNullable(itemsEntity).map(ItemsEntity::getAlbomItemId).orElse(0L);
+        long vkPostId = Optional.ofNullable(itemsEntity).map(ItemsEntity::getVkCommentId).orElse(0L);
 
         log.info("[Сценарий deleteItem][Шаг: Удаления поста в ВК][EventID: {}]", eventId);
-        String res = vkOperator.photosDeleteComment(vkPostId);
+        String res = vkOperator.photosDeleteComment((int) vkPostId);
 
-        log.info("[Сценарий deleteAlbum][Шаг: результат удаления поста в ВК: {}][EventID: {}]", res, eventId);
+        log.info("[Сценарий deleteAlbum][Шаг: Результат удаления поста в ВК: {}][EventID: {}]", res, eventId);
 
         log.info("[Сценарий deleteAlbum][Шаг: Удаления коментария в БД][EventID: {}]", eventId);
         mainOperator.deleteItem(itemId);
-        log.info("[Сценарий deleteAlbum][Шаг: Комментарий успешно удалился в БД: {}][EventID: {}]", res, eventId);
 
-        log.info("[Сценарий createAlbum][Шаг: Финиш][EventID: {}]", eventId);
+        log.info("[Сценарий deleteAlbum][Шаг: Комментарий успешно удалился в БД][EventID: {}]",eventId);
+
+        log.info("[Сценарий deleteItem][Шаг: Финиш][EventID: {}]", eventId);
     }
 }

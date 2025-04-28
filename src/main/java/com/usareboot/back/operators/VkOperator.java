@@ -633,7 +633,10 @@ public class VkOperator {
         log.info("Комментарий успешно добавлен");
     }
 
-    public String photosDeleteComment(Long postId) throws ClientException, ApiException {
+    public String photosDeleteComment(Integer postId) throws ClientException, ApiException {
+        /*var accessToken = commonOperator.getTokenClient(standaloneId).orElse(null);
+        return vkApiCustomClient.deleteItem(Math.toIntExact(postId), -Integer.parseInt(groupId), accessToken, apiVersion);*/
+        log.debug("postId: {}",postId);
         var accessToken = commonOperator.getTokenClient(standaloneId).orElse("");
 
         TransportClient transportClient = new HttpTransportClient();
