@@ -112,8 +112,9 @@ public class MainService {
                     x.getcomment(),
                     x.getalbom_item_cost(),
                     x.getalbom_item_rate(),
-                    (x.getalbom_item_cost().doubleValue() * x.getalbom_item_rate().doubleValue()),
-                    x.getrepayment_name()
+                    x.getcost(),
+                    x.getrepayment_name(),
+                    x.getis_not_size()
             )));
         }
         return scienceDiplomsList;

@@ -1,5 +1,7 @@
 package com.usareboot.back.models.interfaces;
 
+import java.math.BigDecimal;
+
 public interface ItemListResponse {
     long getitem_id();
     long getclient_id();
@@ -27,6 +29,7 @@ public interface ItemListResponse {
     String getcomment();
     Number getalbom_item_cost();
     Number getalbom_item_rate();
-
+    Number getcost();
     String getrepayment_name();
+    boolean getis_not_size();
 }
