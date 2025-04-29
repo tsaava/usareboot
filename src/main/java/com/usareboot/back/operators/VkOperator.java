@@ -3,6 +3,7 @@ package com.usareboot.back.operators;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.usareboot.back.client.VkApiCustomClient;
 import com.usareboot.back.controllers.VK.ConfigureFeignUrlController;
+import com.usareboot.back.models.AlbumRowRequestDTO;
 import com.usareboot.back.models.AlbumsItemsDTO;
 import com.usareboot.back.models.vk.VkAlbumItemResponse;
 import com.usareboot.back.models.vk.VkAlbumResponse;
@@ -636,7 +637,7 @@ public class VkOperator {
     public String photosDeleteComment(Integer postId) throws ClientException, ApiException {
         /*var accessToken = commonOperator.getTokenClient(standaloneId).orElse(null);
         return vkApiCustomClient.deleteItem(Math.toIntExact(postId), -Integer.parseInt(groupId), accessToken, apiVersion);*/
-        log.debug("postId: {}",postId);
+        log.debug("postId: {}", postId);
         var accessToken = commonOperator.getTokenClient(standaloneId).orElse("");
 
         TransportClient transportClient = new HttpTransportClient();
@@ -648,5 +649,27 @@ public class VkOperator {
         log.debug("res: {}", res);
         log.info("Комментарий успешно удален");
         return res;
+    }
+
+    public String photosEditAlbum(String vkId, AlbumRowRequestDTO albumsEntity) throws IOException {
+        var accessToken = commonOperator.getTokenGroup(clientId).orElse(null);
+
+        var description = albumsEntity.getAlbumDesc() + "\nКурс(ы) альбома: " + albumsEntity.getCourseAlbum();
+        final CloseableHttpClient httpclient = HttpClients.createDefault();
+        final HttpPost httpPost = new HttpPost("https://api.vk.com/method/photos.editAlbum");
+        final List<NameValuePair> params = new ArrayList<>();
+        params.add(new BasicNameValuePair("access_token", accessToken));
+        params.add(new BasicNameValuePair("v", apiVersion));
+        params.add(new BasicNameValuePair("album_id", vkId));
+        params.add(new BasicNameValuePair("owner_id", "-" + groupId));
+        System.out.println(albumsEntity.getAlbumDesc());
+        params.add(new BasicNameValuePair("description", description));
+        params.add(new BasicNameValuePair("upload_by_admins_only", "1"/*фотографии могут добавлять все пользователи*/));
+        params.add(new BasicNameValuePair("http.protocol.content-charset", "UTF-8"));
+        httpPost.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));
+        try (CloseableHttpResponse response2 = httpclient.execute(httpPost)) {
+            final HttpEntity entity2 = response2.getEntity();
+            return EntityUtils.toString(entity2);
+        }
     }
 }

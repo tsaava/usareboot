@@ -236,26 +236,9 @@ public class VkService {
         }
     }
 
-    public String updAlbum(String vkId, AlbumRowRequestDTO albumsEntity) throws IOException {
-        var accessToken = commonOperator.getTokenGroup(clientId).orElse(null);
 
-        final CloseableHttpClient httpclient = HttpClients.createDefault();
-        final HttpPost httpPost = new HttpPost("https://api.vk.com/method/photos.editAlbum");
-        final List<NameValuePair> params = new ArrayList<>();
-        params.add(new BasicNameValuePair("access_token", accessToken));
-        params.add(new BasicNameValuePair("v", apiVersion));
-        params.add(new BasicNameValuePair("album_id", vkId));
-        params.add(new BasicNameValuePair("owner_id", "-" + groupId));
-        System.out.println(albumsEntity.getAlbumDesc());
-        params.add(new BasicNameValuePair("description", albumsEntity.getAlbumDesc()));
-        params.add(new BasicNameValuePair("upload_by_admins_only", "1"/*фотографии могут добавлять все пользователи*/));
-        params.add(new BasicNameValuePair("http.protocol.content-charset", "UTF-8"));
-        httpPost.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));
-        try (CloseableHttpResponse response2 = httpclient.execute(httpPost)) {
-            final HttpEntity entity2 = response2.getEntity();
-            return EntityUtils.toString(entity2);
-        }
-    }
+
+
 
     public MultipartFile getMultipartFile(AlbumsItemsDTO albumsItemsDTO, String type) throws IOException {
         return vkOperator.getMultipartFile(albumsItemsDTO, type);

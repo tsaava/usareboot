@@ -2,11 +2,15 @@ package com.usareboot.back.persistence.usareboot.entities;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.sql.Date;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Getter
+@Setter
 @Entity
 @Table(name = "alboms",  catalog = "usareboot")
 public class AlbumsEntity {
@@ -89,102 +93,9 @@ public class AlbumsEntity {
     @Column(name = "album_mapping_dictionary_id")
     private Long albumMappingDictionaryId;
 
-    public void setStatuses(DStatusesEntity statuses) {
-        this.statuses = statuses;
-    }
-
-    public void setCards(CardsEntity cards) {
-        this.cards = cards;
-    }
-
-    public void setAlbumId(long albumId) {
-        this.albumId = albumId;
-    }
-
-    public void setAlbumName(String albumName) {
-        this.albumName = albumName;
-    }
-
-    public void setAlbumDate(Date albomDate) {
-        this.albumDate = albomDate;
-    }
-
-
-    public void setAlbumDatePlane(Date albumDatePlane) {
-        this.albumDatePlane = albumDatePlane;
-    }
-
-    public void setCountOrder(Integer countOrder) {
-        this.countOrder = countOrder;
-    }
-
-    public void setCountry(String country) {
-        this.country = country;
-    }
-
-    public void setAlbumDesc(String albumDesc) {
-        this.albumDesc = albumDesc;
-    }
-
-    public void setShopUrl(String shopUrl) {
-        this.shopUrl = shopUrl;
-    }
-
-    public void setAlbumVkUrl(String albumVkUrl) {
-        this.albumVkUrl = albumVkUrl;
-    }
-
-    public void setPackageId(Long packageId) {
-        this.packageId = packageId;
-    }
-
-    public void setCourseBank(String courseBank) {
-        this.courseBank = courseBank;
-    }
-
-    public void setCourseAlbum(String courseAlbum) {
-        this.courseAlbum = courseAlbum;
-    }
-
-    public void setBankName(String bankName) {
-        this.bankName = bankName;
-    }
-
-    public void setTrackNumber(String trackNumber) {
-        this.trackNumber = trackNumber;
-    }
-
-    public void setWarehouse(String warehouse) {
-        this.warehouse = warehouse;
-    }
-
-    public void setAlbumDateStop(Date albumDateStop) {
-        this.albumDateStop = albumDateStop;
-    }
-
-    public void setAlbumVkId(long albumVkId) {
-        this.albumVkId = albumVkId;
-    }
-    public void setAlbumMappingDictionaryId(long albumMappingDictionaryId) {
-        this.albumMappingDictionaryId = albumMappingDictionaryId;
-    }
-
-
-//    public void setStatusId(long albumStatus) {
-//        this.statusId = albumStatus;
-//    }
-
-    public void setCourseBankId(Long courseBankId) {
-        this.courseBankId = courseBankId;
-    }
-
-    public void setYear(int year) {
-        this.year = year;
-    }
-//    public void setCardId(Long card) {
-//        this.cardId = card;
-//    }
-
+    @Basic
+    @Column(name = "create_date")
+    private LocalDateTime createDate;
 
     @Override
     public boolean equals(Object o) {

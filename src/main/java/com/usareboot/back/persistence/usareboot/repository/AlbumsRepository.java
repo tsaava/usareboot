@@ -3,12 +3,13 @@ import com.usareboot.back.persistence.usareboot.entities.AlbumsEntity;
 import com.usareboot.back.persistence.usareboot.entities.DStatusesEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.Date;
+import java.sql.Date;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Optional;
 
 public interface AlbumsRepository extends JpaRepository<AlbumsEntity, Long> {
-    ArrayList<AlbumsEntity> getAlbumsEntitiesByAlbumDateAfterOrderByAlbumDate(Date albumDate);
+    ArrayList<AlbumsEntity> getAlbumsEntitiesByAlbumDateAfterOrderByCreateDateDesc(Date albumDate);
     AlbumsEntity findAlbumsEntityByAlbumId(Long albumId);
     Optional<AlbumsEntity> findAlbumsEntityByShopUrl(String url);
     Optional<AlbumsEntity> getAlbumsEntityByAlbumMappingDictionaryIdAndStatuses(long albumMappingId, DStatusesEntity statusId);

@@ -13,7 +13,6 @@ import com.usareboot.back.persistence.usareboot.repository.CardsRepository;
 import com.usareboot.back.persistence.usareboot.repository.DStatusRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.criteria.CriteriaBuilder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,9 +20,12 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.text.ParseException;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 @Service
@@ -57,7 +59,7 @@ public class AlbumsService {
         long millis = System.currentTimeMillis();
         java.sql.Date sqlDate = new java.sql.Date(millis);
         var datePolGoda = new java.sql.Date(sqlDate.getTime() - (190L * 24 * 60 * 60 * 1000));
-        var bdFuncResponse = albumsRepository.getAlbumsEntitiesByAlbumDateAfterOrderByAlbumDate(datePolGoda);
+        var bdFuncResponse = albumsRepository.getAlbumsEntitiesByAlbumDateAfterOrderByCreateDateDesc(datePolGoda);
         if (!bdFuncResponse.isEmpty()) {
             bdFuncResponse.forEach(x -> albumsDTOArrayList.add(new AlbumsDTO(
                     x.getAlbumId(),
@@ -129,25 +131,7 @@ log.info("res: {}", res);
         log.info("[Сценарий createAlbum][Шаг: Финиш][EventID: {}]", eventId);*/
     }
 
-    @Transactional
-    public void albumsUpd(AlbumRowRequestDTO albumRowRequestDTO, long id) {
-//        AlbumsEntity album = modelMapper.map(albumRowRequestDTO, AlbumsEntity.class);
-        AlbumsEntity temp = albumsRepository.findAlbumsEntityByAlbumId(albumRowRequestDTO.getAlbumId());
-        temp.setAlbumDesc(albumRowRequestDTO.getAlbumDesc());
-        temp.setCourseAlbum(albumRowRequestDTO.getCourseAlbum());
-        temp.setAlbumDatePlane(albumRowRequestDTO.getAlbumDatePlane());
-        temp.setCountOrder(albumRowRequestDTO.getCountOrder());
-        temp.setAlbumDateStop(albumRowRequestDTO.getAlbumDateStop());
-        if (albumRowRequestDTO.getAlbumStatus() != null && !(albumRowRequestDTO.getAlbumStatus().isEmpty()))
-            temp.setStatuses(statusRepository.findDStatusesEntityByStatusName(albumRowRequestDTO.getAlbumStatus()));
-        if (albumRowRequestDTO.getCard() != null && !(albumRowRequestDTO.getCard().isEmpty()))
-            temp.setCards(cardsRepository.findCardsEntityByCardName(albumRowRequestDTO.getCard()));
 
-        albumsRepository.save(temp);
-//        DStatusesEntity dst=new DStatusesEntity();
-//        dst.setStatusId(17);
-//        this.entityManager.persist(albumsEntity);
-    }
 
     /**
      * Список наименования карт для оплаты выкупов
@@ -168,26 +152,19 @@ log.info("res: {}", res);
         return list;
     }
 
-    public void convertToEntity(AlbumRowRequestDTO albumRowRequestDTO) throws ParseException {
-       /* AlbumsEntity album = modelMapper.map(albumRowRequestDTO, AlbumsEntity.class);
-        AlbumsEntity temp = albumsRepository.findAlbumsEntityByAlbumId(albumRowRequestDTO.getAlbumId());
-        temp.setAlbumDesc(albumRowRequestDTO.getAlbumDesc());
-        temp.setCourseAlbum(albumRowRequestDTO.getCourseAlbum());
-        temp.setAlbumDatePlane(albumRowRequestDTO.getAlbumDatePlane());
-        temp.setCountOrder(albumRowRequestDTO.getCountOrder());
-        temp.setAlbumDateStop(albumRowRequestDTO.getAlbumDateStop());
-        albumsRepository.save(temp);*/
-//        temp.getCourseAlbum(albumRowRequestDTO.getCourseAlbum());
-//        post.setSubmissionDate(albumRowRequestDTO.getSubmissionDateConverted(
-//                userService.getCurrentUser().getPreference().getTimezone()));
+    @Async
+    public void updateAlbum(String vkId, AlbumRowRequestDTO albumsEntity) throws IOException {
+        var eventId = threadLocal.get();
+        log.info("[Сценарий updateAlbum][Шаг: Начало][EventID: {}]", eventId);
 
-//        if (albumRowRequestDTO.getAlbumId() != null) {
-//            AlbumsEntity oldPost = postService.getPostById(albumRowRequestDTO.getId());
-//            post.setRedditID(oldPost.getRedditID());
-//            post.setSent(oldPost.isSent());
-//        }
-//        return album;
+        log.info("[Сценарий updateAlbum][Шаг: Обновляем описание альбома в ВК][EventID: {}]", eventId);
+        String res = vkOperator.photosEditAlbum(vkId, albumsEntity);
+        if(!res.contains("error")) {
+            log.info("[Сценарий updateAlbum][Шаг: В ВК альбом обновился][Album ID: {}][EventID: {}]", albumsEntity.getAlbumVkId(), eventId);
+
+            log.info("[Сценарий updateAlbum][Шаг: Обновление альбома в БД][Album ID: {}][EventID: {}]", albumsEntity.getAlbumVkId(), eventId);
+            albumOperator.albumsUpd(albumsEntity, albumsEntity.getAlbumId());
+        }
+        log.info("[Сценарий updateAlbum][Шаг: Финиш][Album ID: {}][EventID: {}]", albumsEntity.getAlbumVkId(), eventId);
     }
-
-
 }

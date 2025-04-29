@@ -56,18 +56,10 @@ public class AlbumsController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PatchMapping("/update/{token}")
+    @PatchMapping("/update")
     public ResponseEntity<?> patchAlbum(
-            @PathVariable String token,
             @RequestBody AlbumRowRequestDTO data) throws IOException {
-        System.out.println(data);
-        var vk = vkService.updAlbum(String.valueOf(data.getAlbumVkId()), data);
-        System.out.println(vk);
-        System.out.println("в вк альбом обновился, id = " + data.getAlbumVkId());
-        albumsService.albumsUpd(data, data.getAlbumId());
-        System.out.println("в базе альбом обновился");
+        albumsService.updateAlbum(String.valueOf(data.getAlbumVkId()), data);
         return new ResponseEntity<>(HttpStatus.OK);
     }
-
-
 }
