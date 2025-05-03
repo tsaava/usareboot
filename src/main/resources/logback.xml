@@ -35,9 +35,27 @@
         <appender-ref ref="FILE"  level="debug"/>
     </Logger>-->
 
-    <Logger name="com.usareboot.back" level ="debug" additivity="false">
+    <Logger name="com.usareboot.back" level ="debug" >
         <appender-ref ref="FILE"  level="debug"/>
     </Logger>
+    <Logger name=" com.usareboot.back.VkApiClient" level ="TRACE" >
+        <appender-ref ref="FILE"  level="TRACE"/>
+    </Logger>
+    <Logger name="  com.vk.api.sdk" level ="debug" >
+        <appender-ref ref="FILE"  level="debug"/>
+    </Logger>
+    <Logger name="org.apache.http" level ="WARN" >
+        <appender-ref ref="FILE"  level="WARN"/>
+    </Logger>
+
+    <Logger name="org.apache.http.wire" level ="ERROR" >
+        <appender-ref ref="FILE"  level="ERROR"/>
+    </Logger>
+
+    <Logger name="org.springframework.web" level ="DEBUG" >
+        <appender-ref ref="FILE"  level="DEBUG"/>
+    </Logger>
+
 
     <!--<Logger name="org.springframework" level ="debug">
         <appender-ref ref="STDOUT"/>

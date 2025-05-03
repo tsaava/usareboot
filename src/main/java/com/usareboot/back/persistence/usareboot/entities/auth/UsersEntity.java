@@ -22,6 +22,7 @@ public class UsersEntity {
     @Basic
     @Column(name = "login")
     private String login;
+    @Getter
     @Basic
     @Column(name = "password")
     private String password;
@@ -85,10 +86,6 @@ public class UsersEntity {
 
     public void setLogin(String login) {
         this.login = login;
-    }
-
-    public String getPassword(){
-        return password;
     }
 
     public void setPassword(String password) {

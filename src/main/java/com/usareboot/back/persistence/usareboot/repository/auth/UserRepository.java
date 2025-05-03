@@ -12,7 +12,8 @@ public interface UserRepository extends JpaRepository<UsersEntity, Long> {
 
     ArrayList<UsersEntity> findAll();
     Optional<UsersEntity> findUsersEntityByLoginAndPassword(String login, String password);
-    Optional<UsersEntity> findUsersEntityByLogin(String login);
+    Optional<UsersEntity> findFirstByLogin(String login);
+
 
 //    ArrayList<UsersEntity> findAllByPersonId(Long personId);
 

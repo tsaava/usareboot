@@ -18,6 +18,7 @@ import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -29,6 +30,7 @@ import java.util.Map;
 @RestController
 @CrossOrigin(origins = "*")/*!!!!обязательно во все контроллеры вставлять!!*/
 @RequestMapping("/api/usareboot/album/item")
+@PreAuthorize("hasAnyAuthority('admin')")
 @RequiredArgsConstructor
 @Slf4j
 public class AlbumsItemsController {
@@ -96,6 +98,12 @@ public class AlbumsItemsController {
         String photoId = albumsItemsService.saveFile(albumId, file, dto);
         vkWallPostService.postToWallWithPhotos(dto, photos, photoId);
         vkWallPostService.sendPostToChat(dto, photos, photoId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PatchMapping("/update")
+    public ResponseEntity<?> updateAlbumItem(@RequestBody AlbumsItemsDTO data) throws IOException {
+        albumsItemsService.updateAlbumItem(data);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

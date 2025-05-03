@@ -236,10 +236,6 @@ public class VkService {
         }
     }
 
-
-
-
-
     public MultipartFile getMultipartFile(AlbumsItemsDTO albumsItemsDTO, String type) throws IOException {
         return vkOperator.getMultipartFile(albumsItemsDTO, type);
     }

@@ -5,6 +5,7 @@ import com.usareboot.back.models.AlbumsItemsDTO;
 import com.usareboot.back.operators.AlbumItemOperator;
 import com.usareboot.back.operators.CommonOperator;
 import com.usareboot.back.operators.VkOperator;
+import com.usareboot.back.persistence.usareboot.entities.AlbumsItemsEntity;
 import com.usareboot.back.persistence.usareboot.repository.AlbumsItemsRepository;
 import com.usareboot.back.services.vk.VkPostService;
 import com.vk.api.sdk.exceptions.ApiException;
@@ -13,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -26,6 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ThreadLocalRandom;
 
 import static org.springframework.http.ResponseEntity.ok;
 
@@ -49,14 +52,15 @@ public class AlbumsItemsService {
 
     @Value("${vk.api.groupId}")
     private String groupId;
-    private final ThreadLocal<String> threadLocal = new ThreadLocal<>();
+    private final ThreadLocal<Integer> threadLocal = ThreadLocal.withInitial(() -> ThreadLocalRandom.current().nextInt(10000, 100000));
+
 
     //    @Async
     public ArrayList<AlbumsItemsDTO> getAlbumsItems(long albumId) {
         var eventId = threadLocal.get();
         log.info("[Сценарий getAlbumsItems][Шаг: Начало][EventID: {}]", eventId);
         ArrayList<AlbumsItemsDTO> list = new ArrayList<>();
-        var bdFuncResponse = albumsItemsRepository.getAlbumsItemsEntitiesByAlbum_AlbumId(albumId);
+        var bdFuncResponse = albumsItemsRepository.getAlbumsItemsEntitiesByAlbum_AlbumIdOrderByDateCreateDesc(albumId);
         if (!bdFuncResponse.isEmpty()) {
             bdFuncResponse.forEach(x -> list.add(new AlbumsItemsDTO(
                     x.getAlbumItemId(),
@@ -88,10 +92,6 @@ public class AlbumsItemsService {
         }
 //        log.info("[Сценарий getAlbumsItems][Шаг: вывод AlbumsItemsDTO list: {}][EventID: {}]", list, eventId);
         return list;
-    }
-
-    public void saveAlbumItem(AlbumsItemsDTO albumsItemsDTO) throws IOException {
-        albumItemOperator.saveAlbumItem(albumsItemsDTO);
     }
 
     public String saveFile(Long albumId, MultipartFile file, AlbumsItemsDTO albumsItemsDTO) throws IOException, ClientException, ApiException {
@@ -135,11 +135,11 @@ public class AlbumsItemsService {
         Path filePath = Path.of(pathPhoto);
         log.info("Сохранение фото в БД");
         albumsItemsDTO.setPhotoPath(String.valueOf(filePath));
-        copyFile(file);
+//        copyFile(file);
         log.info("Сохранение фото в БД");
-        saveAlbumItem(albumsItemsDTO);
+        albumItemOperator.saveAlbumItem(albumsItemsDTO);
 
-        String fileUri = ServletUriComponentsBuilder.fromCurrentContextPath()
+       /* String fileUri = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path("/image/")
                 .path(Objects.requireNonNull(file.getOriginalFilename()))
                 .toUriString();
@@ -147,7 +147,7 @@ public class AlbumsItemsService {
         var result = Map.of(
                 "filename", file.getOriginalFilename(),
                 "fileUri", fileUri
-        );
+        );*/
 
         log.info("Фото товара успешно загружено, изменено описание и сохранено в бд");
         /*var itemCost = albumsItemsDTO.getAlbumItemCost() * albumsItemsDTO.getAlbumItemRate();
@@ -184,5 +184,25 @@ public class AlbumsItemsService {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    @Async
+    public void updateAlbumItem(AlbumsItemsDTO albumsItemsDTO) throws IOException {
+        var eventId = threadLocal.get();
+        log.info("[Сценарий updateAlbumItem][Шаг: Начало][EventID: {}]", eventId);
+
+        log.info("[Сценарий updateAlbumItem][Шаг: Получаем данные по товару из БД][EventID: {}]", eventId);
+        AlbumsItemsEntity albumItem = albumItemOperator.getAlbumItem(albumsItemsDTO);
+
+        log.info("[Сценарий updateAlbumItem][Шаг: Формируем описание товара с измененоый ценой/курсом][EventID: {}]", eventId);
+        albumsItemsDTO.setDescription("");
+        var allDesc = vkOperator.getAllDesc(albumsItemsDTO);
+        log.info("[Сценарий updateAlbumItem][Шаг: Обновление описания фото в ВК][EventID: {}]", eventId);
+        vkOperator.editPhotoInVk(String.valueOf(albumItem.getVkItemId()), allDesc);
+        albumItem.setDescription(allDesc);
+        log.info("[Сценарий updateAlbumItem][Шаг: Обновление описания товара в БД][EventID: {}]", eventId);
+        albumItemOperator.updateAlbumItem(albumItem, albumsItemsDTO);
+
+        log.info("[Сценарий updateAlbumItem][Шаг: Финиш][AlbumItem ID: {}][EventID: {}]", albumItem.getAlbumItemId(), eventId);
     }
 }

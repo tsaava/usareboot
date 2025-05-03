@@ -11,6 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -18,11 +20,15 @@ import org.springframework.web.bind.annotation.*;
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 @RestController
 @CrossOrigin(origins = "*")
 @RequestMapping("/api/auth")
+@Slf4j
 public class AuthController {
 
     @Autowired
@@ -50,10 +56,10 @@ public class AuthController {
         var list = userDAO.findAllUserRolesUserId(userDAO.findUserByLogin(loginRequest.getLogin()));
         System.out.println(list);
         ArrayList<ChosenRoleDTO> roleList = new ArrayList<>();
-        list.forEach(x -> roleList.add(new ChosenRoleDTO(   x.getRoleId(),
+        list.forEach(x -> roleList.add(new ChosenRoleDTO(x.getRoleId(),
 //                x.getRoleCode(),
                 x.getRoleName())));
-       // Set<String> roles = list.getRoleId();//.stream().map(DRolesEntity::getRoleName).collect(Collectors.toSet());
+        // Set<String> roles = list.getRoleId();//.stream().map(DRolesEntity::getRoleName).collect(Collectors.toSet());
 //        Set<String> rolesCode = list.stream().map(x -> x.getRoleCode()).collect(Collectors.toSet());
 //        Set<Long> rolesId = list.stream().map(x -> x.getRoleId()).collect(Collectors.toSet());
 
@@ -98,34 +104,40 @@ public class AuthController {
      */
     @PostMapping("/choose_role")
     public ResponseEntity<?> gotChosenRolePage(@RequestHeader("Authorization") String token, @RequestBody @Validated ChosenRoleDTO chosenRole) throws UnsupportedEncodingException, NoSuchAlgorithmException {
+        try {
 
-        // проверяет можно ли перерегаться
-        boolean isTokenValid = jwtUtils.validateJwtToken(token);
 
-        // если можно, то создает новый токен
-        if (isTokenValid /*&& isRoleAllowed*/) {
-            String newToken = jwtUtils.generateJwtToken(
-                        userDAO.findNeedLoginByLoginAndRole(
-                                SecurityContextHolder.getContext().getAuthentication().getName(),
-                                chosenRole.getRoleCode()),
+            // проверяет можно ли перерегаться
+            boolean isTokenValid = jwtUtils.validateJwtToken(token);
+            log.debug("isTokenValid: {}", isTokenValid);
+            // если можно, то создает новый токен
+            if (isTokenValid /*&& isRoleAllowed*/) {
+                String newToken = jwtUtils.generateJwtToken(
+                        SecurityContextHolder.getContext().getAuthentication().getName(),
                         chosenRole.getRoleId()
-            );
-            // получаем текущий логин из контекста
-            String login = SecurityContextHolder.getContext().getAuthentication().getName();
+                );
+                // получаем текущий логин из контекста
+                String login = SecurityContextHolder.getContext().getAuthentication().getName();
+                String password = userDAO.getPasswordByLogin(login);
+                log.debug("password: {}",password);
+                List<GrantedAuthority> authorities = Collections.singletonList((new SimpleGrantedAuthority("ROLE_" + chosenRole.getRoleCode())));
+                //создаем новую аутентификацию на основе текущего логина и новой роли
+                Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
+                        login,
+                        userDAO.getPasswordByLogin(login),
+                        authorities
+                ));
+                log.debug("authentication: {}", authentication);
+                // устанавливаем новые данные в контекст
+                SecurityContextHolder.getContext().setAuthentication(authentication);
 
-            //создаем новую аутентификацию на основе текущего логина и новой роли
-            Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken (
-                                                    userDAO.findNeedLoginByLoginAndRole(login, chosenRole.getRoleId().toString()),
-                                                    userDAO.getPasswordByLogin(login)
-                                                    ));
-
-            // устанавливаем новые данные в контекст
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-
-            // возвращаем новый токен
-            return new ResponseEntity<>(new ChooseRoleResponseDTO(chosenRole.getRoleId(), newToken), HttpStatus.ACCEPTED);
+                // возвращаем новый токен
+                return new ResponseEntity<>(new ChooseRoleResponseDTO(chosenRole.getRoleId(), newToken), HttpStatus.ACCEPTED);
+            }
+        } catch (Exception e) {
+            log.error("error: {}", e.getMessage());
+            e.printStackTrace();
         }
-
         return new ResponseEntity<>("Something went wrong....", HttpStatus.FORBIDDEN);
     }
 

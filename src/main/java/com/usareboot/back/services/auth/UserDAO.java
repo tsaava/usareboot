@@ -1,5 +1,6 @@
 package com.usareboot.back.services.auth;
 
+import com.usareboot.back.persistence.usareboot.entities.auth.PersonUsersEntity;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class UserDAO {
 
 
     public UsersEntity findUserByLogin(String login) {
-        return userRepository.findUsersEntityByLogin(login).get();
+        return userRepository.findFirstByLogin(login).orElse(new UsersEntity());
     }
 
 
@@ -103,13 +104,13 @@ public class UserDAO {
     public Long getRoleIdByLogin(String login) {
 //        return rolesRepository.findDRolesEntityByRoleId(Long.valueOf(userRepository.findUsersEntityByLogin(login).get().getRoles())).getRoleName();
 
-        var roleArray = userRepository.findUsersEntityByLogin(login).get().getRoles();
+        var roleArray = userRepository.findFirstByLogin(login).get().getRoles();
         return roleArray.stream().findFirst().get().getRoleId();
 
     }
 
     public Set<Long> getRoleEntityByLogin(String login) {
-        return personRepository.findPersonUsersEntitiesByUserId(userRepository.findUsersEntityByLogin(login).get().getUserId()).stream().map(x -> x.getRoleId()).collect(Collectors.toSet());
+        return personRepository.findPersonUsersEntitiesByUserId(userRepository.findFirstByLogin(login).map(UsersEntity::getUserId).orElse(0L)).stream().map(PersonUsersEntity::getRoleId).collect(Collectors.toSet());
     }
 
     private long getPersonUsersId(long roleId) {
@@ -122,19 +123,21 @@ public class UserDAO {
 
 
     // применяется при смене роли - находит нужную учетную запись по роли и текущей в контексте аутентификации
-    public String findNeedLoginByLoginAndRole(String login, String role) {
+    public String findNeedLoginByLoginAndRole(String login, Long role) {
 //        UsersEntity user = userRepository.findUsersEntityByLogin(login).get();
 //        ArrayList<UsersEntity> usersEntities = userRepository.findAllByPersonId(user.getPersonId());
 //        UsersEntity userOut = usersEntities.stream().filter(x -> rolesRepository.findDRolesEntityByRoleName(role).getRoleId() == Long.parseLong(x.getRoles())).findFirst().get();
 //        return userOut.getLogin();
 
 
-        var roleArray = userRepository.findUsersEntityByLogin(login).get().getRoles();
-        System.out.println(roleArray.stream().findFirst());
+        var roleArray = userRepository.findFirstByLogin(login).map(UsersEntity::getRoles);
+        log.debug("roleArray: {}",roleArray);
 //        return rolesRepository.findDRolesEntityByRoleId(roleArray.stream().findFirst().get().getRoleId()).getRoleName();
-        return rolesRepository.findDRolesEntityByRoleIdAndActive(roleArray.stream().findFirst().get().getRoleId(),1).getRoleName();
+        return rolesRepository.findDRolesEntityByRoleIdAndActive(role,1).getRoleName();
 
     }
+
+
 
     //Проверяет наличие роли у данного юзера на всех аккаунтах
 //    public boolean checkUserRole(String login, String role) {
@@ -143,8 +146,9 @@ public class UserDAO {
 //    public String getUserByPidAndRole()
     public String getPasswordByLogin(String login) throws UnsupportedEncodingException, NoSuchAlgorithmException {
 //        System.out.println( userRepository.findUsersEntityByLogin(login).get().getPassword());
-        log.debug(userRepository.findUsersEntityByLogin(login).get().getPassword());
-        return userRepository.findUsersEntityByLogin(login).get().getPassword();
+//        log.debug(userRepository.findUsersEntityByLogin(login).orElse(null));
+        log.debug("getPasswordByLogin login: {}",login);
+        return userRepository.findFirstByLogin(login).map(UsersEntity::getPassword).orElse("");
     }
 
 

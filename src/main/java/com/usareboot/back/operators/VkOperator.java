@@ -147,7 +147,6 @@ public class VkOperator {
         params.add(new BasicNameValuePair("caption", caption));
         params.add(new BasicNameValuePair("http.protocol.content-charset", "UTF-8"));
         httpPost.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));
-        System.out.println(httpPost);
         try (
                 CloseableHttpResponse response2 = httpclient.execute(httpPost)
         ) {
@@ -652,8 +651,8 @@ public class VkOperator {
     }
 
     public String photosEditAlbum(String vkId, AlbumRowRequestDTO albumsEntity) throws IOException {
-        var accessToken = commonOperator.getTokenGroup(clientId).orElse(null);
-
+        var accessToken = commonOperator.getTokenClient(standaloneId).orElse(null);
+log.debug("accessToken: {}",accessToken);
         var description = albumsEntity.getAlbumDesc() + "\nКурс(ы) альбома: " + albumsEntity.getCourseAlbum();
         final CloseableHttpClient httpclient = HttpClients.createDefault();
         final HttpPost httpPost = new HttpPost("https://api.vk.com/method/photos.editAlbum");

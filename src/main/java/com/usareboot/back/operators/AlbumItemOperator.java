@@ -14,6 +14,9 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Date;
 import java.time.LocalDate;
+
+import static com.usareboot.back.models.constant.Constant.ALBUM_ITEM_DEFAULT_STATUS_ID;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -25,7 +28,7 @@ public class AlbumItemOperator {
 
     public AlbumsItemsEntity saveAlbumItem(AlbumsItemsDTO albumsItemsDTO) {
         AlbumsItemsEntity albumsItemsEntity = new AlbumsItemsEntity();
-        Long albumItemStatus = albumsItemsDTO.getAlbumItemStatus()!=null? albumsItemsDTO.getAlbumItemStatus() : 22;
+        Long albumItemStatus = albumsItemsDTO.getAlbumItemStatus()!=null? albumsItemsDTO.getAlbumItemStatus() : ALBUM_ITEM_DEFAULT_STATUS_ID;
         DStatusesEntity status = dStatusRepository.findDStatusesEntityByStatusId(albumItemStatus);
         albumsItemsEntity.setAlbumItemStatus(status);
         albumsItemsEntity.setAlbumItemName(albumsItemsDTO.getAlbumItemName());
@@ -54,5 +57,15 @@ public class AlbumItemOperator {
             albumsItemsEntity.setPhotoPath(albumsItemsDTO.getPhotoPath());
         }
         return albumsItemsRepository.save(albumsItemsEntity);
+    }
+
+    public AlbumsItemsEntity getAlbumItem(AlbumsItemsDTO albumsItemsDTO) {
+        return albumsItemsRepository.findFirstByAlbumItemId(albumsItemsDTO.getAlbumItemId());
+    }
+
+    public void updateAlbumItem(AlbumsItemsEntity albumsItemsEntity, AlbumsItemsDTO albumsItemsDTO) {
+        albumsItemsEntity.setAlbumItemCost(albumsItemsDTO.getAlbumItemCost());
+        albumsItemsEntity.setAlbumItemRate(albumsItemsDTO.getAlbumItemRate());
+        albumsItemsRepository.save(albumsItemsEntity);
     }
 }

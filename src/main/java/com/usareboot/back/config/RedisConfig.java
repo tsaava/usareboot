@@ -7,10 +7,10 @@ import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactor
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
-@Configuration
+//@Configuration
 public class RedisConfig {
 
-    @Bean
+    /*@Bean
     public RedisConnectionFactory redisConnectionFactory() {
         return new LettuceConnectionFactory(); // Использует настройки из application.properties
     }
@@ -22,5 +22,5 @@ public class RedisConfig {
         template.setKeySerializer(new StringRedisSerializer());
         template.setValueSerializer(new StringRedisSerializer());
         return template;
-    }
+    }*/
 }
