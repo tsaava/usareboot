@@ -172,6 +172,7 @@ public class VkService {
         var eventId = threadLocal.get();
         log.info("[Сценарий createAlbum][Шаг: Начало][EventID: {}]", eventId);
 
+        var description = albumsEntity.getAlbumDesc() + "\nКурс(ы) альбома: " + albumsEntity.getCourseAlbum();
         log.info("[Сценарий createAlbum][Шаг: Определить есть ли в словаре данные по альбому][EventID: {}]", eventId);
         Optional<AlbumMappingDictionaryEntity> albumMappingDictionaryEntity = albumMappingDictionaryRepository.getAlbumMappingDictionaryEntityByLinkContains(Optional.ofNullable(albumsEntity).map(AlbumsEntity::getShopUrl).orElse(""));
         if (albumMappingDictionaryEntity.isEmpty())
@@ -186,7 +187,7 @@ public class VkService {
         params.add(new BasicNameValuePair("v", apiVersion));
         params.add(new BasicNameValuePair("title", Optional.ofNullable(albumsEntity).map(AlbumsEntity::getAlbumName).orElse("")));
         params.add(new BasicNameValuePair("group_id", groupId));
-        params.add(new BasicNameValuePair("description", Optional.ofNullable(albumsEntity).map(AlbumsEntity::getAlbumDesc).orElse("")));
+        params.add(new BasicNameValuePair("description", description));
         params.add(new BasicNameValuePair("upload_by_admins_only", "0"/*фотографии могут добавлять все пользователи*/));
         params.add(new BasicNameValuePair("http.protocol.content-charset", "UTF-8"));
         httpPost.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));

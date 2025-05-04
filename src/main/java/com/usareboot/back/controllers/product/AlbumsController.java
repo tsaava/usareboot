@@ -20,7 +20,7 @@ import java.io.IOException;
 @CrossOrigin(origins = "*")/*!!!!обязательно во все контроллеры вставлять!!*/
 @RequestMapping("/api/usareboot/albums")
 @RequiredArgsConstructor
-@PreAuthorize("hasAnyAuthority('admin')")
+//@PreAuthorize("hasAnyAuthority('admin')")
 public class AlbumsController {
     private AlbumsService albumsService;
     private VkService vkService;

@@ -2,10 +2,14 @@ package com.usareboot.back.persistence.usareboot.entities.auth;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.Setter;
 
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @Getter
+@Setter
 @Entity
 @Table(name = "d_roles",  catalog = "usareboot")
 public class DRolesEntity {
@@ -22,6 +26,14 @@ public class DRolesEntity {
     @Basic
     @Column(name = "active")
     private int active;
+
+    /*@ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "role_tabs",
+            joinColumns = @JoinColumn(name = "role_id"),
+            inverseJoinColumns = @JoinColumn(name = "tab_id")
+    )
+    private Set<Tab> tabs = new HashSet<>();*/
 
     public void setRoleId(long roleId) {
         this.roleId = roleId;

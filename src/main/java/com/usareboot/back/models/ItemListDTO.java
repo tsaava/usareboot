@@ -14,7 +14,7 @@ public class ItemListDTO {
         long clientId;
         Long itemStatusId;
         Long payStatusId;
-        long albumId;
+        Long albumId;
         Long albumItemId;
         Long vkId;
         long orderId;

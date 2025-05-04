@@ -1,6 +1,7 @@
 package com.usareboot.back.persistence.usareboot.repository.auth;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import com.usareboot.back.persistence.usareboot.entities.auth.UsersEntity;
 
@@ -14,6 +15,11 @@ public interface UserRepository extends JpaRepository<UsersEntity, Long> {
     Optional<UsersEntity> findUsersEntityByLoginAndPassword(String login, String password);
     Optional<UsersEntity> findFirstByLogin(String login);
 
+   /* @Query("SELECT DISTINCT u FROM UsersEntity u " +
+            "LEFT JOIN FETCH u.roles r " +
+            "LEFT JOIN FETCH r.tabs t " +
+            "WHERE u.userId = :userId")
+    Optional<UsersEntity> findByIdWithRolesAndTabs(Long userId);*/
 
 //    ArrayList<UsersEntity> findAllByPersonId(Long personId);
 

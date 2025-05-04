@@ -14,5 +14,6 @@ public interface RolesRepository extends JpaRepository<DRolesEntity, Long> {
 
 //    DRolesEntity findDRolesEntitiesByActive(int active);
     DRolesEntity findDistinctByActive(int active);
+    DRolesEntity findFirstByRoleId(Long role);
 
 }

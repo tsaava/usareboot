@@ -113,9 +113,7 @@ public class UserDAO {
         return personRepository.findPersonUsersEntitiesByUserId(userRepository.findFirstByLogin(login).map(UsersEntity::getUserId).orElse(0L)).stream().map(PersonUsersEntity::getRoleId).collect(Collectors.toSet());
     }
 
-    private long getPersonUsersId(long roleId) {
-        return personRepository.findPersonUsersEntityByRoleId(roleId).getPersonUserId();
-    }
+
 
     public DRolesEntity getRoleById(Long roleId) {
         return rolesRepository.findDRolesEntityByRoleIdAndActive(roleId, 1);

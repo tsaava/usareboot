@@ -28,6 +28,8 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;
 
+import static com.usareboot.back.models.constant.Constant.ALBUM_DEFAULT_STATUS_ID;
+
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -94,7 +96,7 @@ public class AlbumsService {
     @Transactional
     public void albumsAdd(AlbumsEntity albumsEntity, Integer id) {
         DStatusesEntity dst = new DStatusesEntity();
-        dst.setStatusId(17);
+        dst.setStatusId(ALBUM_DEFAULT_STATUS_ID);
         albumsEntity.setStatuses(dst);
         if (id != null) {
             albumsEntity.setAlbumVkUrl("https://vk.com/album-" + groupId + "_" + id);
