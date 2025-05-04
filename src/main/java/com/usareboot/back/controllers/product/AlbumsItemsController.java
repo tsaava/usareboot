@@ -30,7 +30,7 @@ import java.util.Map;
 @RestController
 @CrossOrigin(origins = "*")/*!!!!обязательно во все контроллеры вставлять!!*/
 @RequestMapping("/api/usareboot/album/item")
-//@PreAuthorize("hasAnyAuthority('admin')")
+@PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'PROMOTION')")
 @RequiredArgsConstructor
 @Slf4j
 public class AlbumsItemsController {

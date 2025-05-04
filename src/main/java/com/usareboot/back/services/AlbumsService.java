@@ -103,8 +103,8 @@ public class AlbumsService {
         dst.setStatusId(ALBUM_DEFAULT_STATUS_ID);
         log.info("[Сценарий createAlbum][Шаг: Определить есть ли в словаре данные по альбому][EventID: ]");
         Optional<AlbumMappingDictionaryEntity> albumMappingDictionaryEntity = albumMappingDictionaryRepository.getAlbumMappingDictionaryEntityByLinkContains(Optional.ofNullable(albumsEntity).map(AlbumsEntity::getShopUrl).orElse(""));
-        if (albumMappingDictionaryEntity.isEmpty())
-            throw new RuntimeException("В словаре нет сопоставления с введенной ссылкой");
+//        if (albumMappingDictionaryEntity.isEmpty())
+//            throw new RuntimeException("В словаре нет сопоставления с введенной ссылкой");
         albumsEntity.setStatuses(dst);
         if (id != null) {
             albumsEntity.setAlbumVkUrl("https://vk.com/album-" + groupId + "_" + id);

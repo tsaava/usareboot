@@ -21,6 +21,7 @@ import java.io.IOException;
 @RequestMapping("/api/usareboot/albums")
 @RequiredArgsConstructor
 //@PreAuthorize("hasAnyAuthority('admin')")
+@PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'PROMOTION')")
 public class AlbumsController {
     private AlbumsService albumsService;
     private VkService vkService;

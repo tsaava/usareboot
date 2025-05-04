@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 @CrossOrigin(origins = "*")/*!!!!обязательно во все контроллеры вставлять!!*/
 @RequestMapping("/api/usareboot")
 @RequiredArgsConstructor
-//@PreAuthorize("hasAnyAuthority('user')")
+@PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
 public class MainController {
 
     @Autowired

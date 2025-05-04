@@ -116,20 +116,28 @@ public class AuthController {
                         SecurityContextHolder.getContext().getAuthentication().getName(),
                         chosenRole.getRoleId()
                 );
+                log.debug("chosenRole.getRoleId(): {}",chosenRole.getRoleId());
                 // получаем текущий логин из контекста
                 String login = SecurityContextHolder.getContext().getAuthentication().getName();
                 String password = userDAO.getPasswordByLogin(login);
                 log.debug("password: {}",password);
-                List<GrantedAuthority> authorities = Collections.singletonList((new SimpleGrantedAuthority("ROLE_" + chosenRole.getRoleCode())));
+                List<GrantedAuthority> authorities = Collections.singletonList((new SimpleGrantedAuthority("ROLE_" + chosenRole.getRoleCode().toUpperCase())));
+                log.debug("authorities: {}",authorities);
                 //создаем новую аутентификацию на основе текущего логина и новой роли
                 Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                         login,
                         userDAO.getPasswordByLogin(login),
                         authorities
                 ));
-                log.debug("authentication: {}", authentication);
+                // Создаем новую аутентификацию вручную (без вызова authenticationManager)
+                Authentication newAuth = new UsernamePasswordAuthenticationToken(
+                        authentication.getPrincipal(),  // текущий principal (UserDetails)
+                        authentication.getCredentials(),  // пароль или токен
+                        authorities  // только выбранная роль
+                );
+                log.debug("authentication: {}", newAuth);
                 // устанавливаем новые данные в контекст
-                SecurityContextHolder.getContext().setAuthentication(authentication);
+                SecurityContextHolder.getContext().setAuthentication(newAuth);
 
                 // возвращаем новый токен
                 return new ResponseEntity<>(new ChooseRoleResponseDTO(chosenRole.getRoleId(), newToken), HttpStatus.ACCEPTED);
