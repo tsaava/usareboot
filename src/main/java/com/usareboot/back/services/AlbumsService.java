@@ -3,11 +3,13 @@ package com.usareboot.back.services;
 import com.usareboot.back.models.AlbumRowRequestDTO;
 import com.usareboot.back.models.AlbumsDTO;
 import com.usareboot.back.models.CardsDTO;
+import com.usareboot.back.persistence.usareboot.entities.AlbumMappingDictionaryEntity;
 import com.usareboot.back.persistence.usareboot.entities.AlbumsEntity;
 import com.usareboot.back.persistence.usareboot.entities.DStatusesEntity;
 import com.usareboot.back.operators.AlbumOperator;
 import com.usareboot.back.operators.CommonOperator;
 import com.usareboot.back.operators.VkOperator;
+import com.usareboot.back.persistence.usareboot.repository.AlbumMappingDictionaryRepository;
 import com.usareboot.back.persistence.usareboot.repository.AlbumsRepository;
 import com.usareboot.back.persistence.usareboot.repository.CardsRepository;
 import com.usareboot.back.persistence.usareboot.repository.DStatusRepository;
@@ -26,6 +28,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 
 import static com.usareboot.back.models.constant.Constant.ALBUM_DEFAULT_STATUS_ID;
@@ -47,6 +50,7 @@ public class AlbumsService {
     private final CommonOperator commonOperator;
     private final VkOperator vkOperator;
     private final AlbumOperator albumOperator;
+    private final AlbumMappingDictionaryRepository albumMappingDictionaryRepository;
 
 
     /**
@@ -97,6 +101,10 @@ public class AlbumsService {
     public void albumsAdd(AlbumsEntity albumsEntity, Integer id) {
         DStatusesEntity dst = new DStatusesEntity();
         dst.setStatusId(ALBUM_DEFAULT_STATUS_ID);
+        log.info("[Сценарий createAlbum][Шаг: Определить есть ли в словаре данные по альбому][EventID: ]");
+        Optional<AlbumMappingDictionaryEntity> albumMappingDictionaryEntity = albumMappingDictionaryRepository.getAlbumMappingDictionaryEntityByLinkContains(Optional.ofNullable(albumsEntity).map(AlbumsEntity::getShopUrl).orElse(""));
+        if (albumMappingDictionaryEntity.isEmpty())
+            throw new RuntimeException("В словаре нет сопоставления с введенной ссылкой");
         albumsEntity.setStatuses(dst);
         if (id != null) {
             albumsEntity.setAlbumVkUrl("https://vk.com/album-" + groupId + "_" + id);

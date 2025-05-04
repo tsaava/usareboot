@@ -175,8 +175,6 @@ public class VkService {
         var description = albumsEntity.getAlbumDesc() + "\nКурс(ы) альбома: " + albumsEntity.getCourseAlbum();
         log.info("[Сценарий createAlbum][Шаг: Определить есть ли в словаре данные по альбому][EventID: {}]", eventId);
         Optional<AlbumMappingDictionaryEntity> albumMappingDictionaryEntity = albumMappingDictionaryRepository.getAlbumMappingDictionaryEntityByLinkContains(Optional.ofNullable(albumsEntity).map(AlbumsEntity::getShopUrl).orElse(""));
-        if (albumMappingDictionaryEntity.isEmpty())
-            throw new RuntimeException("В словаре нет сопоставления с введенной ссылкой");
 
         var accessToken = commonOperator.getTokenClient(standaloneId).orElse(null);
 //        accessToken = commonOperator.getTokenGroup(groupId).orElse(null);
