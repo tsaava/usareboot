@@ -27,13 +27,13 @@ public class DRolesEntity {
     @Column(name = "active")
     private int active;
 
-    /*@ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "role_tabs",
             joinColumns = @JoinColumn(name = "role_id"),
             inverseJoinColumns = @JoinColumn(name = "tab_id")
     )
-    private Set<Tab> tabs = new HashSet<>();*/
+    private Set<Tab> tabs = new HashSet<>();
 
     public void setRoleId(long roleId) {
         this.roleId = roleId;

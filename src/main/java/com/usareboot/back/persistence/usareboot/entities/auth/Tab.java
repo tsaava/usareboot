@@ -6,12 +6,12 @@ import lombok.Setter;
 
 import java.util.Objects;
 
-/*@Entity
+@Entity
 @Getter
 @Setter
-@Table(name = "tabs", catalog = "dbusareboot")*/
+@Table(name = "tabs", catalog = "dbusareboot")
 public class Tab {
-   /* @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "tab_id")
     private int tabId;
@@ -45,5 +45,5 @@ public class Tab {
     @Override
     public int hashCode() {
         return Objects.hash(tabId, path, name);
-    }*/
+    }
 }
