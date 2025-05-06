@@ -27,7 +27,8 @@ vk:
         version: '5.139'
         redirectUri: 'https://localhost:80/vkAuth'
         pathPhoto: '/vk_img/'
-        redirectStandaloneUri: 'https://localhost/vkAuth'
+#        redirectStandaloneUri: 'https://localhost:80/vkAuth'
+        redirectStandaloneUri: 'https://localtest.me/vkAuth'
     client:
         id: '51727454'
         secret: 'Lp8in0hLVi4I7SR7VMKz'

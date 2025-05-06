@@ -38,9 +38,9 @@
     <Logger name="com.usareboot.back" level ="debug" >
         <appender-ref ref="FILE"  level="debug"/>
     </Logger>
-    <Logger name=" com.usareboot.back.VkApiClient" level ="TRACE" >
+   <!-- <Logger name=" com.usareboot.back.VkApiClient" level ="TRACE" >
         <appender-ref ref="FILE"  level="TRACE"/>
-    </Logger>
+    </Logger>-->
     <Logger name="  com.vk.api.sdk" level ="debug" >
         <appender-ref ref="FILE"  level="debug"/>
     </Logger>

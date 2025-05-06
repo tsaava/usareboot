@@ -15,11 +15,11 @@ public interface UserRepository extends JpaRepository<UsersEntity, Long> {
     Optional<UsersEntity> findUsersEntityByLoginAndPassword(String login, String password);
     Optional<UsersEntity> findFirstByLogin(String login);
 
-    @Query("SELECT DISTINCT u FROM UsersEntity u " +
+   /* @Query("SELECT DISTINCT u FROM UsersEntity u " +
             "LEFT JOIN FETCH u.roles r " +
             "LEFT JOIN FETCH r.tabs t " +
             "WHERE u.userId = :userId")
-    Optional<UsersEntity> findByIdWithRolesAndTabs(Long userId);
+    Optional<UsersEntity> findByIdWithRolesAndTabs(Long userId);*/
 
 //    ArrayList<UsersEntity> findAllByPersonId(Long personId);
 

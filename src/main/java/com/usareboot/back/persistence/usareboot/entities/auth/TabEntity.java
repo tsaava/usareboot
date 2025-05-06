@@ -3,14 +3,16 @@ package com.usareboot.back.persistence.usareboot.entities.auth;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.util.Objects;
 
 @Entity
 @Getter
 @Setter
+@ToString
 @Table(name = "tabs", catalog = "dbusareboot")
-public class Tab {
+public class TabEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "tab_id")
@@ -21,6 +23,10 @@ public class Tab {
     @Basic
     @Column(name = "name")
     private String name;
+
+    @Basic
+    @Column(name = "sort")
+    private String sort;
 
     public void setTabId(int id) {
         this.tabId = id;
@@ -38,7 +44,7 @@ public class Tab {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Tab that = (Tab) o;
+        TabEntity that = (TabEntity) o;
         return tabId == that.tabId && Objects.equals(path, that.path) && Objects.equals(name, that.name);
     }
 

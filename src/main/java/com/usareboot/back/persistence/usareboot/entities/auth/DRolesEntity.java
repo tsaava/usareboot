@@ -33,7 +33,7 @@ public class DRolesEntity {
             joinColumns = @JoinColumn(name = "role_id"),
             inverseJoinColumns = @JoinColumn(name = "tab_id")
     )
-    private Set<Tab> tabs = new HashSet<>();
+    private Set<TabEntity> tabEntities = new HashSet<>();
 
     public void setRoleId(long roleId) {
         this.roleId = roleId;
