@@ -169,6 +169,7 @@ log.info("res: {}", res);
 
         log.info("[Сценарий updateAlbum][Шаг: Обновляем описание альбома в ВК][EventID: {}]", eventId);
         String res = vkOperator.photosEditAlbum(vkId, albumsEntity);
+        log.debug("res:{}",res);
         if(!res.contains("error")) {
             log.info("[Сценарий updateAlbum][Шаг: В ВК альбом обновился][Album ID: {}][EventID: {}]", albumsEntity.getAlbumVkId(), eventId);
 

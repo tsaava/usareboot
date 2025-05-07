@@ -10,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -31,7 +33,8 @@ public class ItemOperator {
         itemsEntity.setDateComment(commentDate);
         itemsEntity.setOrderId(orderId);
         itemsEntity.setItemName(albumsItems.getAlbumItemName());
-        itemsEntity.setVkUrl(albumsItems.getItemUrl());
+        itemsEntity.setVkUrl(albumsItems.getVkPhotoPath());
+
         itemsEntity.setItemStatus(NEW_ITEM_STATUS);
 
         if (data == null) {
@@ -55,16 +58,22 @@ public class ItemOperator {
                 itemsEntity.setItemCount(Integer.valueOf(parsedComment.getCount()));
             else
                 itemsEntity.setItemCount(1);
+
+            itemsEntity.setVkCommentId(commentId);
+
         } else {
             itemsEntity.setItemSize(data.getItemSize());
             itemsEntity.setItemUrl(data.getItemUrl());
             itemsEntity.setItemColor(data.getItemColor());
             itemsEntity.setItemCount(data.getItemCount());
         }
-        itemsEntity.setVkCommentId(commentId);
-        //TODO записывать явно стоимость товара-вытянуть стоимость в валюте и умножить на курс
-//        itemsEntity.setItemCost();
-//        itemsEntity.setVkUrl("https://vk.com/photo-" + groupId + "_" + photoId);
+
+        BigDecimal itemCost = BigDecimal.valueOf(0);
+        if (albumsItems.getAlbumItemCost() != null && albumsItems.getAlbumItemRate() != null) {
+            itemCost = albumsItems.getAlbumItemCost().multiply(albumsItems.getAlbumItemRate())
+                    .setScale(0, RoundingMode.CEILING);
+        }
+        itemsEntity.setItemCost(itemCost);
 
         itemsRepository.save(itemsEntity);
         log.info("Сохранение комментария в itemsEntity прошло успешно");
