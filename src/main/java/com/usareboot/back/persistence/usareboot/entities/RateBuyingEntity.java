@@ -5,8 +5,11 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.math.BigInteger;
+import java.math.BigDecimal;
+import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -27,59 +30,56 @@ public class RateBuyingEntity {
 
     @Basic
     @Column(name = "date_buying")
-    private Timestamp dateBuying;
+    private LocalDate dateBuying;
     @Basic
     @Column(name = "rate_exchange")
-    private BigInteger rateExchange;
+    private BigDecimal rateExchange;
     @Basic
     @Column(name = "sum_exchange")
-    private BigInteger sumExchange;
+    private BigDecimal sumExchange;
     @Basic
     @Column(name = "sum_exchange_usdt")
-    private BigInteger sumExchangeUsdt;
+    private BigDecimal sumExchangeUsdt;
     @Basic
     @Column(name = "type")
     private String type;
     @Basic
     @Column(name = "percent_payment")
-    private BigInteger percentPayment;
+    private BigDecimal percentPayment;
     @Basic
     @Column(name = "difference_usdt")
-    private BigInteger differenceUsdt;
+    private BigDecimal differenceUsdt;
     @Basic
     @Column(name = "rate_payment")
-    private BigInteger ratePayment;
+    private BigDecimal ratePayment;
     @Basic
     @Column(name = "percent_client")
-    private BigInteger percentClient;
+    private BigDecimal percentClient;
     @Basic
     @Column(name = "rate_client")
-    private BigInteger rateClient;
+    private BigDecimal rateClient;
 
 
     public void setRateBuyingId(long rateBuyingId) {
         this.rateBuyingId = rateBuyingId;
     }
 
-
-
-
-    public void setDateBuying(Timestamp dateBuying) {
+    public void setDateBuying(LocalDate dateBuying) {
         this.dateBuying = dateBuying;
     }
 
 
-    public void setRateExchange(BigInteger rateExchange) {
+    public void setRateExchange(BigDecimal rateExchange) {
         this.rateExchange = rateExchange;
     }
 
 
-    public void setSumExchange(BigInteger sumExchange) {
+    public void setSumExchange(BigDecimal sumExchange) {
         this.sumExchange = sumExchange;
     }
 
 
-    public void setSumExchangeUsdt(BigInteger sumExchangeUsdt) {
+    public void setSumExchangeUsdt(BigDecimal sumExchangeUsdt) {
         this.sumExchangeUsdt = sumExchangeUsdt;
     }
 
@@ -89,27 +89,27 @@ public class RateBuyingEntity {
     }
 
 
-    public void setPercentPayment(BigInteger percentPayment) {
+    public void setPercentPayment(BigDecimal percentPayment) {
         this.percentPayment = percentPayment;
     }
 
 
-    public void setDifferenceUsdt(BigInteger differenceUsdt) {
+    public void setDifferenceUsdt(BigDecimal differenceUsdt) {
         this.differenceUsdt = differenceUsdt;
     }
 
 
-    public void setRatePayment(BigInteger ratePayment) {
+    public void setRatePayment(BigDecimal ratePayment) {
         this.ratePayment = ratePayment;
     }
 
 
-    public void setPercentClient(BigInteger percentClient) {
+    public void setPercentClient(BigDecimal percentClient) {
         this.percentClient = percentClient;
     }
 
 
-    public void setRateClient(BigInteger rateClient) {
+    public void setRateClient(BigDecimal rateClient) {
         this.rateClient = rateClient;
     }
 
