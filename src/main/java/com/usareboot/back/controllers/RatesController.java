@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 @RestController
 @CrossOrigin(origins = "*")/*!!!!обязательно во все контроллеры вставлять!!*/
@@ -24,13 +25,15 @@ public class RatesController {
     private final RatesService ratesService;
 
     @GetMapping("/list")
-    public CompletableFuture<ResponseEntity<RatesDTO>> getRatesListAsync() {
-        return ratesService.getListRates()
+    public ResponseEntity<?> getRatesListAsync() throws ExecutionException, InterruptedException {
+        RatesDTO rates = ratesService.getListRates().get();
+        return ResponseEntity.ok(rates);
+        /*return ratesService.getListRates()
                 .thenApply(ResponseEntity::ok)
                 .exceptionally(ex -> {
                     log.error("Ошибка при выдаче курса", ex);
                     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-                });
+                });*/
     }
 
     /*@PatchMapping("/update")

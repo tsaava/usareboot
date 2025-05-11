@@ -32,6 +32,8 @@ public class RatesOperator {
                 entity.getCountry().getCountryId(),
                 entity.getDateBuying(),
                 entity.getRateExchange(),
+                entity.getSumExchange(),
+                entity.getSumExchangeUsdt(),
                 entity.getType(),
                 entity.getPercentPayment(),
                 entity.getDifferenceUsdt(),

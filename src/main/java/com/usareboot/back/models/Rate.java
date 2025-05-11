@@ -16,6 +16,8 @@ public class Rate {
     long countryId;
     LocalDate dateBuying;
     BigDecimal rateExchange;
+    BigDecimal sumExchange;
+    BigDecimal sumExchangeUsdt;
     String type;
     BigDecimal percentPayment;
     BigDecimal differenceUsdt;
