@@ -2,6 +2,7 @@ package com.usareboot.back.operators;
 
 import com.usareboot.back.models.AlbumRowRequestDTO;
 import com.usareboot.back.persistence.usareboot.entities.AlbumsEntity;
+import com.usareboot.back.persistence.usareboot.entities.CardsEntity;
 import com.usareboot.back.persistence.usareboot.repository.AlbumsRepository;
 import com.usareboot.back.persistence.usareboot.repository.CardsRepository;
 import com.usareboot.back.persistence.usareboot.repository.DStatusRepository;
@@ -9,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
 
 @Slf4j
 @Service
@@ -34,13 +37,19 @@ public class AlbumOperator {
         temp.setAlbumDesc(albumRowRequestDTO.getAlbumDesc());
         temp.setCourseAlbum(albumRowRequestDTO.getCourseAlbum());
         temp.setAlbumDatePlane(albumRowRequestDTO.getAlbumDatePlane());
-        temp.setCountOrder(albumRowRequestDTO.getCountOrder());
+//        temp.setCountOrder(albumRowRequestDTO.getCountOrder());
         temp.setAlbumDateStop(albumRowRequestDTO.getAlbumDateStop());
+        temp.setCreateDate(LocalDateTime.now());
         if (albumRowRequestDTO.getAlbumStatus() != null && !(albumRowRequestDTO.getAlbumStatus().isEmpty()))
             temp.setStatuses(statusRepository.findDStatusesEntityByStatusName(albumRowRequestDTO.getAlbumStatus()));
-        if (albumRowRequestDTO.getCard() != null && !(albumRowRequestDTO.getCard().isEmpty()))
-            temp.setCards(cardsRepository.findCardsEntityByCardName(albumRowRequestDTO.getCard()));
 
+        if (albumRowRequestDTO.getCard() != null && !(albumRowRequestDTO.getCard().isEmpty())) {
+
+            CardsEntity card = cardsRepository.findCardsEntityByCardName(albumRowRequestDTO.getCard());
+            log.debug("card:{}",card);
+            temp.setCards(card);
+        }
+        log.debug("albumRowRequestDTO: {}", albumRowRequestDTO);
         albumsRepository.save(temp);
 //        DStatusesEntity dst=new DStatusesEntity();
 //        dst.setStatusId(17);

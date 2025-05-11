@@ -173,9 +173,11 @@ log.info("res: {}", res);
         if(!res.contains("error")) {
             log.info("[Сценарий updateAlbum][Шаг: В ВК альбом обновился][Album ID: {}][EventID: {}]", albumsEntity.getAlbumVkId(), eventId);
 
-            log.info("[Сценарий updateAlbum][Шаг: Обновление альбома в БД][Album ID: {}][EventID: {}]", albumsEntity.getAlbumVkId(), eventId);
-            albumOperator.albumsUpd(albumsEntity, albumsEntity.getAlbumId());
+
         }
+        log.info("[Сценарий updateAlbum][Шаг: Обновление альбома в БД][Album ID: {}][EventID: {}]", albumsEntity.getAlbumVkId(), eventId);
+        albumOperator.albumsUpd(albumsEntity, albumsEntity.getAlbumId());
+
         log.info("[Сценарий updateAlbum][Шаг: Финиш][Album ID: {}][EventID: {}]", albumsEntity.getAlbumVkId(), eventId);
     }
 }
