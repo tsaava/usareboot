@@ -3,6 +3,7 @@ package com.usareboot.back.persistence.usareboot.entities;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -13,12 +14,13 @@ import java.util.Objects;
 @Getter
 @Setter
 @Entity
+@ToString
 @Table(name = "items",  catalog = "usareboot")
 public class ItemsEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "item_id")
-    private long itemId;
+    private Long itemId;
     @Basic
     @Column(name = "albom_item_id")
     private Long albomItemId;
@@ -85,7 +87,7 @@ public class ItemsEntity {
     @Column(name = "vk_comment_id")
     private Long vkCommentId;
 
-    public void setItemId(long itemId) {
+    public void setItemId(Long itemId) {
         this.itemId = itemId;
     }
     public void setAlbomItemId(long albomItemId) {
@@ -170,7 +172,7 @@ public class ItemsEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ItemsEntity that = (ItemsEntity) o;
-        return itemId == that.itemId && Objects.equals(itemStatus, that.itemStatus) && Objects.equals(orderId, that.orderId) && Objects.equals(itemColor, that.itemColor) && Objects.equals(itemSize, that.itemSize) && Objects.equals(itemWeight, that.itemWeight) && Objects.equals(itemName, that.itemName) && Objects.equals(itemCount, that.itemCount) && Objects.equals(importItemListId, that.importItemListId) && Objects.equals(dateDelivery, that.dateDelivery) && Objects.equals(pointType, that.pointType) && Objects.equals(vkUrl, that.vkUrl) && Objects.equals(itemUrl, that.itemUrl) && Objects.equals(comment, that.comment) && Objects.equals(dateComment, that.dateComment) && Objects.equals(costStatus, that.costStatus);
+        return Objects.equals(itemId, that.itemId) && Objects.equals(itemStatus, that.itemStatus) && Objects.equals(orderId, that.orderId) && Objects.equals(itemColor, that.itemColor) && Objects.equals(itemSize, that.itemSize) && Objects.equals(itemWeight, that.itemWeight) && Objects.equals(itemName, that.itemName) && Objects.equals(itemCount, that.itemCount) && Objects.equals(importItemListId, that.importItemListId) && Objects.equals(dateDelivery, that.dateDelivery) && Objects.equals(pointType, that.pointType) && Objects.equals(vkUrl, that.vkUrl) && Objects.equals(itemUrl, that.itemUrl) && Objects.equals(comment, that.comment) && Objects.equals(dateComment, that.dateComment) && Objects.equals(costStatus, that.costStatus);
     }
 
     @Override

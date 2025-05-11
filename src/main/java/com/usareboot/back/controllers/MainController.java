@@ -3,6 +3,7 @@ package com.usareboot.back.controllers;
 import com.google.gson.Gson;
 import com.usareboot.back.models.ItemListDTO;
 import com.usareboot.back.models.ItemsRequestDTO;
+import com.usareboot.back.persistence.usareboot.entities.ItemsEntity;
 import com.usareboot.back.services.MainService;
 import com.vk.api.sdk.exceptions.ApiException;
 import com.vk.api.sdk.exceptions.ClientException;
@@ -50,6 +51,12 @@ public class MainController {
     @PostMapping("/item/list")
     public ResponseEntity<?> saveItemList(@RequestBody ItemListDTO data) {
         mainService.saveItemAttribute(data);
+        return new ResponseEntity<>( HttpStatus.OK);
+    }
+
+    @PostMapping("/item/{itemId}/duplicate")
+    public ResponseEntity<?> saveDuplicateItemRow(@PathVariable Long itemId) {
+        mainService.saveDuplicateItemRow(itemId);
         return new ResponseEntity<>( HttpStatus.OK);
     }
 

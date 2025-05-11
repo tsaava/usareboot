@@ -105,6 +105,7 @@ public class AlbumsService {
         Optional<AlbumMappingDictionaryEntity> albumMappingDictionaryEntity = albumMappingDictionaryRepository.getAlbumMappingDictionaryEntityByLinkContains(Optional.ofNullable(albumsEntity).map(AlbumsEntity::getShopUrl).orElse(""));
 //        if (albumMappingDictionaryEntity.isEmpty())
 //            throw new RuntimeException("В словаре нет сопоставления с введенной ссылкой");
+        albumMappingDictionaryEntity.ifPresent(mappingDictionaryEntity -> albumsEntity.setAlbumMappingDictionaryId(mappingDictionaryEntity.getAlbumMappingDictionaryId()));
         albumsEntity.setStatuses(dst);
         if (id != null) {
             albumsEntity.setAlbumVkUrl("https://vk.com/album-" + groupId + "_" + id);

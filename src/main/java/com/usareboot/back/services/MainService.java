@@ -13,15 +13,18 @@ import com.usareboot.back.persistence.usareboot.repository.*;
 import com.vk.api.sdk.exceptions.ApiException;
 import com.vk.api.sdk.exceptions.ClientException;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.StoredProcedureQuery;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Optional;
@@ -40,6 +43,9 @@ public class MainService {
     private final ApiTokenRepository apiTokenRepository;
     private final MainOperator mainOperator;
     private final VkOperator vkOperator;
+    @PersistenceContext
+    private EntityManager entityManager;
+
     @Value("${spring.datasource.usareboot.schema}")
     String schemaName;
 
@@ -165,6 +171,44 @@ public class MainService {
         } catch (Exception e) {
             log.error("В бд не записался данный трек: {}: {}", itemListDTO.getRepaymentName(), e.getMessage());
         }
+    }
+    @Transactional
+    public void saveDuplicateItemRow(Long itemId) {
+        ItemsEntity duplicate = new ItemsEntity();
+        ItemsEntity original = itemsRepository.findById(itemId)
+                .orElseThrow(() -> new EntityNotFoundException("Item not found"));
+// Копируем свойства
+        BeanUtils.copyProperties(original, duplicate);
+
+// Обнуляем ID (чтобы создалась новая запись)
+        duplicate.setItemId(null);
+        duplicate.setVkCommentId(null);
+        var comment= "ДУБЛИКАТ\n"+original.getComment();
+        duplicate.setComment(comment);
+
+        itemsRepository.save(duplicate);
+//        this.entityManager.persist(itemsEntity);
+
+       /* ItemsEntity itemsEntity =new ItemsEntity();
+        itemsEntity.setAlbomItemId(itemListDTO.getAlbumItemId());
+        itemsEntity.setItemCost((BigDecimal) itemListDTO.getAlbumItemCost());
+        itemsEntity.setOrderId(itemListDTO.getOrderId());
+        itemsEntity.setItemSize(itemListDTO.getItemSize());
+        itemsEntity.setItemName(itemListDTO.getItemName());
+        if (itemListDTO.getItemStatus() != null) {
+            var itemStatusId = dStatusRepository.findDStatusesEntityByStatusName(itemListDTO.getItemStatus()).getStatusId();
+            itemsEntity.setItemStatus(itemStatusId);
+        }
+        if (itemListDTO.getPayStatus() != null) {
+            var payStatusId = dStatusRepository.findDStatusesEntityByStatusName(itemListDTO.getPayStatus()).getStatusId();
+            itemsEntity.setCostStatus(payStatusId);
+        }
+        itemsEntity.setVkUrl(itemListDTO.getAlbumVkUrl());
+        itemsEntity.setItemUrl(itemListDTO.getItemUrl());
+        itemsEntity.setComment(itemListDTO.getComment());
+        itemsEntity.setItemColor(itemListDTO.getItemColor());
+        itemsEntity.setItemColor(itemListDTO.getItemColor());
+        itemsEntity.setVkCommentId(itemListDTO.getVkCommentId());*/
     }
 
     public void saveItemStatus(ItemListDTO itemListDTO) {
