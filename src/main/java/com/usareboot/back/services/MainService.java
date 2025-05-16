@@ -172,6 +172,7 @@ public class MainService {
             log.error("В бд не записался данный трек: {}: {}", itemListDTO.getRepaymentName(), e.getMessage());
         }
     }
+
     @Transactional
     public void saveDuplicateItemRow(Long itemId) {
         ItemsEntity duplicate = new ItemsEntity();
@@ -183,7 +184,7 @@ public class MainService {
 // Обнуляем ID (чтобы создалась новая запись)
         duplicate.setItemId(null);
         duplicate.setVkCommentId(null);
-        var comment= "ДУБЛИКАТ\n"+original.getComment();
+        var comment = "ДУБЛИКАТ\n" + original.getComment();
         duplicate.setComment(comment);
 
         itemsRepository.save(duplicate);
@@ -232,7 +233,7 @@ public class MainService {
             log.info("[Сценарий saveItemStatus][Шаг: Формирование сообщения для создания комментария под фото клиенту][EventID: {}]", eventId);
             String messageClientForItem = mainOperator.getMessageClientForItem(itemsEntity, itemStatusId);
 
-            if(!messageClientForItem.isEmpty()) {
+            if (!messageClientForItem.isEmpty()) {
                 log.info("[Сценарий saveItemStatus][Шаг: Создание комментария под фото][EventID: {}]", eventId);
                 vkOperator.createCommentInVk(messageClientForItem, itemsEntity, albumItem);
             }
@@ -300,16 +301,16 @@ public class MainService {
 
         ItemsEntity itemsEntity = mainOperator.getItem(itemId);
         long vkPostId = Optional.ofNullable(itemsEntity).map(ItemsEntity::getVkCommentId).orElse(0L);
+        if (vkPostId != 0) {
+            log.info("[Сценарий deleteItem][Шаг: Удаления поста в ВК][EventID: {}]", eventId);
+            String res = vkOperator.photosDeleteComment((int) vkPostId);
 
-        log.info("[Сценарий deleteItem][Шаг: Удаления поста в ВК][EventID: {}]", eventId);
-        String res = vkOperator.photosDeleteComment((int) vkPostId);
-
-        log.info("[Сценарий deleteAlbum][Шаг: Результат удаления поста в ВК: {}][EventID: {}]", res, eventId);
-
+            log.info("[Сценарий deleteAlbum][Шаг: Результат удаления поста в ВК: {}][EventID: {}]", res, eventId);
+        }
         log.info("[Сценарий deleteAlbum][Шаг: Удаления коментария в БД][EventID: {}]", eventId);
         mainOperator.deleteItem(itemId);
 
-        log.info("[Сценарий deleteAlbum][Шаг: Комментарий успешно удалился в БД][EventID: {}]",eventId);
+        log.info("[Сценарий deleteAlbum][Шаг: Комментарий успешно удалился в БД][EventID: {}]", eventId);
 
         log.info("[Сценарий deleteItem][Шаг: Финиш][EventID: {}]", eventId);
     }

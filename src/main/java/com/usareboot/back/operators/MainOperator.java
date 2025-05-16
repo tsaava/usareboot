@@ -80,8 +80,8 @@ public class MainOperator {
             BigDecimal itemCost = itemsEntity.getItemCost();
             message = userName + ",\n"
                     + itemName + "\n"
-                    + ((itemSize != null && itemSize.isEmpty()) ? ("Размер: " + itemSize + "\n") : "")
-                    + ((itemColor != null && itemColor.isEmpty()) ? ("Цвет: " + itemColor + "\n") : "")
+                    + ((itemSize != null && !itemSize.isEmpty()) ? ("Размер: " + itemSize + "\n") : "")
+                    + ((itemColor != null && !itemColor.isEmpty()) ? ("Цвет: " + itemColor + "\n") : "")
                     + "Цена: " + itemCost + (itemCount > 1 ? " * " + itemCount : "") + "\n"
                     + "выкуплено";
         }

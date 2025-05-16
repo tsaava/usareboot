@@ -1,65 +1,48 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<configuration>
+<configuration status="DEBUG">
+    <!-- Указываем путь для логов -->
+    <property name="LOG_PATH" value="logs" />
 
-    <!-- Консольный аппендер -->
-    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <!-- Аппендер для вывода в консоль -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss} %-5level %logger{36} - %msg%n</pattern>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%-5level] [%t] %c{1} - %msg%n</pattern>
         </encoder>
     </appender>
-    <appender name="FILE"
-              class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>logs/back.log</file>
-        <rollingPolicy
-                class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <!-- daily rollover -->
-            <fileNamePattern>/logs/back.%d{yyyy-MM-dd}.log</fileNamePattern>
 
-            <!-- Храним файлы логов 10 дней -->
-            <maxHistory>90</maxHistory>
-
-            <!-- Максимальный размер файлов лога 10 гигабайт -->
-            <totalSizeCap>2GB</totalSizeCap>
-
+    <!-- Аппендер для записи в файл с ротацией -->
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH}/back.log</file>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%-5level] [%t] %c{1} - %msg%n</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/archive/back.%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+            <maxFileSize>200MB</maxFileSize>
+            <maxHistory>30</maxHistory>
+            <totalSizeCap>1GB</totalSizeCap> <!-- Ограничение на общий размер логов -->
         </rollingPolicy>
-        <encoder>
-            <pattern>%d{dd.MM.yyyy HH:mm:ss.SSS} [%thread] %-5level  %logger{20} - %msg%n</pattern>
-        </encoder>
     </appender>
-    <!-- Настройка уровня логирования -->
-    <root level="info">
-        <appender-ref ref="STDOUT" />
-<!--        <appender-ref ref="FILE" />-->
+
+    <!-- Настройки логгеров -->
+    <root level="INFO">
+        <appender-ref ref="CONSOLE" />
     </root>
-    <Logger name="org.springframework.web.filter.CommonsRequestLoggingFilter" level ="debug">
-        <appender-ref ref="FILE"  level="debug"/>
-    </Logger>
 
-    <Logger name="com.usareboot.back" level ="TRACE" >
-        <appender-ref ref="FILE"  level="debug"/>
-    </Logger>
-   <!-- <Logger name=" com.usareboot.back.VkApiClient" level ="TRACE" >
-        <appender-ref ref="FILE"  level="TRACE"/>
-    </Logger>-->
-    <Logger name="  com.vk.api.sdk" level ="debug" >
-        <appender-ref ref="FILE"  level="debug"/>
-    </Logger>
-    <Logger name="org.apache.http" level ="WARN" >
-        <appender-ref ref="FILE"  level="WARN"/>
-    </Logger>
+    <!-- Логи для вашего приложения -->
+    <logger name="com.usareboot.back" level="DEBUG">
+        <appender-ref ref="FILE" />
+    </logger>
 
-    <Logger name="org.apache.http.wire" level ="ERROR" >
-        <appender-ref ref="FILE"  level="ERROR"/>
-    </Logger>
+    <!-- Логи Spring Framework -->
+    <logger name="org.springframework" level="INFO" />
+    <logger name="org.springframework.web.filter.CommonsRequestLoggingFilter" level="DEBUG" />
+    <logger name="org.springframework.web" level="DEBUG" />
 
-    <Logger name="org.springframework.web" level ="DEBUG" >
-        <appender-ref ref="FILE"  level="DEBUG"/>
-    </Logger>
+    <!-- Логи VK API SDK -->
+    <logger name="com.vk.api.sdk" level="DEBUG" />
 
-
-    <!--<Logger name="org.springframework" level ="debug">
-        <appender-ref ref="STDOUT"/>
-        <appender-ref ref="FILE"  level="debug"/>
-    </Logger>-->
-
+    <!-- Логи Apache HTTP Client -->
+    <logger name="org.apache.http" level="WARN" />
+    <logger name="org.apache.http.wire" level="ERROR" />
 </configuration>
