@@ -45,7 +45,7 @@ public class AlbumsController {
 
     @PostMapping("/add")
     public ResponseEntity<?> addAlbum(@RequestBody AlbumsEntity data) throws IOException, ClientException, ApiException {
-        albumsService.albumsAdd(data, null);
+//        albumsService.albumsAdd(data, null);
         Integer albumId = vkService.createAlbum(data);
         albumsService.albumsAdd(data, albumId);
         return new ResponseEntity<>(HttpStatus.OK);

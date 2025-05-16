@@ -4,10 +4,12 @@ import com.google.gson.Gson;
 import com.usareboot.back.models.ItemListDTO;
 import com.usareboot.back.models.ItemsRequestDTO;
 import com.usareboot.back.persistence.usareboot.entities.ItemsEntity;
+import com.usareboot.back.security.JwtUtils;
 import com.usareboot.back.services.MainService;
 import com.vk.api.sdk.exceptions.ApiException;
 import com.vk.api.sdk.exceptions.ClientException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,24 +20,36 @@ import org.springframework.web.bind.annotation.*;
 @CrossOrigin(origins = "*")/*!!!!обязательно во все контроллеры вставлять!!*/
 @RequestMapping("/api/usareboot")
 @RequiredArgsConstructor
+@Slf4j
 //@PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
 public class MainController {
 
     @Autowired
     private MainService mainService;
 
-    @PostMapping ("/import/data/{albom}")
+    @Autowired
+    private JwtUtils jwtUtils;
+
+    @GetMapping("/token")
+    public ResponseEntity<?> getCheckApplicationToken(@RequestHeader("Authorization") String token) {
+        // проверяет можно ли перерегаться
+        boolean isTokenValid = jwtUtils.validateJwtToken(token);
+        log.debug("isTokenValid: {}", isTokenValid);
+        return new ResponseEntity<>(isTokenValid, HttpStatus.OK);
+    }
+
+    @PostMapping("/import/data/{albom}")
     public ResponseEntity<?> importData(@PathVariable String albom,
                                         @RequestBody String filters) {
-        System.out.print(albom+' '+filters);
-        albom=albom.replace("\"","");
+        System.out.print(albom + ' ' + filters);
+        albom = albom.replace("\"", "");
         mainService.getImportList(filters, albom);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PostMapping ("/import/list")
-    public ResponseEntity<?> importList( @RequestBody String listAlbom) {
-        System.out.println("listAlbom: "+listAlbom);
+    @PostMapping("/import/list")
+    public ResponseEntity<?> importList(@RequestBody String listAlbom) {
+        System.out.println("listAlbom: " + listAlbom);
         return new ResponseEntity<>(new Gson().toJson(mainService.getListImport(listAlbom)), HttpStatus.OK);
     }
 
@@ -43,6 +57,7 @@ public class MainController {
     public ResponseEntity<?> getItemList(@PathVariable/*(name = "status", required = false)*/ int status) {
         return new ResponseEntity<>(new Gson().toJson(mainService.getItemListDao(status)), HttpStatus.OK);
     }
+
     @GetMapping("/item/weight/list")
     public ResponseEntity<?> getItemWeightList() {
         return new ResponseEntity<>(new Gson().toJson(mainService.getItemWeightListDao()), HttpStatus.OK);
@@ -51,13 +66,13 @@ public class MainController {
     @PostMapping("/item/list")
     public ResponseEntity<?> saveItemList(@RequestBody ItemListDTO data) {
         mainService.saveItemAttribute(data);
-        return new ResponseEntity<>( HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PostMapping("/item/{itemId}/duplicate")
     public ResponseEntity<?> saveDuplicateItemRow(@PathVariable Long itemId) {
         mainService.saveDuplicateItemRow(itemId);
-        return new ResponseEntity<>( HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PostMapping("/item/status")
@@ -83,7 +98,7 @@ public class MainController {
                                       @RequestBody String data) {
         System.out.println(data);
         Gson g = new Gson();
-        mainService.saveItemWeightAndStatus(id,g.fromJson(data,ItemsRequestDTO.class));
+        mainService.saveItemWeightAndStatus(id, g.fromJson(data, ItemsRequestDTO.class));
 //        return new ResponseEntity<>(new Gson().toJson(mainDAO.getItemListDao()), HttpStatus.OK);
     }
 

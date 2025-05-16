@@ -422,7 +422,7 @@ public class VkOperator {
                     .setScale(0, RoundingMode.CEILING);
         }
         var message = albumsItemsDTO.getAlbumItemName() + " "
-                + (albumsItemsDTO.getItemDescription() != null && !albumsItemsDTO.getItemDescription().isEmpty() ? (albumsItemsDTO.getItemDescription() +"\n"): "")
+                + (albumsItemsDTO.getItemDescription() != null && !albumsItemsDTO.getItemDescription().isEmpty() ? (albumsItemsDTO.getItemDescription() + "\n") : "")
                 + itemCost + "+вес" + "\n" +
                 albumsItemsDTO.getVkPhotoPath();
         return message;
@@ -653,7 +653,9 @@ public class VkOperator {
     public String photosEditAlbum(String vkId, AlbumRowRequestDTO albumsEntity) throws IOException {
         var accessToken = commonOperator.getTokenClient(standaloneId).orElse(null);
         log.debug("accessToken: {}", accessToken);
-        var description = albumsEntity.getAlbumDesc() + "\nКурс(ы) альбома: " + albumsEntity.getCourseAlbum();
+        var description = (albumsEntity.getAlbumDesc() != null && !albumsEntity.getAlbumDesc().isEmpty() ?
+                albumsEntity.getAlbumDesc() +"\n": "") +
+                "Курс(ы) альбома: " + albumsEntity.getCourseAlbum();
         final CloseableHttpClient httpclient = HttpClients.createDefault();
         final HttpPost httpPost = new HttpPost("https://api.vk.com/method/photos.editAlbum");
         final List<NameValuePair> params = new ArrayList<>();

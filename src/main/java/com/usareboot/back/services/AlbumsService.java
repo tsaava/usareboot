@@ -111,6 +111,7 @@ public class AlbumsService {
             albumsEntity.setAlbumVkUrl("https://vk.com/album-" + groupId + "_" + id);
             albumsEntity.setAlbumVkId(id);
         }
+        albumsEntity.setCreateDate(LocalDateTime.now());
         this.entityManager.persist(albumsEntity);
     }
 

@@ -105,8 +105,6 @@ public class AuthController {
     @PostMapping("/choose_role")
     public ResponseEntity<?> gotChosenRolePage(@RequestHeader("Authorization") String token, @RequestBody @Validated ChosenRoleDTO chosenRole) throws UnsupportedEncodingException, NoSuchAlgorithmException {
         try {
-
-
             // проверяет можно ли перерегаться
             boolean isTokenValid = jwtUtils.validateJwtToken(token);
             log.debug("isTokenValid: {}", isTokenValid);
