@@ -7,6 +7,7 @@ import lombok.Setter;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.Date;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Getter
@@ -60,7 +61,7 @@ public class AlbumsItemsEntity {
     private Integer albumItemCount;
     @Basic
     @Column(name = "date_create")
-    private Date dateCreate;
+    private LocalDateTime dateCreate;
     @Basic
     @Column(name = "albom_item_cost")
     private BigDecimal albumItemCost;
@@ -140,7 +141,7 @@ public class AlbumsItemsEntity {
         this.albumItemCount = albumItemCount;
     }
 
-    public void setDateCreate(Date dateCreate) {
+    public void setDateCreate(LocalDateTime dateCreate) {
         this.dateCreate = dateCreate;
     }
 

@@ -14,6 +14,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Date;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import static com.usareboot.back.models.constant.Constant.ALBUM_ITEM_DEFAULT_STATUS_ID;
 
@@ -43,8 +44,7 @@ public class AlbumItemOperator {
         albumsItemsEntity.setItemUrl(albumsItemsDTO.getItemUrl());
         albumsItemsEntity.setVkItemId(albumsItemsDTO.getVkItemId());
         albumsItemsEntity.setAlbumId(albumsRepository.findAlbumsEntityByAlbumId(albumsItemsDTO.getAlbumId()));
-        LocalDate localDate = LocalDate.now();
-        albumsItemsEntity.setDateCreate(Date.valueOf(localDate));
+        albumsItemsEntity.setDateCreate(LocalDateTime.now());
         albumsItemsEntity.setVkPhotoPath(albumsItemsDTO.getVkPhotoPath());
         albumsItemsEntity.setDescription(albumsItemsDTO.getDescription());
         albumsItemsEntity.setItemDescription(albumsItemsDTO.getItemDescription());

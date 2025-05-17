@@ -32,7 +32,7 @@
     </root>
 
     <!-- Логи для вашего приложения -->
-    <logger name="com.usareboot.back" level="DEBUG"> <!--additivity="false"-->
+    <logger name="com.usareboot.back" level="DEBUG" additivity="false">
         <appender-ref ref="FILE" />
     </logger>
 

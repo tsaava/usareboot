@@ -127,6 +127,7 @@ public class VkOperator {
         var allDesc = albumsItemsDTO.getAlbumItemName() + "\n" +
                 (albumsItemsDTO.getDescription() != null && !albumsItemsDTO.getDescription().isEmpty() ? (albumsItemsDTO.getDescription() + "\n") : "") +
                 (albumsItemsDTO.getAllowableSizes() != null && !albumsItemsDTO.getAllowableSizes().isEmpty() ? ("Размеры: " + albumsItemsDTO.getAllowableSizes() + "\n") : "") +
+                (albumsItemsDTO.getAlbumItemColor() != null && !albumsItemsDTO.getAlbumItemColor().isEmpty() ? ("Цвет: " + albumsItemsDTO.getAlbumItemColor() + "\n") : "") +
                 "цена: " + albumsItemsDTO.getAlbumItemCost().toString() +
                 ", курс: " + albumsItemsDTO.getAlbumItemRate().toString() + "\n" +
                 albumsItemsDTO.getItemUrl();
@@ -424,7 +425,7 @@ public class VkOperator {
         }
         var message = albumsItemsDTO.getAlbumItemName() + "\n"
                 + (albumsItemsDTO.getItemDescription() != null && !albumsItemsDTO.getItemDescription().isEmpty() ? (albumsItemsDTO.getItemDescription() + "\n") : "")
-                + (albumsItemsDTO.getAllowableSizes() != null && !albumsItemsDTO.getAllowableSizes().isEmpty() ? ("Размеры: " + albumsItemsDTO.getAllowableSizes() + "\n") : "")
+//                + (albumsItemsDTO.getAllowableSizes() != null && !albumsItemsDTO.getAllowableSizes().isEmpty() ? ("Размеры: " + albumsItemsDTO.getAllowableSizes() + "\n") : "")
                 + itemCost + "+вес" + "\n" +
                 albumsItemsDTO.getVkPhotoPath();
         return message;
