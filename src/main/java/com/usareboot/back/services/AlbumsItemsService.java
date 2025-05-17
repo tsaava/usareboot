@@ -87,7 +87,8 @@ public class AlbumsItemsService {
                     x.getStatuses().getStatusId(),
                     x.getStatuses().getStatusName(),
                     x.getVkPhotoPath(),
-                    x.isNoSize()
+                    x.isNoSize(),
+                    x.getAllowableSizes()
             )));
         }
 //        log.info("[Сценарий getAlbumsItems][Шаг: вывод AlbumsItemsDTO list: {}][EventID: {}]", list, eventId);
@@ -103,7 +104,6 @@ public class AlbumsItemsService {
             log.error("Ошибка загрузки: нет ссылки на фотографию");
             throw new RuntimeException("Ошибка загрузки: нет ссылки на фотографию");
         }
-
        /* var photoUploadVk = vkOperator.getUrlPhotoInAlbumVk(albumId);
         log.info("Upload photo in vk");
         var vkPhotoList = configureFeignUrlController.uploadPhotoInVk(photoUploadVk, file);

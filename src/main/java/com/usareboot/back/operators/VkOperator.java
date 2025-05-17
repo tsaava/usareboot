@@ -125,9 +125,10 @@ public class VkOperator {
 
     public String getAllDesc(AlbumsItemsDTO albumsItemsDTO) {
         var allDesc = albumsItemsDTO.getAlbumItemName() + "\n" +
-                albumsItemsDTO.getDescription() + "\n" +
-                "цена: " + albumsItemsDTO.getAlbumItemCost().toString() + ", курс: " +
-                albumsItemsDTO.getAlbumItemRate().toString() + "\n" +
+                (albumsItemsDTO.getDescription() != null && !albumsItemsDTO.getDescription().isEmpty() ? (albumsItemsDTO.getDescription() + "\n") : "") +
+                (albumsItemsDTO.getAllowableSizes() != null && !albumsItemsDTO.getAllowableSizes().isEmpty() ? ("Размеры: " + albumsItemsDTO.getAllowableSizes() + "\n") : "") +
+                "цена: " + albumsItemsDTO.getAlbumItemCost().toString() +
+                ", курс: " + albumsItemsDTO.getAlbumItemRate().toString() + "\n" +
                 albumsItemsDTO.getItemUrl();
         return allDesc;
     }
@@ -421,8 +422,9 @@ public class VkOperator {
             itemCost = albumsItemsDTO.getAlbumItemCost().multiply(albumsItemsDTO.getAlbumItemRate())
                     .setScale(0, RoundingMode.CEILING);
         }
-        var message = albumsItemsDTO.getAlbumItemName() + " "
+        var message = albumsItemsDTO.getAlbumItemName() + "\n"
                 + (albumsItemsDTO.getItemDescription() != null && !albumsItemsDTO.getItemDescription().isEmpty() ? (albumsItemsDTO.getItemDescription() + "\n") : "")
+                + (albumsItemsDTO.getAllowableSizes() != null && !albumsItemsDTO.getAllowableSizes().isEmpty() ? ("Размеры: " + albumsItemsDTO.getAllowableSizes() + "\n") : "")
                 + itemCost + "+вес" + "\n" +
                 albumsItemsDTO.getVkPhotoPath();
         return message;
@@ -654,7 +656,7 @@ public class VkOperator {
         var accessToken = commonOperator.getTokenClient(standaloneId).orElse(null);
         log.debug("accessToken: {}", accessToken);
         var description = (albumsEntity.getAlbumDesc() != null && !albumsEntity.getAlbumDesc().isEmpty() ?
-                albumsEntity.getAlbumDesc() +"\n": "") +
+                albumsEntity.getAlbumDesc() + "\n" : "") +
                 "Курс(ы) альбома: " + albumsEntity.getCourseAlbum();
         final CloseableHttpClient httpclient = HttpClients.createDefault();
         final HttpPost httpPost = new HttpPost("https://api.vk.com/method/photos.editAlbum");

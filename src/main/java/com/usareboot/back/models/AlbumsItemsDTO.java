@@ -38,4 +38,5 @@ public class AlbumsItemsDTO {
     private String albumItemStatusName;
     private String vkPhotoPath;
     private boolean noSize;
+    private String allowableSizes;
 }

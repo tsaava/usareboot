@@ -81,6 +81,10 @@ public class AlbumsItemsEntity {
     @Basic
     @Column(name = "no_size")
     private boolean isNoSize;
+
+    @Basic
+    @Column(name = "allowable_sizes")
+    private String allowableSizes;
     public void setAlbumItemId(long albumItemId) {
         this.albumItemId = albumItemId;
     }

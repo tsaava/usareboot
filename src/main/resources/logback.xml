@@ -15,6 +15,8 @@
         <file>${LOG_PATH}/back.log</file>
         <encoder>
             <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%-5level] [%t] %c{1} - %msg%n</pattern>
+            <!-- Отключаем обрезание строк -->
+            <immediateFlush>true</immediateFlush>
         </encoder>
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
             <fileNamePattern>${LOG_PATH}/archive/back.%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
@@ -30,7 +32,7 @@
     </root>
 
     <!-- Логи для вашего приложения -->
-    <logger name="com.usareboot.back" level="DEBUG" additivity="false">
+    <logger name="com.usareboot.back" level="DEBUG"> <!--additivity="false"-->
         <appender-ref ref="FILE" />
     </logger>
 
