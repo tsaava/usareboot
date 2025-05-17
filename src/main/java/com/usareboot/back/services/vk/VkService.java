@@ -99,6 +99,7 @@ public class VkService {
             data.setTokenEnd(dataTokenEnd);
             apiTokenRepository.save(data);
         });
+        log.debug("новый токен сохранен в базу");
     }
 
     public String exchangeCodeForTokens(TokenRequest request) throws IOException {
@@ -136,7 +137,7 @@ public class VkService {
     }
 
     public void exchangeRefreshTokens(TokenRequest request) throws IOException {
-        log.info("exchangeCodeForTokens: {}", request);
+        log.info("exchangeRefreshTokens: {}", request);
 
         boolean expiredToken = commonOperator.isExpiredToken(standaloneId);
         if (expiredToken) {
@@ -162,6 +163,7 @@ public class VkService {
                 log.info("tempString: {}", tempString);
 
                 VkOauth2Response vkOauth2Response = mapper.readValue(tempString, VkOauth2Response.class);
+                log.debug("Сохранение рефрештокена");
                 saveAccessToken(vkOauth2Response);
             }
         }
