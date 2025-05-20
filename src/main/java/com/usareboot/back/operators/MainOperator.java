@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 import static com.usareboot.back.models.constant.Constant.*;
 
@@ -77,12 +78,16 @@ public class MainOperator {
             String itemSize = itemsEntity.getItemSize();
             Integer itemCount = itemsEntity.getItemCount();
             String itemColor = itemsEntity.getItemColor();
-            BigDecimal itemCost = itemsEntity.getItemCost();
+            BigDecimal itemCost = BigDecimal.valueOf(0);
+            if (itemsEntity.getItemCost() != null) {
+                itemCost = itemsEntity.getItemCost();
+            }
             message = userName + ",\n"
                     + itemName + "\n"
                     + ((itemSize != null && !itemSize.isEmpty()) ? ("Размер: " + itemSize + "\n") : "")
                     + ((itemColor != null && !itemColor.isEmpty()) ? ("Цвет: " + itemColor + "\n") : "")
-                    + "Цена: " + itemCost + (itemCount > 1 ? " * " + itemCount : "") + "\n"
+                    + "Цена: " + itemCost + "\n"
+//                    + "Цена: " + itemCost + (itemCount > 1 ? " * " + itemCount : "") + "\n"
                     + "выкуплено";
         }
         if (itemStatusId == ITEM_IN_NOT_REDEEMED_SIZE_STATUS_ID) {

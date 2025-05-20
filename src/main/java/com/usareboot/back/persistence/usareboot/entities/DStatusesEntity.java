@@ -3,12 +3,14 @@ package com.usareboot.back.persistence.usareboot.entities;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.util.Objects;
 
 @Getter
 @Setter
 @Entity
+@ToString
 @Table(name = "d_statuses",  catalog = "usareboot")
 public class DStatusesEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -13,6 +13,8 @@ import com.usareboot.back.persistence.usareboot.repository.AlbumMappingDictionar
 import com.usareboot.back.persistence.usareboot.repository.AlbumsRepository;
 import com.usareboot.back.persistence.usareboot.repository.CardsRepository;
 import com.usareboot.back.persistence.usareboot.repository.DStatusRepository;
+import com.vk.api.sdk.exceptions.ApiException;
+import com.vk.api.sdk.exceptions.ClientException;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
@@ -165,7 +167,7 @@ log.info("res: {}", res);
     }
 
     @Async
-    public void updateAlbum(String vkId, AlbumRowRequestDTO albumsEntity) throws IOException {
+    public void updateAlbum(String vkId, AlbumRowRequestDTO albumsEntity) throws IOException, ClientException, ApiException {
         var eventId = threadLocal.get();
         log.info("[Сценарий updateAlbum][Шаг: Начало][EventID: {}]", eventId);
 
@@ -174,12 +176,24 @@ log.info("res: {}", res);
         log.debug("res:{}",res);
         if(!res.contains("error")) {
             log.info("[Сценарий updateAlbum][Шаг: В ВК альбом обновился][Album ID: {}][EventID: {}]", albumsEntity.getAlbumVkId(), eventId);
-
-
         }
-        log.info("[Сценарий updateAlbum][Шаг: Обновление альбома в БД][Album ID: {}][EventID: {}]", albumsEntity.getAlbumVkId(), eventId);
-        albumOperator.albumsUpd(albumsEntity, albumsEntity.getAlbumId());
 
+        log.info("[Сценарий updateAlbum][Шаг: Обновление альбома в БД][Album ID: {}][EventID: {}]", albumsEntity.getAlbumVkId(), eventId);
+        boolean isCommentsDisabled = albumOperator.albumsUpd(albumsEntity);
+
+        log.debug("Проверка на статус альбом закрыт: {}", isCommentsDisabled);
+
+        if(isCommentsDisabled) {
+            log.info("[Сценарий updateAlbum][Шаг: Закрытие альбома для редактирования и загрузка фото стоп][Album ID: {}][EventID: {}]", albumsEntity.getAlbumVkId(), eventId);
+            albumOperator.commentsDisabled(albumsEntity);
+
+            log.info("[Сценарий updateAlbum][Шаг: Загрузка фото стоп][Album ID: {}][EventID: {}]", albumsEntity.getAlbumVkId(), eventId);
+            var photo = albumOperator.uploadPhotoStop(albumsEntity);
+
+            log.info("[Сценарий updateAlbum][Шаг: Выбор обложки для альбома: {}][EventID: {}]",albumsEntity.getAlbumVkId(),eventId);
+            var photoId = photo.split("_")[1];
+            vkOperator.photosMakeCover(Integer.parseInt(photoId), (int) albumsEntity.getAlbumVkId());
+        }
         log.info("[Сценарий updateAlbum][Шаг: Финиш][Album ID: {}][EventID: {}]", albumsEntity.getAlbumVkId(), eventId);
     }
 }

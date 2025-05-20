@@ -13,6 +13,7 @@ public class Constant {
     public static final long ITEM_IN_CANCELED_BY_STORE_STATUS_ID;
     public static final long ALBUM_ITEM_DEFAULT_STATUS_ID;
     public static final long ALBUM_DEFAULT_STATUS_ID;
+    public static final long ALBUM_CLOSE_STATUS_ID;
     static {
         ALBUM_STATUS_OPEN = 8;
         PERCENTAGE_INCOME_DEFAULT = 25;
@@ -25,6 +26,7 @@ public class Constant {
         ITEM_IN_NOT_REDEEMED_COST_STATUS_ID = 21L;
         ALBUM_ITEM_DEFAULT_STATUS_ID = 13L;
         ALBUM_DEFAULT_STATUS_ID = 8L;
+        ALBUM_CLOSE_STATUS_ID = 9L;
         ALBUM_TITLE = "Фотографии на стене сообщества";
     }
 }

@@ -60,7 +60,7 @@ public class AlbumsController {
 
     @PatchMapping("/update")
     public ResponseEntity<?> patchAlbum(
-            @RequestBody AlbumRowRequestDTO data) throws IOException {
+            @RequestBody AlbumRowRequestDTO data) throws IOException, ClientException, ApiException {
         albumsService.updateAlbum(String.valueOf(data.getAlbumVkId()), data);
         return new ResponseEntity<>(HttpStatus.OK);
     }

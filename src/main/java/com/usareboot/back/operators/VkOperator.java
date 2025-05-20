@@ -676,4 +676,55 @@ public class VkOperator {
             return EntityUtils.toString(entity2);
         }
     }
+
+    public void commentsDisabledInVkAlbum(long albumId)
+            throws ClientException, ApiException {
+        var accessToken = commonOperator.getTokenClient(standaloneId).orElse("");
+
+        TransportClient transportClient = new HttpTransportClient();
+        VkApiClient vk = new VkApiClient(transportClient);
+        UserActor actor = new UserActor(Integer.valueOf(standaloneId), accessToken);
+
+        var res = vk.photos().editAlbum(actor, (int) albumId)
+                .ownerId(-Integer.parseInt(groupId))
+                .commentsDisabled(true)
+                .uploadByAdminsOnly(true)
+                .execute();
+        log.debug("результат закрытия комментариев в альбоме:{}", res.toString());
+    }
+
+    public String uploadToAlbumStopFile(int albumId, File photoFile)
+            throws ClientException, ApiException, IOException {
+        var accessToken = commonOperator.getTokenClient(standaloneId).orElse("");
+
+        TransportClient transportClient = new HttpTransportClient();
+        VkApiClient vk = new VkApiClient(transportClient);
+        UserActor actor = new UserActor(Integer.valueOf(standaloneId), accessToken);
+
+
+        // 1. Получаем URL для загрузки
+        var uploadUrl = vk.photos().getUploadServer(actor)
+                .albumId(albumId)
+                .groupId(Integer.valueOf(groupId))
+                .execute()
+                .getUploadUrl()
+                .toString();
+
+        // 2. Загружаем файл
+        PhotoUploadResponse uploadResponse = vk.upload()
+                .photo(uploadUrl, photoFile)
+                .execute();
+
+        // 3. Сохраняем в альбом
+        var photos = vk.photos().save(actor)
+                .albumId(albumId)
+                .server(uploadResponse.getServer())
+                .hash(uploadResponse.getHash())
+                .photosList(uploadResponse.getPhotosList())
+                .groupId(Integer.valueOf(groupId))
+                .execute();
+
+        var photo = photos.get(0);
+        return "photo" + photo.getOwnerId() + "_" + photo.getId();
+    }
 }
