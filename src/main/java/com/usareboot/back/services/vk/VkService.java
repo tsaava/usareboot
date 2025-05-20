@@ -174,7 +174,8 @@ public class VkService {
         var eventId = threadLocal.get();
         log.info("[Сценарий createAlbum][Шаг: Начало][EventID: {}]", eventId);
 
-        var description = albumsEntity.getAlbumDesc() + "\nКурс(ы) альбома: " + albumsEntity.getCourseAlbum();
+        var description = (albumsEntity.getAlbumDesc() != null ? albumsEntity.getAlbumDesc() + "\n" : "")
+                + "Курс(ы) альбома: " + albumsEntity.getCourseAlbum();
         log.info("[Сценарий createAlbum][Шаг: Определить есть ли в словаре данные по альбому][EventID: {}]", eventId);
         Optional<AlbumMappingDictionaryEntity> albumMappingDictionaryEntity = albumMappingDictionaryRepository.getAlbumMappingDictionaryEntityByLinkContains(Optional.ofNullable(albumsEntity).map(AlbumsEntity::getShopUrl).orElse(""));
 
@@ -252,7 +253,7 @@ public class VkService {
                 var commentText = object.get("text").getAsString();
                 var albumId = albumsItems.getAlbum().getAlbumId();
                 var fromId = object.get("from_id").getAsLong();
-                if(object.get("from_id").getAsString().contains(groupId)) {
+                if (object.get("from_id").getAsString().contains(groupId)) {
                     log.debug("Комментарий создала наша группа, выход из сценария сохранения комментария");
                     return;
                 }

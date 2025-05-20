@@ -21,6 +21,9 @@ public class DCountriesEntity {
     @Basic
     @Column(name = "currency")
     private String currency;
+    @Basic
+    @Column(name = "active")
+    private int active;
 
 
     public void setCountryId(int countryId) {
@@ -35,6 +38,9 @@ public class DCountriesEntity {
 
     public void setCurrency(String currency) {
         this.currency = currency;
+    }
+    public void setActive(int active) {
+        this.active = active;
     }
 
     @Override

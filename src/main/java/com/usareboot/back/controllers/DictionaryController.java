@@ -2,6 +2,9 @@ package com.usareboot.back.controllers;
 
 import com.usareboot.back.models.CountriesDTO;
 import com.usareboot.back.models.RatesDTO;
+import com.usareboot.back.operators.RatesOperator;
+import com.usareboot.back.persistence.usareboot.entities.DCountriesEntity;
+import com.usareboot.back.services.DictionaryService;
 import com.usareboot.back.services.RatesService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,6 +16,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 @RestController
@@ -22,18 +26,11 @@ import java.util.concurrent.ExecutionException;
 @RequiredArgsConstructor
 @Slf4j
 public class DictionaryController {
+    private final DictionaryService dictionaryService;
 
-    private final RatesService ratesService;
-
-    @GetMapping("/country")
+    @GetMapping("/countries")
     public ResponseEntity<?> getCountryList() throws ExecutionException, InterruptedException {
-//        CountriesDTO rates = ratesService.getListRates().get();
-        return new ResponseEntity<>(HttpStatus.OK);
-        /*return ratesService.getListRates()
-                .thenApply(ResponseEntity::ok)
-                .exceptionally(ex -> {
-                    log.error("Ошибка при выдаче курса", ex);
-                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-                });*/
+        List<DCountriesEntity> countries = dictionaryService.getCountries().get();
+        return ResponseEntity.ok(countries);
     }
 }

@@ -58,6 +58,9 @@ public class RateBuyingEntity {
     @Basic
     @Column(name = "rate_client")
     private BigDecimal rateClient;
+    @Basic
+    @Column(name = "date_create")
+    private LocalDateTime dateCreate;
 
 
     public void setRateBuyingId(long rateBuyingId) {
@@ -111,6 +114,9 @@ public class RateBuyingEntity {
 
     public void setRateClient(BigDecimal rateClient) {
         this.rateClient = rateClient;
+    }
+    public void setDateCreate(LocalDateTime dateCreate) {
+        this.dateCreate = dateCreate;
     }
 
     @Override

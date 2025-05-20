@@ -1,6 +1,6 @@
 package com.usareboot.back.controllers;
 
-import com.usareboot.back.models.AlbumsItemsDTO;
+import com.usareboot.back.models.Rate;
 import com.usareboot.back.models.RatesDTO;
 import com.usareboot.back.services.RatesService;
 import lombok.RequiredArgsConstructor;
@@ -11,7 +11,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 @RestController
@@ -36,9 +35,9 @@ public class RatesController {
                 });*/
     }
 
-    /*@PatchMapping("/update")
-    public ResponseEntity<?> updateAlbumItem(@RequestBody AlbumsItemsDTO data) throws IOException {
-        albumsItemsService.updateAlbumItem(data);
+    @PutMapping("/update")
+    public ResponseEntity<?> updateAlbumItem(@RequestBody Rate data) throws IOException {
+        ratesService.saveRowRate(data);
         return new ResponseEntity<>(HttpStatus.OK);
-    }*/
+    }
 }
