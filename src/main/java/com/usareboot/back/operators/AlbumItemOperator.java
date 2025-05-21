@@ -12,8 +12,6 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.sql.Date;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import static com.usareboot.back.models.constant.Constant.ALBUM_ITEM_DEFAULT_STATUS_ID;
@@ -50,6 +48,7 @@ public class AlbumItemOperator {
         albumsItemsEntity.setItemDescription(albumsItemsDTO.getItemDescription());
         albumsItemsEntity.setNoSize(albumsItemsDTO.isNoSize());
         albumsItemsEntity.setAllowableSizes(albumsItemsDTO.getAllowableSizes());
+        albumsItemsEntity.setPriceDependsSize(albumsItemsDTO.isPriceDependsSize());
         try {
             var photoUrl = vkOperator.getCommentPhotoVk(albumsItemsDTO.getVkItemId());
             albumsItemsEntity.setPhotoPath(photoUrl);

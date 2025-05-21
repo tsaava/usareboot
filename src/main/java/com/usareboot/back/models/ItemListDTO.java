@@ -39,4 +39,5 @@ public class ItemListDTO {
         Number cost;
         String repaymentName;
         boolean isNotSize;
+        Boolean isPriceDependsSize;
 }

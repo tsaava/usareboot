@@ -6,7 +6,6 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.sql.Date;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -86,6 +85,10 @@ public class AlbumsItemsEntity {
     @Basic
     @Column(name = "allowable_sizes")
     private String allowableSizes;
+
+    @Basic
+    @Column(name = "price_depends_size")
+    private boolean priceDependsSize;
     public void setAlbumItemId(long albumItemId) {
         this.albumItemId = albumItemId;
     }
@@ -163,6 +166,9 @@ public class AlbumsItemsEntity {
 
     public void setCost(BigDecimal cost) {
         this.cost = cost;
+    }
+    public void setPriceDependsSize(boolean priceDependsSize) {
+        this.priceDependsSize = priceDependsSize;
     }
 
     @Override

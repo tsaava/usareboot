@@ -39,4 +39,5 @@ public class AlbumsItemsDTO {
     private String vkPhotoPath;
     private boolean noSize;
     private String allowableSizes;
+    private boolean priceDependsSize;
 }
