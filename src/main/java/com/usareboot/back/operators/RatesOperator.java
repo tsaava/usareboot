@@ -10,10 +10,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
@@ -64,11 +66,35 @@ public class RatesOperator {
         rateBuying.setSumExchange(rate.getSumExchange());
         rateBuying.setSumExchangeUsdt(rate.getSumExchangeUsdt());
         rateBuying.setDifferenceUsdt(rate.getDifferenceUsdt());
-        rateBuying.setDateCreate(LocalDateTime.now());
+        if (rateBuying.getDateCreate() == null)
+            rateBuying.setDateCreate(LocalDateTime.now());
         DCountriesEntity country = countriesRepository.findFirstByCountryName(rate.getCountryName()).orElse(new DCountriesEntity());
         log.debug("country: {}", country);
         rateBuying.setCountry(country);
         ratesRepository.save(rateBuying);
+    }
+
+    public DCountriesEntity getCountryByCurrency(String currency) {
+        return countriesRepository.findFirstByCurrency(currency).orElse(new DCountriesEntity());
+    }
+
+    public Rate getActiveRateByCurrencyAndDate(DCountriesEntity country, LocalDate date) {
+        List<RateBuyingEntity> rates = ratesRepository.findAllByCountryAndDateBuyingLessThanEqual(country, date);
+        RateBuyingEntity rate = rates.stream()
+                .sorted(Comparator.comparing(RateBuyingEntity::getDateBuying).reversed())
+                .findFirst()
+                .orElse(null);
+//        RateBuyingEntity rate = rates.stream().max(Comparator.comparing(RateBuyingEntity::getRateBuyingId)).orElse(new RateBuyingEntity());
+        Rate build = new Rate();
+        if (rate != null)
+            build = Rate.builder()
+                    .rateBuyingId(rate.getRateBuyingId())
+                    .ratePayment(rate.getRatePayment())
+                    .rateClient(rate.getRateClient())
+                    .percentClient(rate.getPercentClient())
+                    .build();
+
+        return build;
     }
 }
 

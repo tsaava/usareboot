@@ -40,4 +40,10 @@ public class RatesController {
         ratesService.saveRowRate(data);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    @GetMapping("/active")
+    public ResponseEntity<?> getActiveRate(@RequestParam(name = "currency") String currency) {
+        Rate activeRate = ratesService.getActiveRate(currency);
+        return ResponseEntity.ok(activeRate);
+    }
 }

@@ -12,5 +12,7 @@ public interface DCountriesRepository extends JpaRepository<DCountriesEntity, Lo
 
     List<DCountriesEntity> findAllByActive(Integer active);
     Optional<DCountriesEntity> findFirstByCountryName(String countryName);
+
+    Optional<DCountriesEntity> findFirstByCurrency(String currency);
 }
 

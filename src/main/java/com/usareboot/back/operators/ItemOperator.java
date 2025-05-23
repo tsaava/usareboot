@@ -69,11 +69,11 @@ public class ItemOperator {
         }
 
         BigDecimal itemCost = BigDecimal.valueOf(0);
-        if (albumsItems.getAlbumItemCost() != null && albumsItems.getAlbumItemRate() != null) {
+        /*if (albumsItems.getAlbumItemCost() != null && albumsItems.getAlbumItemRate() != null) {
             itemCost = albumsItems.getAlbumItemCost().multiply(albumsItems.getAlbumItemRate())
                     .setScale(0, RoundingMode.CEILING);
-        }
-        itemsEntity.setItemCost(itemCost);
+        }*/
+        itemsEntity.setItemCost(albumsItems.getCost());
 
         itemsRepository.save(itemsEntity);
         log.info("Сохранение комментария в itemsEntity прошло успешно");

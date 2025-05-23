@@ -80,7 +80,7 @@ public class MainOperator {
             String itemColor = itemsEntity.getItemColor();
             BigDecimal itemCost = BigDecimal.valueOf(0);
             if (itemsEntity.getItemCost() != null) {
-                itemCost = itemsEntity.getItemCost();
+                itemCost = itemsEntity.getItemCost().setScale(0, RoundingMode.UP);
             }
             message = userName + ",\n"
                     + itemName + "\n"

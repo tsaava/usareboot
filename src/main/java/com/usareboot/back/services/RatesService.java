@@ -1,9 +1,12 @@
 package com.usareboot.back.services;
 
+import com.usareboot.back.models.CountriesDTO;
 import com.usareboot.back.models.Rate;
 import com.usareboot.back.models.RatesDTO;
 import com.usareboot.back.operators.CommonOperator;
 import com.usareboot.back.operators.RatesOperator;
+import com.usareboot.back.persistence.usareboot.entities.DCountriesEntity;
+import com.usareboot.back.persistence.usareboot.repository.DCountriesRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -11,6 +14,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -48,5 +52,20 @@ public class RatesService {
         ratesOperator.saveRowRate(rate);
 
         log.info("[Сценарий saveRowRate][Шаг: Финиш][EventID: {}]", eventId);
+    }
+
+    public Rate getActiveRate(String currency) {
+        var eventId = threadLocal.get();
+        log.info("[Сценарий getActiveRate][Шаг: Начало][EventID: {}]", eventId);
+        var date = LocalDate.now();
+
+        log.info("[Сценарий getActiveRate][Шаг: Получение сущности Страны по валюте][EventID: {}]", eventId);
+        DCountriesEntity country = ratesOperator.getCountryByCurrency(currency);
+
+        log.info("[Сценарий getActiveRate][Шаг: Получение активного курса. Фильтр по валюте и текущей дате][EventID: {}]", eventId);
+        Rate rate = ratesOperator.getActiveRateByCurrencyAndDate(country, date);
+
+        log.info("[Сценарий getActiveRate][Шаг: Финиш][EventID: {}]", eventId);
+        return rate;
     }
 }
