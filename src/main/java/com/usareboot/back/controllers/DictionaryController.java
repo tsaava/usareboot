@@ -22,7 +22,6 @@ import java.util.concurrent.ExecutionException;
 @RestController
 @CrossOrigin(origins = "*")/*!!!!обязательно во все контроллеры вставлять!!*/
 @RequestMapping("/api/usareboot/dictionary")
-@PreAuthorize("hasAnyRole('ADMIN')")
 @RequiredArgsConstructor
 @Slf4j
 public class DictionaryController {
