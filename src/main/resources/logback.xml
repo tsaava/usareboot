@@ -42,7 +42,7 @@
     <logger name="org.springframework.web" level="DEBUG" />
 
     <!-- Логи VK API SDK -->
-    <logger name="com.vk.api.sdk" level="DEBUG" />
+<!--    <logger name="com.vk.api.sdk" level="DEBUG" />-->
 
     <!-- Логи Apache HTTP Client -->
     <logger name="org.apache.http" level="WARN" />

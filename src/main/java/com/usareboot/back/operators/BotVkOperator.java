@@ -21,6 +21,8 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 import java.util.Random;
 
+import static com.usareboot.back.models.constant.Constant.ALBUM_DEFAULT_STATUS_ID;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -53,7 +55,7 @@ public class BotVkOperator {
         log.info("albumMapping: {}", albumMappingId);
 
         DStatusesEntity dStatusesEntity = new DStatusesEntity();
-        dStatusesEntity.setStatusId(17);
+        dStatusesEntity.setStatusId(ALBUM_DEFAULT_STATUS_ID);
         AlbumsEntity album = albumsRepository.getAlbumsEntityByAlbumMappingDictionaryIdAndStatuses(albumMappingId, dStatusesEntity).orElse(null);
         if (album == null) {
             album = albumsRepository.getAlbumsEntityByAlbumMappingDictionaryIdAndStatuses(DEFAULT_ALBUM_MAPPING_ID, dStatusesEntity).orElse(null);

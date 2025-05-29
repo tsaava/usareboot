@@ -174,7 +174,7 @@ public class VkService {
         var eventId = threadLocal.get();
         log.info("[Сценарий createAlbum][Шаг: Начало][EventID: {}]", eventId);
 
-        var description = (albumsEntity.getAlbumDesc() != null ? albumsEntity.getAlbumDesc() + "\n" : "")
+        var description = (albumsEntity.getAlbumDesc() != null && !albumsEntity.getAlbumDesc().isEmpty() && !albumsEntity.getAlbumDesc().equals("null") ? albumsEntity.getAlbumDesc() + "\n" : "")
                 + "Курс(ы) альбома: " + albumsEntity.getCourseAlbum();
         log.info("[Сценарий createAlbum][Шаг: Определить есть ли в словаре данные по альбому][EventID: {}]", eventId);
         Optional<AlbumMappingDictionaryEntity> albumMappingDictionaryEntity = albumMappingDictionaryRepository.getAlbumMappingDictionaryEntityByLinkContains(Optional.ofNullable(albumsEntity).map(AlbumsEntity::getShopUrl).orElse(""));

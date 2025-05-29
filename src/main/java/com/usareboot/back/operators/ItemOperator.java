@@ -68,8 +68,8 @@ public class ItemOperator {
             itemsEntity.setItemCount(data.getItemCount());
         }
 
-        BigDecimal itemCost = BigDecimal.valueOf(0);
-        /*if (albumsItems.getAlbumItemCost() != null && albumsItems.getAlbumItemRate() != null) {
+        /*BigDecimal itemCost = BigDecimal.valueOf(0);
+        if (albumsItems.getAlbumItemCost() != null && albumsItems.getAlbumItemRate() != null) {
             itemCost = albumsItems.getAlbumItemCost().multiply(albumsItems.getAlbumItemRate())
                     .setScale(0, RoundingMode.CEILING);
         }*/
