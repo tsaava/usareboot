@@ -120,7 +120,8 @@ public class MainService {
                     x.getalbom_item_rate(),
                     x.getcost(),
                     x.getrepayment_name(),
-                    x.getis_not_size()
+                    x.getis_not_size(),
+                    x.getis_price_depends_size()
             )));
         }
         return scienceDiplomsList;

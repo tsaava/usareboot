@@ -88,7 +88,8 @@ public class AlbumsItemsService {
                     x.getStatuses().getStatusName(),
                     x.getVkPhotoPath(),
                     x.isNoSize(),
-                    x.getAllowableSizes()
+                    x.getAllowableSizes(),
+                    x.isPriceDependsSize()
             )));
         }
 //        log.info("[Сценарий getAlbumsItems][Шаг: вывод AlbumsItemsDTO list: {}][EventID: {}]", list, eventId);

@@ -32,4 +32,5 @@ public interface ItemListResponse {
     Number getcost();
     String getrepayment_name();
     boolean getis_not_size();
+    boolean getis_price_depends_size();
 }
