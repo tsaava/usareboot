@@ -27,9 +27,9 @@ public interface ItemListResponse {
     String getphoto_path();
     String getvk_photo_path();
     String getcomment();
-    Number getalbom_item_cost();
-    Number getalbom_item_rate();
-    Number getcost();
+    BigDecimal getalbom_item_cost();
+    BigDecimal getalbom_item_rate();
+    BigDecimal getcost();
     String getrepayment_name();
     boolean getis_not_size();
     boolean getis_price_depends_size();

@@ -34,10 +34,12 @@ public class ItemListDTO {
         String photoPath;
         String vkPhotoPath;
         String comment;
-        Number albumItemCost;
-        Number albumItemRate;
-        Number cost;
+        BigDecimal albumItemCost;
+        BigDecimal albumItemRate;
+        BigDecimal cost;
         String repaymentName;
         boolean isNotSize;
         Boolean isPriceDependsSize;
+//        BigDecimal itemCost;
+//        BigDecimal itemRate;
 }

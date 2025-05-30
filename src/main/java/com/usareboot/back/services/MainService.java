@@ -24,7 +24,6 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Optional;
@@ -145,6 +144,13 @@ public class MainService {
             log.info("itemListDTO.getItemSize(): {}", itemListDTO.getItemSize());
             if (itemListDTO.getItemSize() != null)
                 itemList.setItemSize(itemListDTO.getItemSize());
+            if (itemListDTO.getCost() != null)
+                itemList.setItemCost(itemListDTO.getCost());
+            if (itemListDTO.getAlbumItemRate() != null)
+                itemList.setItemRate(itemListDTO.getAlbumItemRate());
+            if (itemListDTO.getAlbumItemCost() != null)
+                itemList.setItemCostCu(itemListDTO.getAlbumItemCost());
+            log.info("itemList: {}",itemList);
             itemsRepository.save(itemList);
             log.info("Успешное сохранение данных в таблицу item");
             /*if (!repaymentName.isEmpty()) {

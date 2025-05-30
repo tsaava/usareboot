@@ -84,6 +84,14 @@ public class ItemsEntity {
     private BigDecimal itemCost;
 
     @Basic
+    @Column(name = "item_rate")
+    private BigDecimal itemRate;
+
+    @Basic
+    @Column(name = "item_cost_cu")
+    private BigDecimal itemCostCu;
+
+    @Basic
     @Column(name = "vk_comment_id")
     private Long vkCommentId;
 

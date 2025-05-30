@@ -65,6 +65,7 @@ public class MainController {
 
     @PostMapping("/item/list")
     public ResponseEntity<?> saveItemList(@RequestBody ItemListDTO data) {
+        log.info("data: {}", data);
         mainService.saveItemAttribute(data);
         return new ResponseEntity<>(HttpStatus.OK);
     }
