@@ -89,7 +89,8 @@ public class AlbumsItemsService {
                     x.getVkPhotoPath(),
                     x.isNoSize(),
                     x.getAllowableSizes(),
-                    x.isPriceDependsSize()
+                    x.isPriceDependsSize(),
+                    x.getPromotionMessage()
             )));
         }
 //        log.info("[Сценарий getAlbumsItems][Шаг: вывод AlbumsItemsDTO list: {}][EventID: {}]", list, eventId);
@@ -97,21 +98,12 @@ public class AlbumsItemsService {
     }
 
     public String saveFile(Long albumId, MultipartFile file, AlbumsItemsDTO albumsItemsDTO) throws IOException, ClientException, ApiException {
-//        var albumsItemsDTO = vkService.saveFileInVk(albumId, file, adFile1, adFile2, adFile3, dto);
-//        final String accessToken = commonOperator.getTokenClient(standaloneId).orElse(null);
-
         log.info("Редактирование комментария в вк");
         if (file == null && (albumsItemsDTO.getPhotoUrl() == null || albumsItemsDTO.getPhotoUrl().isEmpty())) {
             log.error("Ошибка загрузки: нет ссылки на фотографию");
             throw new RuntimeException("Ошибка загрузки: нет ссылки на фотографию");
         }
-       /* var photoUploadVk = vkOperator.getUrlPhotoInAlbumVk(albumId);
-        log.info("Upload photo in vk");
-        var vkPhotoList = configureFeignUrlController.uploadPhotoInVk(photoUploadVk, file);
-        log.info("vkPhotoList: {}", vkPhotoList);
-        log.info("Save photo in vk");
-        var photo = vkOperator.savePhotoInVk(vkPhotoList.getPhotos_list(), String.valueOf(albumId), String.valueOf(vkPhotoList.getServer()), vkPhotoList.getHash());
-        */
+
         List<MultipartFile> files = new ArrayList<>();
         files.add(file);
         log.info("Загружаем фотографии на сервер ВК");
@@ -130,40 +122,15 @@ public class AlbumsItemsService {
         log.info("В ВК фотография успешно загружена и добавлено описание");
 
         albumsItemsDTO.setVkItemId(Long.parseLong(photoId));
-//        albumsItemsDTO.setVkPhotoPath("https://vk.com/photo-" + groupId + "_" + photo);
         albumsItemsDTO.setVkPhotoPath("https://vk.com/photo" + photo);
 
         Path filePath = Path.of(pathPhoto);
         log.info("Сохранение фото в БД");
         albumsItemsDTO.setPhotoPath(String.valueOf(filePath));
-//        copyFile(file);
         log.info("Сохранение фото в БД");
         albumItemOperator.saveAlbumItem(albumsItemsDTO);
 
-       /* String fileUri = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path("/image/")
-                .path(Objects.requireNonNull(file.getOriginalFilename()))
-                .toUriString();
-
-        var result = Map.of(
-                "filename", file.getOriginalFilename(),
-                "fileUri", fileUri
-        );*/
-
         log.info("Фото товара успешно загружено, изменено описание и сохранено в бд");
-        /*var itemCost = albumsItemsDTO.getAlbumItemCost() * albumsItemsDTO.getAlbumItemRate();
-        var description = albumsItemsDTO.getAlbumName() +"\n"+itemCost+"\n"+albumsItemsDTO.getVkPhotoPath();
-        VkPostRequestDTO vkPostRequestDTO = VkPostRequestDTO.builder()
-                .itemUrl(albumsItemsDTO.getVkPhotoPath())
-                .albumName(albumsItemsDTO.getAlbumName())
-                .itemCost(itemCost)
-                .description(description)
-                .build();
-
-        log.info("VkPostRequestDTO: {}",vkPostRequestDTO);
-
-//        vkOperator.postInVk(vkPostRequestDTO,  photos);
-        vkPostService.postWithPhotos(vkPostRequestDTO,  photos);*/
         return photoId;
     }
 

@@ -89,6 +89,10 @@ public class AlbumsItemsEntity {
     @Basic
     @Column(name = "price_depends_size")
     private boolean priceDependsSize;
+
+    @Basic
+    @Column(name = "promotion_message")
+    private String promotionMessage;
     public void setAlbumItemId(long albumItemId) {
         this.albumItemId = albumItemId;
     }

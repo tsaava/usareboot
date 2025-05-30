@@ -49,6 +49,7 @@ public class AlbumItemOperator {
         albumsItemsEntity.setNoSize(albumsItemsDTO.isNoSize());
         albumsItemsEntity.setAllowableSizes(albumsItemsDTO.getAllowableSizes());
         albumsItemsEntity.setPriceDependsSize(albumsItemsDTO.isPriceDependsSize());
+        albumsItemsEntity.setPromotionMessage(albumsItemsDTO.getPromotionMessage());
         try {
             var photoUrl = vkOperator.getCommentPhotoVk(albumsItemsDTO.getVkItemId());
             albumsItemsEntity.setPhotoPath(photoUrl);

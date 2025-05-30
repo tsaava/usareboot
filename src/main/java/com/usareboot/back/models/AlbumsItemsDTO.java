@@ -40,4 +40,5 @@ public class AlbumsItemsDTO {
     private boolean noSize;
     private String allowableSizes;
     private boolean priceDependsSize;
+    private String promotionMessage;
 }

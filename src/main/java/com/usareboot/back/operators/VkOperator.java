@@ -419,13 +419,12 @@ public class VkOperator {
     public String getMessage(AlbumsItemsDTO albumsItemsDTO) {
         BigDecimal itemCost = BigDecimal.valueOf(0);
         if (albumsItemsDTO.getAlbumItemCost() != null && albumsItemsDTO.getAlbumItemRate() != null) {
-//            itemCost = (int) (albumsItemsDTO.getAlbumItemCost() * albumsItemsDTO.getAlbumItemRate());
             itemCost = albumsItemsDTO.getAlbumItemCost().multiply(albumsItemsDTO.getAlbumItemRate())
                     .setScale(0, RoundingMode.CEILING);
         }
-        var message = albumsItemsDTO.getAlbumItemName() + "\n"
+        var message = (albumsItemsDTO.getPromotionMessage() != null && !albumsItemsDTO.getPromotionMessage().isEmpty() ? (albumsItemsDTO.getPromotionMessage() + "\n——————————————\n") : "")
+                + albumsItemsDTO.getAlbumItemName() + "\n"
                 + (albumsItemsDTO.getItemDescription() != null && !albumsItemsDTO.getItemDescription().isEmpty() ? (albumsItemsDTO.getItemDescription() + "\n") : "")
-//                + (albumsItemsDTO.getAllowableSizes() != null && !albumsItemsDTO.getAllowableSizes().isEmpty() ? ("Размеры: " + albumsItemsDTO.getAllowableSizes() + "\n") : "")
                 + itemCost + "+вес" + "\n" +
                 albumsItemsDTO.getVkPhotoPath();
         return message;
