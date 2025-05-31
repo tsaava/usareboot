@@ -78,12 +78,13 @@ public class RatesOperator {
         return countriesRepository.findFirstByCurrency(currency).orElse(new DCountriesEntity());
     }
 
-    public Rate getActiveRateByCurrencyAndDate(DCountriesEntity country, LocalDate date) {
-        List<RateBuyingEntity> rates = ratesRepository.findAllByCountryAndDateBuyingLessThanEqual(country, date);
-        RateBuyingEntity rate = rates.stream()
-                .sorted(Comparator.comparing(RateBuyingEntity::getDateBuying).reversed())
-                .findFirst()
+    public Rate getActiveRateByCurrencyAndDate(String currency, LocalDate date) {
+        List<RateBuyingEntity> rates = ratesRepository.findAllByCountryCurrencyAndDateBuyingLessThanEqual(currency, date);
+        log.debug("rates: {}",rates);
+
+        RateBuyingEntity rate = rates.stream().max(Comparator.comparing(RateBuyingEntity::getDateBuying))
                 .orElse(null);
+        log.debug("rate: {}",rate);
 //        RateBuyingEntity rate = rates.stream().max(Comparator.comparing(RateBuyingEntity::getRateBuyingId)).orElse(new RateBuyingEntity());
         Rate build = new Rate();
         if (rate != null)

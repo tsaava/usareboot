@@ -4,6 +4,7 @@ import com.usareboot.back.persistence.usareboot.entities.auth.TabEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.math.BigDecimal;
 import java.math.BigDecimal;
@@ -17,6 +18,7 @@ import java.util.Set;
 @Entity
 @Getter
 @Setter
+@ToString
 @Table(name = "rate_buying", catalog = "dbusareboot")
 public class RateBuyingEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)

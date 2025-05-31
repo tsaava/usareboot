@@ -60,10 +60,10 @@ public class RatesService {
         var date = LocalDate.now();
 
         log.info("[Сценарий getActiveRate][Шаг: Получение сущности Страны по валюте][EventID: {}]", eventId);
-        DCountriesEntity country = ratesOperator.getCountryByCurrency(currency);
+//        DCountriesEntity country = ratesOperator.getCountryByCurrency(currency);
 
         log.info("[Сценарий getActiveRate][Шаг: Получение активного курса. Фильтр по валюте и текущей дате][EventID: {}]", eventId);
-        Rate rate = ratesOperator.getActiveRateByCurrencyAndDate(country, date);
+        Rate rate = ratesOperator.getActiveRateByCurrencyAndDate(currency, date);
 
         log.info("[Сценарий getActiveRate][Шаг: Финиш][EventID: {}]", eventId);
         return rate;

@@ -14,4 +14,5 @@ public interface RateBuyingRepository extends JpaRepository<RateBuyingEntity, Lo
     List<RateBuyingEntity> findAllByCountryAndDateBuyingIsBefore(DCountriesEntity country, LocalDate dateBuying);
 //    List<RateBuyingEntity> findAllByCountryAndDateBuyingLessThanOrEqual(DCountriesEntity country, LocalDate dateBuying);
     List<RateBuyingEntity> findAllByCountryAndDateBuyingLessThanEqual(DCountriesEntity country, LocalDate dateBuying);
+    List<RateBuyingEntity> findAllByCountryCurrencyAndDateBuyingLessThanEqual(String currency, LocalDate dateBuying);
 }
