@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -18,19 +19,25 @@ public class CommentParser {
 //    private static final Pattern ONE_COUNT_PATTERN = Pattern.compile("\\d+", Pattern.CASE_INSENSITIVE);
 //    private static final Pattern ONE_SIZE_PATTERN = Pattern.compile("[a-zA-Z]+", Pattern.CASE_INSENSITIVE);
 
-//    private static final Pattern SIZE_PATTERN_NEW = Pattern.compile("(\\d+[./-]?\\d*|\\.\\d+)", Pattern.CASE_INSENSITIVE);
+    //    private static final Pattern SIZE_PATTERN_NEW = Pattern.compile("(\\d+[./-]?\\d*|\\.\\d+)", Pattern.CASE_INSENSITIVE);
+// Полная таблица транслитерации (рус → латиница)
+    private static final Map<Character, String> TRANSLIT_MAP = Map.ofEntries(
+            Map.entry('Л', "L"), Map.entry('л', "l"),
+            Map.entry('М', "M"), Map.entry('м', "m"),
+            Map.entry('С', "S"), Map.entry('с', "s"),
+            Map.entry('Х', "X"), Map.entry('х', "x")
+    );
 
-    public ParsedComment parse(String comment){
+    public ParsedComment parse(String comment) {
         ParsedComment result = new ParsedComment();
 
+        String normalizedComment = transliterateRussian(comment);
         // Ищем все возможные числа и размеры с разделителями / или -
 //        Matcher matcher = Pattern.compile("(\\d+[./-]?\\d*|\\.\\d+)").matcher(comment);
         Matcher matcher = Pattern.compile(
-                // Числовые размеры (с дробями и разделителями)
-                "(\\d+[./-]?\\d*[A-Z]?)" +
-                        // ИЛИ буквенные размеры (XS, XXL, 42R и т. д.)
-                        "|([A-Z]{1,5}\\d*[A-Z]?)"
-        ).matcher(comment);
+                "(\\d+[./-]?\\d*[A-Za-z]?)" +  // Числовые размеры (42, 36.5, 40/41)
+                        "|([A-Za-z]{1,5}\\d*[A-Za-z]?)"  // Буквенные размеры (XL, р42)
+        ).matcher(normalizedComment);
         List<String> matches = new ArrayList<>();
 
         while (matcher.find()) {
@@ -55,15 +62,25 @@ public class CommentParser {
 
             if (isValidQuantity(second)) {
                 result.setCount(second.replaceAll("[^0-9]", ""));
-                result.setSize(first);
+                result.setSize(first.toUpperCase());
             } else {
-                result.setSize(second);
+                result.setSize(second.toUpperCase());
             }
         } else {
-            result.setSize(matches.get(0));
+            result.setSize(matches.get(0).toUpperCase());
         }
 
         return result;
+    }
+
+    // Транслитерация русских букв в латиницу
+    private String transliterateRussian(String text) {
+        StringBuilder result = new StringBuilder();
+        for (char c : text.toCharArray()) {
+            String translitChar = TRANSLIT_MAP.getOrDefault(c, String.valueOf(c));
+            result.append(translitChar);
+        }
+        return result.toString();
     }
 
     private boolean isValidQuantity(String numberStr) {

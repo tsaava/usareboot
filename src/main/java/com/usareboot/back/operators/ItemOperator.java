@@ -73,6 +73,8 @@ public class ItemOperator {
             itemCost = albumsItems.getAlbumItemCost().multiply(albumsItems.getAlbumItemRate())
                     .setScale(0, RoundingMode.CEILING);
         }*/
+        itemsEntity.setItemCostCu(albumsItems.getAlbumItemCost());
+        itemsEntity.setItemRate(albumsItems.getAlbumItemRate());
         itemsEntity.setItemCost(albumsItems.getCost());
 
         itemsRepository.save(itemsEntity);
