@@ -1,12 +1,8 @@
 package com.usareboot.back.operators;
 
 import com.usareboot.back.models.AlbumRowRequestDTO;
-import com.usareboot.back.persistence.usareboot.entities.AlbumsEntity;
-import com.usareboot.back.persistence.usareboot.entities.CardsEntity;
-import com.usareboot.back.persistence.usareboot.entities.DStatusesEntity;
-import com.usareboot.back.persistence.usareboot.repository.AlbumsRepository;
-import com.usareboot.back.persistence.usareboot.repository.CardsRepository;
-import com.usareboot.back.persistence.usareboot.repository.DStatusRepository;
+import com.usareboot.back.persistence.usareboot.entities.*;
+import com.usareboot.back.persistence.usareboot.repository.*;
 import com.vk.api.sdk.exceptions.ApiException;
 import com.vk.api.sdk.exceptions.ClientException;
 import lombok.RequiredArgsConstructor;
@@ -21,14 +17,20 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 import static com.usareboot.back.models.constant.Constant.ALBUM_CLOSE_STATUS_ID;
+import static com.usareboot.back.models.constant.Constant.ITEM_IN_REDEEMED_STATUS_ID;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class AlbumOperator {
     private final AlbumsRepository albumsRepository;
+    private final AlbumsItemsRepository albumsItemsRepository;
+    private final ItemsRepository itemsRepository;
     private final DStatusRepository statusRepository;
     private final CardsRepository cardsRepository;
     private final VkOperator vkOperator;
@@ -77,6 +79,32 @@ public class AlbumOperator {
             log.debug("Закрытие альбома {} для редактирования", temp.getAlbumName());
             vkOperator.commentsDisabledInVkAlbum(albumRowRequestDTO.getAlbumVkId());
             log.debug("Альбом {} закрыт для редактирования", temp.getAlbumName());
+        } catch (Exception e) {
+            log.error("Не удалось закрыть комментарии в закрытый альбом");
+            throw e;
+        }
+    }
+
+    public void insertCountBuyOutItems(Long albumId) {
+        try {
+            List<AlbumsItemsEntity> listAlbumItems = albumsItemsRepository.findAllByAlbumAlbumId(albumId).orElse(new ArrayList<>());
+
+            log.debug("listAlbumItems: {}", listAlbumItems);
+
+            if (listAlbumItems.isEmpty())
+                return;
+            List<Long> albumItemIds = new ArrayList<>();
+            for (var albumItem:listAlbumItems) {
+                albumItemIds.add(albumItem.getAlbumItemId());
+            }
+            List<ItemsEntity> itemsBuyOut = itemsRepository.findByAlbomItemIdInAndItemStatus(albumItemIds, ITEM_IN_REDEEMED_STATUS_ID).orElse(new ArrayList<>());
+            log.debug("itemsBuyOut: {}", itemsBuyOut);
+
+            var album = albumsRepository.findAlbumsEntityByAlbumId(albumId);
+            album.setCountOrder(itemsBuyOut.size());
+            albumsRepository.save(album);
+
+            log.debug("Сохранение кол-во выкупленных товаров у альбома {}:{}", album.getAlbumName(), album.getAlbumId());
         } catch (Exception e) {
             log.error("Не удалось закрыть комментарии в закрытый альбом");
             throw e;

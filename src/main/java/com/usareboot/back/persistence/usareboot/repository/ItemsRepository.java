@@ -1,9 +1,13 @@
 package com.usareboot.back.persistence.usareboot.repository;
 
+import com.usareboot.back.persistence.usareboot.entities.AlbumsItemsEntity;
 import com.usareboot.back.persistence.usareboot.entities.ItemsEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.query.Procedure;
 import org.springframework.data.repository.CrudRepository;
+
+import java.util.List;
+import java.util.Optional;
 
 public interface ItemsRepository extends CrudRepository<ItemsEntity, Long> {
 
@@ -13,5 +17,7 @@ public interface ItemsRepository extends CrudRepository<ItemsEntity, Long> {
     @Procedure
     void item_set_date_all();
 
+    Optional<List<ItemsEntity>> findByAlbomItemIdIn(List<Long> albumItemId);
+    Optional<List<ItemsEntity>> findByAlbomItemIdInAndItemStatus(List<Long> albumItemId, Long statusId);
 }
 

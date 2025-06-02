@@ -193,6 +193,9 @@ log.info("res: {}", res);
             log.info("[Сценарий updateAlbum][Шаг: Выбор обложки для альбома: {}][EventID: {}]",albumsEntity.getAlbumVkId(),eventId);
             var photoId = photo.split("_")[1];
             vkOperator.photosMakeCover(Integer.parseInt(photoId), (int) albumsEntity.getAlbumVkId());
+
+            log.info("[Сценарий updateAlbum][Шаг: Проставление количества выкупленных товаров: {}][EventID: {}]",albumsEntity.getAlbumVkId(),eventId);
+            albumOperator.insertCountBuyOutItems(albumsEntity.getAlbumId());
         }
         log.info("[Сценарий updateAlbum][Шаг: Финиш][Album ID: {}][EventID: {}]", albumsEntity.getAlbumVkId(), eventId);
     }

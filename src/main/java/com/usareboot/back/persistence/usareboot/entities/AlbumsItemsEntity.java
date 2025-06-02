@@ -3,6 +3,7 @@ package com.usareboot.back.persistence.usareboot.entities;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -12,6 +13,7 @@ import java.util.Objects;
 @Getter
 @Setter
 @Entity
+@ToString
 @Table(name = "alboms_items", catalog = "usareboot")
 public class AlbumsItemsEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
