@@ -1,5 +1,6 @@
 package com.usareboot.back.operators;
 
+import com.usareboot.back.models.ItemRowsDTO;
 import com.usareboot.back.persistence.usareboot.entities.AlbumsItemsEntity;
 import com.usareboot.back.persistence.usareboot.entities.ItemsEntity;
 import com.usareboot.back.models.ParsedComment;
@@ -15,6 +16,9 @@ import java.math.RoundingMode;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 import static com.usareboot.back.models.constant.Constant.NEW_ITEM_STATUS;
 
@@ -78,6 +82,24 @@ public class ItemOperator {
         itemsEntity.setItemCost(albumsItems.getCost());
 
         itemsRepository.save(itemsEntity);
+        log.info("Сохранение комментария в itemsEntity прошло успешно");
+    }
+
+    public void saveNumberOrder(ItemRowsDTO itemRowsDTO) {
+        var numberOrder = itemRowsDTO.getOrderNumber();
+        List<Long> itemIds = new ArrayList<>();
+        itemRowsDTO.getItems()
+                .forEach(item -> {
+                    item.setRepaymentName(numberOrder);
+                    itemIds.add(item.getItemId());
+                });
+        log.debug("itemIds: {}",itemIds);
+        List<ItemsEntity> items = itemsRepository.findByItemIdIn(itemIds).orElse(new ArrayList<>());
+        items.forEach(item -> {
+            item.setRepaymentName(numberOrder);
+        });
+        log.debug("ItemsEntity:{} ", items);
+        itemsRepository.saveAll(items);
         log.info("Сохранение комментария в itemsEntity прошло успешно");
     }
 }

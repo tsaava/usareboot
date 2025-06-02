@@ -17,7 +17,7 @@ public interface ItemsRepository extends CrudRepository<ItemsEntity, Long> {
     @Procedure
     void item_set_date_all();
 
-    Optional<List<ItemsEntity>> findByAlbomItemIdIn(List<Long> albumItemId);
+    Optional<List<ItemsEntity>> findByItemIdIn(List<Long> albumItemId);
     Optional<List<ItemsEntity>> findByAlbomItemIdInAndItemStatus(List<Long> albumItemId, Long statusId);
 }
 
