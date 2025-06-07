@@ -153,16 +153,7 @@ public class MainOperator {
                     .build();
             albumItemOperator.updateAlbumItem(albumItem, build);
 
-            /*
-            albumsItemsDTO.getAlbumItemName() + "\n" +
-                    (albumsItemsDTO.getDescription() != null && !albumsItemsDTO.getDescription().isEmpty() ? (albumsItemsDTO.getDescription() + "\n") : "") +
-                    (albumsItemsDTO.getAllowableSizes() != null && !albumsItemsDTO.getAllowableSizes().isEmpty() ? ("Размеры: " + albumsItemsDTO.getAllowableSizes() + "\n") : "") +
-                    (albumsItemsDTO.getAlbumItemColor() != null && !albumsItemsDTO.getAlbumItemColor().isEmpty() ? ("Цвет: " + albumsItemsDTO.getAlbumItemColor() + "\n") : "") +
-                    "цена: " + albumsItemsDTO.getAlbumItemCost().toString() +
-                    ", курс: " + albumsItemsDTO.getAlbumItemRate().toString() + "\n" +
-                    albumsItemsDTO.getItemUrl();*/
-
-            var albumsItemsDTO =AlbumsItemsDTO.builder()
+            var albumsItemsDTO = AlbumsItemsDTO.builder()
                     .albumItemName(albumItem.getAlbumItemName())
                     .description(albumItem.getDescription())
                     .allowableSizes(albumItem.getAllowableSizes())
@@ -171,11 +162,15 @@ public class MainOperator {
                     .albumItemRate(albumItem.getAlbumItemRate())
                     .itemUrl(albumItem.getItemUrl())
                     .build();
-//            log.info("[Сценарий updateAlbumItem][Шаг: Формируем описание товара с измененоый ценой/курсом][EventID: {}]", eventId);
+            log.info("Формируем описание товара с измененой ценой/курсом");
             var allDesc = vkOperator.getAllDesc(albumsItemsDTO);
-//            log.info("[Сценарий updateAlbumItem][Шаг: Обновление описания фото в ВК][EventID: {}]", eventId);
-            vkOperator.editPhotoInVk(String.valueOf(albumItem.getVkItemId()), allDesc);
+
+            log.info("Обновление описания фото в ВК");
+            var res = vkOperator.editPhotoInVk(String.valueOf(albumItem.getVkItemId()), allDesc);
+            log.info("Обновление описания фото в ВК, res: {}", res);
+
             albumItem.setDescription(allDesc);
+            albumsItemsRepository.save(albumItem);
         }
     }
 }
