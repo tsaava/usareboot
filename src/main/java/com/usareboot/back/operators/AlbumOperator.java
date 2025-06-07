@@ -53,7 +53,7 @@ public class AlbumOperator {
         temp.setAlbumDatePlane(albumRowRequestDTO.getAlbumDatePlane());
 //        temp.setCountOrder(albumRowRequestDTO.getCountOrder());
         temp.setAlbumDateStop(albumRowRequestDTO.getAlbumDateStop());
-        temp.setCreateDate(LocalDateTime.now());
+//        temp.setCreateDate(LocalDateTime.now());
         if (albumRowRequestDTO.getAlbumStatus() != null && !(albumRowRequestDTO.getAlbumStatus().isEmpty())) {
             log.debug("albumRowRequestDTO.getAlbumStatus(): {}", albumRowRequestDTO.getAlbumStatus());
             DStatusesEntity dStatusesEntityByStatusName = statusRepository.findDStatusesEntityByStatusName(albumRowRequestDTO.getAlbumStatus());

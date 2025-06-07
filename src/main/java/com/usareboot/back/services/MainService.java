@@ -1,14 +1,13 @@
 package com.usareboot.back.services;
 
+import com.usareboot.back.models.*;
+import com.usareboot.back.operators.AlbumItemOperator;
+import com.usareboot.back.operators.AlbumOperator;
 import com.usareboot.back.operators.MainOperator;
 import com.usareboot.back.operators.VkOperator;
 import com.usareboot.back.persistence.usareboot.entities.AlbumsItemsEntity;
 import com.usareboot.back.persistence.usareboot.entities.DStatusesEntity;
 import com.usareboot.back.persistence.usareboot.entities.ItemsEntity;
-import com.usareboot.back.models.ImportDTO;
-import com.usareboot.back.models.ItemListDTO;
-import com.usareboot.back.models.ItemWeightListDTO;
-import com.usareboot.back.models.ItemsRequestDTO;
 import com.usareboot.back.persistence.usareboot.repository.*;
 import com.vk.api.sdk.exceptions.ApiException;
 import com.vk.api.sdk.exceptions.ClientException;
@@ -41,6 +40,7 @@ public class MainService {
     private final RepaymentsRepository repaymentsRepository;
     private final ApiTokenRepository apiTokenRepository;
     private final MainOperator mainOperator;
+    private final AlbumItemOperator albumItemOperator;
     private final VkOperator vkOperator;
     @PersistenceContext
     private EntityManager entityManager;
@@ -150,7 +150,7 @@ public class MainService {
                 itemList.setItemRate(itemListDTO.getAlbumItemRate());
             if (itemListDTO.getAlbumItemCost() != null)
                 itemList.setItemCostCu(itemListDTO.getAlbumItemCost());
-            log.info("itemList: {}",itemList);
+            log.info("itemList: {}", itemList);
             itemsRepository.save(itemList);
             log.info("Успешное сохранение данных в таблицу item");
             /*if (!repaymentName.isEmpty()) {
@@ -233,6 +233,9 @@ public class MainService {
             log.info("[Сценарий saveItemStatus][Шаг: Маппинг наименования статуса товара и вытаскивание id][EventID: {}]", eventId);
             var itemStatusId = mainOperator.getItemStatus(itemListDTO);
             log.info("[Сценарий saveItemStatus][Шаг: Статус заказа клиента: {}, id: {}][EventID: {}]", itemListDTO.getItemStatus(), itemStatusId, eventId);
+
+            log.info("[Сценарий saveItemStatus][Шаг: Сохранение курса и цену в товар (albumItems)][EventID: {}]", eventId);
+            mainOperator.updateRateAndCostInAlbumItem(albumItem, itemListDTO);
 
             log.info("[Сценарий saveItemStatus][Шаг: Сохраняем стоимость заказа для тех товаров которые выкупили][EventID: {}]", eventId);
             ItemsEntity itemsEntity = mainOperator.saveItemCost(item, itemStatusId, albumItem);

@@ -1,5 +1,6 @@
 package com.usareboot.back.operators;
 
+import com.usareboot.back.models.AlbumsItemsDTO;
 import com.usareboot.back.models.ItemListDTO;
 import com.usareboot.back.persistence.usareboot.entities.AlbumsItemsEntity;
 import com.usareboot.back.persistence.usareboot.entities.ItemsEntity;
@@ -11,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
@@ -25,6 +27,8 @@ public class MainOperator {
     private final DStatusRepository dStatusRepository;
     private final OrdersRepository ordersRepository;
     private final UsersRepository usersRepository;
+    private final AlbumItemOperator albumItemOperator;
+    private final VkOperator vkOperator;
 
     @Value("${vk.api.groupId}")
     private String groupId;
@@ -86,9 +90,10 @@ public class MainOperator {
                     + itemName + "\n"
                     + ((itemSize != null && !itemSize.isEmpty()) ? ("Размер: " + itemSize + "\n") : "")
                     + ((itemColor != null && !itemColor.isEmpty()) ? ("Цвет: " + itemColor + "\n") : "")
-                    + "Цена: " + itemCost + "\n"
-//                    + "Цена: " + itemCost + (itemCount > 1 ? " * " + itemCount : "") + "\n"
-                    + "выкуплено";
+//                    + "Цена: " + itemCost + "\n"
+//                    + "выкуплено";
+                    + (itemCount > 1 ? ("Цена (1шт): " + itemCost + "\nвыкуплено " + itemCount + " шт") :
+                    "Цена: " + itemCost + "\nвыкуплено");
         }
         if (itemStatusId == ITEM_IN_NOT_REDEEMED_SIZE_STATUS_ID) {
             message = userName + ",\n"
@@ -106,18 +111,71 @@ public class MainOperator {
             message = userName + ",\n"
                     + "Ваш товар был выкуплен но отменен магазином";
         }
+        if (itemStatusId == ITEM_IN_REDEEMED_WITH_CHANGE_COST_STATUS_ID) {
+            /*message = userName + ",\n"
+                    + "Ваш товар был выкуплен, но ";*/
+            String itemName = itemsEntity.getItemName();
+            String itemSize = itemsEntity.getItemSize();
+            Integer itemCount = itemsEntity.getItemCount();
+            String itemColor = itemsEntity.getItemColor();
+            BigDecimal itemCost = BigDecimal.valueOf(0);
+            if (itemsEntity.getItemCost() != null) {
+                itemCost = itemsEntity.getItemCost().setScale(0, RoundingMode.UP);
+            }
+            message = userName + ",\n"
+                    + itemName + "\n"
+                    + ((itemSize != null && !itemSize.isEmpty()) ? ("Размер: " + itemSize + "\n") : "")
+                    + ((itemColor != null && !itemColor.isEmpty()) ? ("Цвет: " + itemColor + "\n") : "")
+                    + (itemCount > 1 ? ("Цена (1шт): " + itemCost + "\nвыкуплено " + itemCount + " шт") :
+                    "Цена: " + itemCost + "\nвыкуплено");
+        }
         return message;
     }
 
-    public boolean deleteItem(Long itemId){
+    public boolean deleteItem(Long itemId) {
         try {
             log.debug("удаление item:{}", itemId);
             itemsRepository.deleteById(itemId);
             return true;
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             log.error("Ошибка удаления комментария в бд {}", e.toString());
             throw new RuntimeException("Ошибка удаления комментария в бд");
+        }
+    }
+
+    public void updateRateAndCostInAlbumItem(AlbumsItemsEntity albumItem, ItemListDTO itemListDTO) throws IOException {
+        if (itemListDTO.getAlbumItemCost().compareTo(albumItem.getAlbumItemCost()) <= 0 ||
+                itemListDTO.getAlbumItemRate().compareTo(albumItem.getAlbumItemRate()) <= 0) {
+            log.debug("Цена или курс меньше объявленной в товаре");
+            AlbumsItemsDTO build = AlbumsItemsDTO.builder()
+                    .albumItemRate(itemListDTO.getAlbumItemRate())
+                    .albumItemCost(itemListDTO.getAlbumItemCost())
+                    .build();
+            albumItemOperator.updateAlbumItem(albumItem, build);
+
+            /*
+            albumsItemsDTO.getAlbumItemName() + "\n" +
+                    (albumsItemsDTO.getDescription() != null && !albumsItemsDTO.getDescription().isEmpty() ? (albumsItemsDTO.getDescription() + "\n") : "") +
+                    (albumsItemsDTO.getAllowableSizes() != null && !albumsItemsDTO.getAllowableSizes().isEmpty() ? ("Размеры: " + albumsItemsDTO.getAllowableSizes() + "\n") : "") +
+                    (albumsItemsDTO.getAlbumItemColor() != null && !albumsItemsDTO.getAlbumItemColor().isEmpty() ? ("Цвет: " + albumsItemsDTO.getAlbumItemColor() + "\n") : "") +
+                    "цена: " + albumsItemsDTO.getAlbumItemCost().toString() +
+                    ", курс: " + albumsItemsDTO.getAlbumItemRate().toString() + "\n" +
+                    albumsItemsDTO.getItemUrl();*/
+
+            var albumsItemsDTO =AlbumsItemsDTO.builder()
+                    .albumItemName(albumItem.getAlbumItemName())
+                    .description(albumItem.getDescription())
+                    .allowableSizes(albumItem.getAllowableSizes())
+                    .albumItemColor(albumItem.getItemColor())
+                    .albumItemCost(albumItem.getAlbumItemCost())
+                    .albumItemRate(albumItem.getAlbumItemRate())
+                    .itemUrl(albumItem.getItemUrl())
+                    .build();
+//            log.info("[Сценарий updateAlbumItem][Шаг: Формируем описание товара с измененоый ценой/курсом][EventID: {}]", eventId);
+            var allDesc = vkOperator.getAllDesc(albumsItemsDTO);
+//            log.info("[Сценарий updateAlbumItem][Шаг: Обновление описания фото в ВК][EventID: {}]", eventId);
+            vkOperator.editPhotoInVk(String.valueOf(albumItem.getVkItemId()), allDesc);
+            albumItem.setDescription(allDesc);
         }
     }
 }
