@@ -16,7 +16,7 @@ import java.util.concurrent.ExecutionException;
 @RestController
 @CrossOrigin(origins = "*")/*!!!!обязательно во все контроллеры вставлять!!*/
 @RequestMapping("/api/usareboot/rate")
-@PreAuthorize("hasAnyRole('ADMIN')")
+//@PreAuthorize("hasAnyRole('ADMIN')")
 @RequiredArgsConstructor
 @Slf4j
 public class RatesController {

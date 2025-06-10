@@ -422,7 +422,7 @@ public class VkOperator {
             itemCost = albumsItemsDTO.getAlbumItemCost().multiply(albumsItemsDTO.getAlbumItemRate())
                     .setScale(0, RoundingMode.CEILING);
         }
-        var message = (albumsItemsDTO.getPromotionMessage() != null && !albumsItemsDTO.getPromotionMessage().isEmpty() ? (albumsItemsDTO.getPromotionMessage() + "\n——————————————\n") : "")
+        var message = (albumsItemsDTO.getPromotionMessage() != null && !albumsItemsDTO.getPromotionMessage().isEmpty() ? (albumsItemsDTO.getPromotionMessage() + "\n───────────────\n") : "")
                 + albumsItemsDTO.getAlbumItemName() + "\n"
                 + (albumsItemsDTO.getItemDescription() != null && !albumsItemsDTO.getItemDescription().isEmpty() ? (albumsItemsDTO.getItemDescription() + "\n") : "")
                 + itemCost + "+вес" + "\n" +
