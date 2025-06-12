@@ -67,7 +67,7 @@ public class AlbumsService {
         long millis = System.currentTimeMillis();
         java.sql.Date sqlDate = new java.sql.Date(millis);
         var datePolGoda = new java.sql.Date(sqlDate.getTime() - (190L * 24 * 60 * 60 * 1000));
-        var bdFuncResponse = albumsRepository.getAlbumsEntitiesByAlbumDateAfterOrderByCreateDateDesc(datePolGoda);
+        var bdFuncResponse = albumsRepository.getAlbumsEntitiesByAlbumDateAfterOrderByStatusesAscCreateDateDesc(datePolGoda);
         if (!bdFuncResponse.isEmpty()) {
             bdFuncResponse.forEach(x -> albumsDTOArrayList.add(new AlbumsDTO(
                     x.getAlbumId(),
