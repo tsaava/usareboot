@@ -190,7 +190,7 @@ public class MainService {
 
 // Обнуляем ID (чтобы создалась новая запись)
         duplicate.setItemId(null);
-        duplicate.setVkCommentId(null);
+//        duplicate.setVkCommentId(null);
         var comment = "ДУБЛИКАТ\n" + original.getComment();
         duplicate.setComment(comment);
 
@@ -312,10 +312,14 @@ public class MainService {
         ItemsEntity itemsEntity = mainOperator.getItem(itemId);
         long vkPostId = Optional.ofNullable(itemsEntity).map(ItemsEntity::getVkCommentId).orElse(0L);
         if (vkPostId != 0) {
-            log.info("[Сценарий deleteItem][Шаг: Удаления поста в ВК][EventID: {}]", eventId);
-            String res = vkOperator.photosDeleteComment((int) vkPostId);
+            try {
+                log.info("[Сценарий deleteItem][Шаг: Удаления поста в ВК][EventID: {}]", eventId);
+                String res = vkOperator.photosDeleteComment((int) vkPostId);
 
-            log.info("[Сценарий deleteAlbum][Шаг: Результат удаления поста в ВК: {}][EventID: {}]", res, eventId);
+                log.info("[Сценарий deleteAlbum][Шаг: Результат удаления поста в ВК: {}][EventID: {}]", res, eventId);
+            } catch (Exception e) {
+                log.error("[Сценарий deleteAlbum][Шаг: В ВК комментарий не удален или не найден: {}][EventID: {}]", e, eventId);
+            }
         }
         log.info("[Сценарий deleteAlbum][Шаг: Удаления коментария в БД][EventID: {}]", eventId);
         mainOperator.deleteItem(itemId);
