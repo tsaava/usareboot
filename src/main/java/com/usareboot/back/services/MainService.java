@@ -235,7 +235,7 @@ public class MainService {
             log.info("[Сценарий saveItemStatus][Шаг: Статус заказа клиента: {}, id: {}][EventID: {}]", itemListDTO.getItemStatus(), itemStatusId, eventId);
 
             log.info("[Сценарий saveItemStatus][Шаг: Сохранение курса и цену в товар (albumItems)][EventID: {}]", eventId);
-            mainOperator.updateRateAndCostInAlbumItem(albumItem, itemListDTO);
+//            mainOperator.updateRateAndCostInAlbumItem(albumItem, itemListDTO);
 
             log.info("[Сценарий saveItemStatus][Шаг: Сохраняем стоимость заказа для тех товаров которые выкупили][EventID: {}]", eventId);
             ItemsEntity itemsEntity = mainOperator.saveItemCost(item, itemStatusId, albumItem);
