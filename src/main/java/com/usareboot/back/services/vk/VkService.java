@@ -289,6 +289,11 @@ public class VkService {
             botVkOperator.sendMessageWithKeyboard(userId, startKeyboard, text);
         }
     }
+
+    public boolean isExpiredToken(TokenRequest request) throws IOException {
+        log.info("exchangeRefreshTokens: {}", request);
+        return commonOperator.isExpiredToken(standaloneId);
+    }
 }
 
 

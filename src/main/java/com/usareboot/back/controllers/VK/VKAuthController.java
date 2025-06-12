@@ -1,15 +1,11 @@
 package com.usareboot.back.controllers.VK;
 
-import com.google.gson.Gson;
 import com.usareboot.back.models.vk.TokenRequest;
-import com.usareboot.back.models.vk.VkOauth2Response;
 import com.usareboot.back.services.vk.VkService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -40,5 +36,11 @@ public class VKAuthController {
     public ResponseEntity<?> exchangeRefreshTokens(@RequestBody TokenRequest request) throws IOException {
         vkService.exchangeRefreshTokens(request);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping("/oauth2/token/validate")
+    public boolean Expired(@RequestBody TokenRequest request) throws IOException {
+        return vkService.isExpiredToken(request);
+//        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
