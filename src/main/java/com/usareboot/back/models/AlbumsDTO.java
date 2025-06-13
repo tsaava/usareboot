@@ -32,13 +32,11 @@ public class AlbumsDTO {
     private Long cardId;
     private String cardName;
 
+    private Integer actionPercent1;
+    private Integer rateAction1;
+    private Integer actionPercent2;
+    private Integer rateAction2;
+    private Integer actionPercent3;
+    private Integer rateAction3;
+    private Long rateBuyingId;
 }
-/*  private long albumId;
-    private long albumVkId;
-    private String albumDesc;
-    private String courseAlbum;
-    private String albumDatePlane;
-    private Integer countOrder;
-    private String albumDateStop;
-    private String albumStatus;
-    private String card;*/

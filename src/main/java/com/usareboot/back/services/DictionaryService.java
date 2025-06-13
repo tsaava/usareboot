@@ -2,6 +2,7 @@ package com.usareboot.back.services;
 
 import com.usareboot.back.operators.CommonOperator;
 import com.usareboot.back.operators.DictionaryOperator;
+import com.usareboot.back.persistence.usareboot.entities.AlbumMappingDictionaryEntity;
 import com.usareboot.back.persistence.usareboot.entities.DCountriesEntity;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -37,5 +38,16 @@ public class DictionaryService {
 
         log.info("[Сценарий getCountries][Шаг: Финиш][EventID: {}]", eventId);
         return CompletableFuture.completedFuture(countries);
+    }
+
+//    @Async
+    public List<AlbumMappingDictionaryEntity> getAlbumList() {
+        var eventId = threadLocal.get();
+
+        log.info("[Сценарий getAlbumList][Шаг: Начало][EventID: {}]", eventId);
+        List<AlbumMappingDictionaryEntity> countries = dictionaryOperator.getAlbumList();
+
+        log.info("[Сценарий getAlbumList][Шаг: Финиш][EventID: {}]", eventId);
+        return countries;
     }
 }

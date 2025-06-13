@@ -91,7 +91,15 @@ public class AlbumsService {
                     x.getStatuses() != null ? x.getStatuses().getStatusId() : null,
                     x.getStatuses() != null ? x.getStatuses().getStatusName() : null,
                     x.getCards() != null ? x.getCards().getCardId() : null,
-                    x.getCards() != null ? x.getCards().getCardName() : null
+                    x.getCards() != null ? x.getCards().getCardName() : null,
+
+                    x.getActionPercent1(),
+                    x.getRateAction1(),
+                    x.getActionPercent2(),
+                    x.getRateAction2(),
+                    x.getActionPercent3(),
+                    x.getRateAction3(),
+                    x.getRateBuyingId()
             )));
         }
         log.info("[Сценарий getListAlbums][Шаг: финиш][EventID: {}]", eventId);

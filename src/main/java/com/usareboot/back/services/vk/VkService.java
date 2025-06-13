@@ -290,8 +290,7 @@ public class VkService {
         }
     }
 
-    public boolean isExpiredToken(TokenRequest request) throws IOException {
-        log.info("exchangeRefreshTokens: {}", request);
+    public boolean isExpiredToken() throws IOException {
         return commonOperator.isExpiredToken(standaloneId);
     }
 }

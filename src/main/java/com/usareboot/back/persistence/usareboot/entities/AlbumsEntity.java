@@ -97,6 +97,28 @@ public class AlbumsEntity {
     @Column(name = "create_date")
     private LocalDateTime createDate;
 
+    @Basic
+    @Column(name = "action_percent_1")
+    private Integer actionPercent1;
+    @Basic
+    @Column(name = "action_percent_2")
+    private Integer actionPercent2;
+    @Basic
+    @Column(name = "action_percent_3")
+    private Integer actionPercent3;
+    @Basic
+    @Column(name = "rate_action_1")
+    private Integer rateAction1;
+    @Basic
+    @Column(name = "rate_action_2")
+    private Integer rateAction2;
+    @Basic
+    @Column(name = "rate_action_3")
+    private Integer rateAction3;
+    @Basic
+    @Column(name = "rate_buying_id")
+    private Long rateBuyingId;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

@@ -39,8 +39,9 @@ public class VKAuthController {
     }
 
     @GetMapping("/oauth2/token/validate")
-    public boolean Expired(@RequestBody TokenRequest request) throws IOException {
-        return vkService.isExpiredToken(request);
+    public ResponseEntity<?> Expired() throws IOException {
+        boolean expiredToken = vkService.isExpiredToken();
+        return ResponseEntity.ok(expiredToken);
 //        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

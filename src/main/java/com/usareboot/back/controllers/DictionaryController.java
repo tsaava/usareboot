@@ -3,6 +3,7 @@ package com.usareboot.back.controllers;
 import com.usareboot.back.models.CountriesDTO;
 import com.usareboot.back.models.RatesDTO;
 import com.usareboot.back.operators.RatesOperator;
+import com.usareboot.back.persistence.usareboot.entities.AlbumMappingDictionaryEntity;
 import com.usareboot.back.persistence.usareboot.entities.DCountriesEntity;
 import com.usareboot.back.services.DictionaryService;
 import com.usareboot.back.services.RatesService;
@@ -30,6 +31,12 @@ public class DictionaryController {
     @GetMapping("/countries")
     public ResponseEntity<?> getCountryList() throws ExecutionException, InterruptedException {
         List<DCountriesEntity> countries = dictionaryService.getCountries().get();
+        return ResponseEntity.ok(countries);
+    }
+
+    @GetMapping("/album")
+    public ResponseEntity<?> getAlbumList() {
+        List<AlbumMappingDictionaryEntity> countries = dictionaryService.getAlbumList();
         return ResponseEntity.ok(countries);
     }
 }
