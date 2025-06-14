@@ -9,6 +9,7 @@ import java.util.Optional;
 
 public interface AlbumMappingDictionaryRepository extends JpaRepository<AlbumMappingDictionaryEntity, Long> {
     Optional<AlbumMappingDictionaryEntity> getAlbumMappingDictionaryEntityByLinkContains(String itemUrl);
+    Optional<AlbumMappingDictionaryEntity> findFirstByLinkContains(String itemUrl);
     Optional<AlbumMappingDictionaryEntity> getAlbumMappingDictionaryEntityByAlbumMappingDictionaryId(Long id);
     List<AlbumMappingDictionaryEntity> findAllByActive(Long id);
 }

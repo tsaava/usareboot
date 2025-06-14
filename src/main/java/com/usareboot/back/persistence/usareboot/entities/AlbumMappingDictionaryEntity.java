@@ -36,6 +36,11 @@ public class AlbumMappingDictionaryEntity {
     @Column(name = "url_cover")
     private String urlCover;
 
+    @Basic
+    @Column(name = "description")
+    private String description;
+
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

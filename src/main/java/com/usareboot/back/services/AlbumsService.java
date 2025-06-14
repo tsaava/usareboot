@@ -99,7 +99,7 @@ public class AlbumsService {
                     x.getRateAction2(),
                     x.getActionPercent3(),
                     x.getRateAction3(),
-                    x.getRateBuyingId()
+                    x.getAlbumMappingDictionaryId()
             )));
         }
         log.info("[Сценарий getListAlbums][Шаг: финиш][EventID: {}]", eventId);
@@ -112,10 +112,10 @@ public class AlbumsService {
         DStatusesEntity dst = new DStatusesEntity();
         dst.setStatusId(ALBUM_DEFAULT_STATUS_ID);
         log.info("[Сценарий createAlbum][Шаг: Определить есть ли в словаре данные по альбому][EventID: ]");
-        Optional<AlbumMappingDictionaryEntity> albumMappingDictionaryEntity = albumMappingDictionaryRepository.getAlbumMappingDictionaryEntityByLinkContains(Optional.ofNullable(albumsEntity).map(AlbumsEntity::getShopUrl).orElse(""));
+//        Optional<AlbumMappingDictionaryEntity> albumMappingDictionaryEntity = albumMappingDictionaryRepository.getAlbumMappingDictionaryEntityByLinkContains(Optional.ofNullable(albumsEntity).map(AlbumsEntity::getShopUrl).orElse(""));
 //        if (albumMappingDictionaryEntity.isEmpty())
 //            throw new RuntimeException("В словаре нет сопоставления с введенной ссылкой");
-        albumMappingDictionaryEntity.ifPresent(mappingDictionaryEntity -> albumsEntity.setAlbumMappingDictionaryId(mappingDictionaryEntity.getAlbumMappingDictionaryId()));
+//        albumMappingDictionaryEntity.ifPresent(mappingDictionaryEntity -> albumsEntity.setAlbumMappingDictionaryId(mappingDictionaryEntity.getAlbumMappingDictionaryId()));
         albumsEntity.setStatuses(dst);
         if (id != null) {
             albumsEntity.setAlbumVkUrl("https://vk.com/album-" + groupId + "_" + id);

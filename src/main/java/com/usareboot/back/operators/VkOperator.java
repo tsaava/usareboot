@@ -416,6 +416,20 @@ public class VkOperator {
         }
     }
 
+    public void editAlbum(long albumId)
+            throws ClientException, ApiException {
+        var accessToken = commonOperator.getTokenClient(standaloneId).orElse("");
+
+        TransportClient transportClient = new HttpTransportClient();
+        VkApiClient vk = new VkApiClient(transportClient);
+        UserActor actor = new UserActor(Integer.valueOf(standaloneId), accessToken);
+
+        var res = vk.photos().editAlbum(actor, (int) albumId)
+                .ownerId(-Integer.parseInt(groupId))
+                .uploadByAdminsOnly(false)
+                .execute();
+    }
+
     public String getMessage(AlbumsItemsDTO albumsItemsDTO) {
         BigDecimal itemCost = BigDecimal.valueOf(0);
         if (albumsItemsDTO.getAlbumItemCost() != null && albumsItemsDTO.getAlbumItemRate() != null) {
@@ -667,7 +681,7 @@ public class VkOperator {
         params.add(new BasicNameValuePair("owner_id", "-" + groupId));
         System.out.println(albumsEntity.getAlbumDesc());
         params.add(new BasicNameValuePair("description", description));
-        params.add(new BasicNameValuePair("upload_by_admins_only", "1"/*фотографии могут добавлять все пользователи*/));
+        params.add(new BasicNameValuePair("upload_by_admins_only", "0"/*фотографии могут добавлять все пользователи*/));
         params.add(new BasicNameValuePair("http.protocol.content-charset", "UTF-8"));
         httpPost.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));
         try (CloseableHttpResponse response2 = httpclient.execute(httpPost)) {

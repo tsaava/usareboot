@@ -38,5 +38,5 @@ public class AlbumsDTO {
     private Integer rateAction2;
     private Integer actionPercent3;
     private Integer rateAction3;
-    private Long rateBuyingId;
+    private Long albumMappingDictionaryId;
 }

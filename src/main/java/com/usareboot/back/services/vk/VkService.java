@@ -176,8 +176,8 @@ public class VkService {
 
         var description = (albumsEntity.getAlbumDesc() != null && !albumsEntity.getAlbumDesc().isEmpty() && !albumsEntity.getAlbumDesc().equals("null") ? albumsEntity.getAlbumDesc() + "\n" : "")
                 + "Курс(ы) альбома: " + albumsEntity.getCourseAlbum();
-        log.info("[Сценарий createAlbum][Шаг: Определить есть ли в словаре данные по альбому][EventID: {}]", eventId);
-        Optional<AlbumMappingDictionaryEntity> albumMappingDictionaryEntity = albumMappingDictionaryRepository.getAlbumMappingDictionaryEntityByLinkContains(Optional.ofNullable(albumsEntity).map(AlbumsEntity::getShopUrl).orElse(""));
+//        log.info("[Сценарий createAlbum][Шаг: Определить есть ли в словаре данные по альбому][EventID: {}]", eventId);
+        Optional<AlbumMappingDictionaryEntity> albumMappingDictionaryEntity = albumMappingDictionaryRepository.findFirstByLinkContains(Optional.ofNullable(albumsEntity).map(AlbumsEntity::getShopUrl).orElse(""));
 
         var accessToken = commonOperator.getTokenClient(standaloneId).orElse(null);
 //        accessToken = commonOperator.getTokenGroup(groupId).orElse(null);
@@ -229,6 +229,9 @@ public class VkService {
                     }
                     log.info("[Сценарий createAlbum][Шаг: Выбор обложки для альбома: {}][EventID: {}]", albumId, eventId);
                     vkOperator.photosMakeCover(photoId, albumId);
+
+                    log.info("[Сценарий createAlbum][Шаг: ОБновление альбома чтобы не было галочки могут загружать только админы: {}][EventID: {}]", albumId, eventId);
+                    vkOperator.editAlbum(albumId);
                 } catch (Exception e) {
                     log.error("[Сценарий createAlbum][Шаг: Ошибка получения ссылки из бд на обложку альбома][e: {}]", e.getMessage());
                 }
